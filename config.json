@@ -1,0 +1,7 @@
+{
+	"width":1200,
+	"height":800,
+	"msg":"hello world",
+	"orange":"0xff8000",
+	"palette":["0xff0000", "0xff4000", "0xff8000", "0xffb000","0x000000", "0x000000", "0xffffff", "0xff0000", "0x00ff00"]
+}
