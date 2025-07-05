@@ -179,7 +179,7 @@ public class CompitoTreImplementation implements ICompitoTre {
                     lunghezzaMin = ITot;
                     seqMin = new ArrayList<>();
                     seqMin.add(new Landmark(StatoCella.ORIGINE.value(), O.x(), O.y()));
-                    seqMin.add(new Landmark(StatoCella.FRONTIERA.value(), F.x(), F.y()));
+                    seqMin.add(new Landmark(StatoCella.FRONTIERA.addTo(F.stato()), F.x(), F.y()));
                     
                     List<Landmark> landmarksFromRecursion = camminoFD.landmarks();
                     if (!landmarksFromRecursion.isEmpty()) {
