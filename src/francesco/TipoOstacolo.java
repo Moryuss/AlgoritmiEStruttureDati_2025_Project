@@ -1,15 +1,12 @@
 package francesco;
 
 public enum TipoOstacolo {
-	SEMPLICE, // cella
-	AGGLOMERATI,
+	SEMPLICE, // cella singolo
+	AGGLOMERATO, // rettangolo di celle
 	BARRA_VERTICALE,
 	BARRA_ORIZZONTALE,
-	BARRA_DIAGONALE, // solo sottile
-	ZONA_CHIUSA
-	/*
-semplici, agglomerati, diagonali, 
-delimitatori di aree chiuse, a barre ed altre eventuali 
-conformazioni ideate dal gruppo di lavoro
-	 */
+	BARRA_DIAGONALE, // solo sottile (spessore = 1)
+	ZONA_CHIUSA, // forme rettangolari cave all'interno
+	DELIMITATORE_VERTICALE,
+	DELIMITATORE_ORIZZONTALE
 }

@@ -1,6 +1,7 @@
 package francesco;
 
 public enum StatoCella {
+	VUOTA		(0b0000000), 
 	CONTESTO	(0b0000001),
 	COMPLEMENTO	(0b0000010),
 	//CHIUSURA	(0b0000011),
@@ -15,6 +16,10 @@ public enum StatoCella {
 	
 	private StatoCella(int v) {
 		value = v;
+	}
+	
+	public int value() {
+		return value;
 	}
 	
 	

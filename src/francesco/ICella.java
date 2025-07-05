@@ -4,9 +4,10 @@ public interface ICella {
 	
 	int stato();
 	
-	
 	default boolean is(StatoCella stato) {
 		return stato.is(stato());
 	}
+	
+	void setStato(int stato);
 	
 }
