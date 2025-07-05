@@ -22,30 +22,30 @@ public class CompitoTreImplementation implements ICompitoTre {
 		  // Calcola contesto di O
         IGrigliaConOrigine g = new CompitoDueImpl().calcola(griglia, O); //impl nicolas
         
-        // Verifica se D è nel contesto
+        // Verifica se D è nel contesto (Caso base)
         if (g.isInContesto(D.x(), D.y())) {
             double distanza = g.distanzaLiberaDa(D.x(), D.y());
             return new Cammino(distanza, Arrays.asList(
-                new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y(), 0),
-                new Landmark(StatoCella.LANDMARK.value(), D.x(), D.y(), 1)
-            )); 
-            // QUI Vanno fatte delle modifiche:
-            //1. probabilmente rimuovere completamente index
-            //2. Fare che lo stato è l'OR degli stati
-            
+                new Landmark(StatoCella.LANDMARK.value(),
+                		O.x(), O.y()),
+                new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()),
+                		D.x(), D.y())
+            ));          
         }
         
-        // Verifica se D è nel complemento
+        // Verifica se D è nel complemento (Caso base)
         if (g.isInComplemento(D.x(), D.y())) {
             double distanza = g.distanzaLiberaDa(D.x(), D.y());
             return new Cammino(distanza, Arrays.asList(
-                new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y(), 0),
-                new Landmark(StatoCella.LANDMARK.value(), D.x(), D.y(), 1)
+                new Landmark(StatoCella.LANDMARK.value(),
+                		O.x(), O.y()),
+                new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()),
+                		D.x(), D.y())
            )); 
         }
         
         // Verifica se frontiera è vuota (vicolo cieco)
-        List<ICella2D> frontieraList = g.getFrontiera().toList();	//controlla il tipo di ritorno,
+        List<ICella2D> frontieraList = g.getFrontiera().toList();	//controlla il tipo di ritorno, per ora è ICella2
         if (frontieraList.isEmpty()) {
             return new Cammino(Double.POSITIVE_INFINITY,
             		new ArrayList<>());
@@ -58,20 +58,25 @@ public class CompitoTreImplementation implements ICompitoTre {
         // Crea griglia con chiusura come ostacolo
         IGriglia<?> g2 = griglia.addObstacle(g.convertiChiusuraInOstacolo());
         
-        for (ICella2 F : frontieraList) {	//ICella2 o ICella2D?
-            double IF = g.distanzaLiberaDa(F.x(), F.y());	//Questi metodi funzionano con ICella2D
+        for (ICella2D F : frontieraList) {		//qui potrebbe essere ICella2 invece
+            double IF = g.distanzaLiberaDa(F.x(), F.y());
             
-            if (IF < lunghezzaMin) {	//La cella di frontiera é raggiungibile
-                // Ricorsione: cerca cammino da F a D
-                ICammino camminoFD = camminoMin(g2, F, D);	
+            if (IF < lunghezzaMin) {
+                //RICORSIONE
+                ICammino camminoFD = camminoMin(g2, F, D);
                 double ITot = IF + camminoFD.lunghezza();
                 
                 if (ITot < lunghezzaMin) {
                     lunghezzaMin = ITot;
                     seqMin = new ArrayList<>();
-                    seqMin.add(new Landmark(StatoCella.LANDMARK.value(),O.x(), O.y(), 0));
-                    seqMin.add(new Landmark(StatoCella.LANDMARK.value(),F.x(), F.y(), 1));
-                    seqMin.addAll(camminoFD.landmarks().subList(1, camminoFD.landmarks().size()));
+                    seqMin.add(new Landmark(StatoCella.ORIGINE.value(), O.x(), O.y()));
+                    seqMin.add(new Landmark(StatoCella.FRONTIERA.value(), F.x(), F.y()));
+                    
+                    // Aggiungi i landmark dalla ricorsione (saltando il primo che dovrebbe essere l'ultimo della chaimata prima)
+                    List<ILandmark> landmarksFromRecursion = camminoFD.landmarks();
+                    if (!landmarksFromRecursion.isEmpty()) {
+                        seqMin.addAll(landmarksFromRecursion.subList(1, landmarksFromRecursion.size()));
+                    }
                 }
             }
         }
