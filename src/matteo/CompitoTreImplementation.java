@@ -94,7 +94,8 @@ public class CompitoTreImplementation implements ICompitoTre {
         }
     }
     
-    private ICammino camminoMinInternal(IGriglia griglia, ICella2D O, ICella2D D, int livelloRicorsione) throws InterruptedException {
+    
+    private ICammino camminoMinInternal(IGriglia<?> griglia, ICella2D O, ICella2D D, int livelloRicorsione) throws InterruptedException {
         // Controlla se deve interrompere
         if (controlloInterruzione.deveInterrompere()) {
             throw new InterruptedException("Calcolo interrotto");
@@ -152,7 +153,7 @@ public class CompitoTreImplementation implements ICompitoTre {
         
         // Ricerca ricorsiva
         double lunghezzaMin = Double.POSITIVE_INFINITY;
-        List<Landmark> seqMin = new ArrayList<>();
+        List<ILandmark> seqMin = new ArrayList<>();
         
         IGriglia<?> g2 = griglia.addObstacle(g.convertiChiusuraInOstacolo());
         
@@ -181,7 +182,7 @@ public class CompitoTreImplementation implements ICompitoTre {
                     seqMin.add(new Landmark(StatoCella.ORIGINE.value(), O.x(), O.y()));
                     seqMin.add(new Landmark(StatoCella.FRONTIERA.addTo(F.stato()), F.x(), F.y()));
                     
-                    List<Landmark> landmarksFromRecursion = camminoFD.landmarks();
+                    List<ILandmark> landmarksFromRecursion = camminoFD.landmarks();
                     if (!landmarksFromRecursion.isEmpty()) {
                         seqMin.addAll(landmarksFromRecursion.subList(1, landmarksFromRecursion.size()));
                     }
