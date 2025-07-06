@@ -58,7 +58,7 @@ public class OZonaChiusa implements CostruttoreOstacolo {
 			if(finito) {
 				// Lato inferiore della cornice
 				for(int i = x; i < x + tempWidth; i++) {
-					if(!griglia.isNavigabile(i, y + tempHeight)) {
+					if(!griglia.isNavigabile(i, y + tempHeight - 1)) {
 						retry++;
 						finito = false;
 						break;
