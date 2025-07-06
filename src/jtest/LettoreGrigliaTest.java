@@ -19,23 +19,24 @@ import francesco.implementazioni.LettoreGriglia;
 import processing.core.PApplet;
 import processing.data.JSONObject;
 
-class LettoreGrigliaTest extends PApplet{
+class LettoreGrigliaTest {
 
 	@Test
 	void testNumeroDiOstacoli() {
 		LettoreGriglia lettore = new LettoreGriglia();
-		int width = 10;
-		int height = 10;
+		JSONObject json = PApplet.loadJSONObject(Path.of("letturaTest.json").toFile());
+		int width = json.getInt("width");
+		int height = json.getInt("height");
 		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
 		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
 //		IGriglia<?> griglia = lettore.crea(Path.of("config.json"));
-		JSONObject json = loadJSONObject(Path.of("letturaTest.json").toFile());
-		List<IObstacle> ostacoli = lettore.generaOstacoli(width, height, griglia, json);
+		int randomSeed = json.getInt("randomSeed");
+		List<IObstacle> ostacoli = lettore.generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
 		
 		int somma = 0;
 		for(TipoOstacolo ost : TipoOstacolo.values()) {
-			if(json.hasKey(ost.toString())) {
-				somma += json.getInt(ost.toString());
+			if(json.getJSONObject("maxOstacoli").hasKey(ost.toString())) {
+				somma += json.getJSONObject("maxOstacoli").getInt(ost.toString());
 			}
 		}
 		
@@ -55,6 +56,8 @@ class LettoreGrigliaTest extends PApplet{
 				if (griglia.getCellaAt(j, i).is(StatoCella.OSTACOLO)) count++;
 			}
 		}
+		
+		json = json.getJSONObject("maxOstacoli");
 		assertEquals(json.getInt(TipoOstacolo.SEMPLICE.toString()), count);
 	}
 
@@ -62,8 +65,8 @@ class LettoreGrigliaTest extends PApplet{
 	void testGrigliaPiccolaSenzaErrori() {
 		assertDoesNotThrow(() -> {
 			LettoreGriglia lettore = new LettoreGriglia();
-			int width = 1;
-			int height = 1;
+//			int width = 1;   // Consigli sulle misure
+//			int height = 1;
 			IGriglia<?> griglia = lettore.crea(Path.of("letturaTest.json"));
 		});
 	}
@@ -72,8 +75,8 @@ class LettoreGrigliaTest extends PApplet{
 	void testGrigliaGrandeSenzaErrori() {
 		assertDoesNotThrow(() -> {
 			LettoreGriglia lettore = new LettoreGriglia();
-			int width = 1200;
-			int height = 1200;
+//			int width = 1200;    // Consigli sulle misure
+//			int height = 1200;
 			IGriglia<?> griglia = lettore.crea(Path.of("letturaTest.json"));
 		});
 	}
@@ -81,12 +84,13 @@ class LettoreGrigliaTest extends PApplet{
 	@Test
 	void testOstacoliEffettivamentePresenti() {
 		LettoreGriglia lettore = new LettoreGriglia();
-		JSONObject json = loadJSONObject(Path.of("letturaTest.json").toFile());
+		JSONObject json = PApplet.loadJSONObject(Path.of("letturaTest.json").toFile());
 		int width = json.getInt("width");
 		int height = json.getInt("height");
+		int randomSeed = json.getInt("randomSeed");
 		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
 		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
-		List<IObstacle> ostacoli = lettore.generaOstacoli(width, height, griglia, json);
+		List<IObstacle> ostacoli = lettore.generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
 		
 		assertFalse(ostacoli.isEmpty());
 		

@@ -40,14 +40,14 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
 		
 		// Infine aggiunge gli ostacoli
-		List<IObstacle> ostacoli = generaOstacoli(width, height, griglia, json);
+		int randomSeed = json.getInt("randomSeed");
+		List<IObstacle> ostacoli = generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
 		
 		return griglia;
 	}
 
 	
-	public List<IObstacle> generaOstacoli(int width, int height, IGriglia<ICella> griglia, JSONObject json) {
-		int randomSeed = json.getInt("randomSeed");
+	public List<IObstacle> generaOstacoli(int width, int height, IGriglia<ICella> griglia, int randomSeed, JSONObject json) {
 		List<IObstacle> ostacoli = new ArrayList<>();
 		
 		for(TipoOstacolo ost : TipoOstacolo.values()) {

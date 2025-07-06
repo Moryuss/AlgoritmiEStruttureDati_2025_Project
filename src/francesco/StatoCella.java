@@ -2,7 +2,7 @@ package francesco;
 
 public enum StatoCella {
 	@Deprecated
-	VUOTA		(0b0000000), 
+	VUOTA		(0b0000000),
 	CONTESTO	(0b0000001),
 	COMPLEMENTO	(0b0000010),
 	//CHIUSURA	(0b0000011),
