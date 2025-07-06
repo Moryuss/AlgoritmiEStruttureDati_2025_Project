@@ -29,7 +29,7 @@ class LettoreGrigliaTest extends PApplet{
 		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
 		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
 //		IGriglia<?> griglia = lettore.crea(Path.of("config.json"));
-		JSONObject json = loadJSONObject(Path.of("config.json").toFile());
+		JSONObject json = loadJSONObject(Path.of("letturaTest.json").toFile());
 		List<IObstacle> ostacoli = lettore.generaOstacoli(width, height, griglia, json);
 		
 		int somma = 0;
@@ -44,31 +44,27 @@ class LettoreGrigliaTest extends PApplet{
 	
 	// Attenzione: per questo test servono SOLO ostacoli semplici, altrimenti il controllo non torna
 	@Test
-	  void contaCelleOstacolo() {
-	    var path = Path.of("config.json");
-	    var json = PApplet.loadJSONObject(path.toFile());
-	    IGriglia<?> griglia = new LettoreGriglia().crea(path);
-	    
-	    int count = 0;
-	    for (int i=0; i<griglia.height(); i++) {
-	      for (int j=0; j<griglia.width(); j++) {
-	        if (griglia.getCellaAt(j, i).is(StatoCella.OSTACOLO)) count++;
-	        System.out.print(griglia.getCellaAt(j, i).stato());
-	      }
-	      System.out.println();
-	    }
-	    
-	    assertEquals(json.getInt(TipoOstacolo.SEMPLICE.toString()), count);
-	    System.out.println(count);
-	  }
-	
+	void contaCelleOstacolo() {
+		var path = Path.of("letturaTest.json");
+		var json = PApplet.loadJSONObject(path.toFile());
+		IGriglia<?> griglia = new LettoreGriglia().crea(path);
+		
+		int count = 0;
+		for (int i=0; i<griglia.height(); i++) {
+			for (int j=0; j<griglia.width(); j++) {
+				if (griglia.getCellaAt(j, i).is(StatoCella.OSTACOLO)) count++;
+			}
+		}
+		assertEquals(json.getInt(TipoOstacolo.SEMPLICE.toString()), count);
+	}
+
 	@Test
 	void testGrigliaPiccolaSenzaErrori() {
 		assertDoesNotThrow(() -> {
 			LettoreGriglia lettore = new LettoreGriglia();
 			int width = 1;
 			int height = 1;
-			IGriglia<?> griglia = lettore.creaConDim(Path.of("config.json"), width, height);
+			IGriglia<?> griglia = lettore.crea(Path.of("letturaTest.json"));
 		});
 	}
 	
@@ -78,14 +74,14 @@ class LettoreGrigliaTest extends PApplet{
 			LettoreGriglia lettore = new LettoreGriglia();
 			int width = 1200;
 			int height = 1200;
-			IGriglia<?> griglia = lettore.creaConDim(Path.of("config.json"), width, height);
+			IGriglia<?> griglia = lettore.crea(Path.of("letturaTest.json"));
 		});
 	}
 	
 	@Test
 	void testOstacoliEffettivamentePresenti() {
 		LettoreGriglia lettore = new LettoreGriglia();
-		JSONObject json = loadJSONObject(Path.of("config.json").toFile());
+		JSONObject json = loadJSONObject(Path.of("letturaTest.json").toFile());
 		int width = json.getInt("width");
 		int height = json.getInt("height");
 		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
@@ -94,7 +90,7 @@ class LettoreGrigliaTest extends PApplet{
 		
 		assertFalse(ostacoli.isEmpty());
 		
-		IGriglia<?> grigliaDaConfrontare = lettore.crea(Path.of("config.json"));
+		IGriglia<?> grigliaDaConfrontare = lettore.crea(Path.of("letturaTest.json"));
 		
 		for(int i = 0; i < height; i++) {
 			for(int j =0; j < width; j++) {
@@ -109,12 +105,12 @@ class LettoreGrigliaTest extends PApplet{
 	                	}
 					}
 				}
-
+				
 	            // Verifica lo stato della cella
 				if (isOstacolo) {
-					assertTrue(StatoCella.OSTACOLO.value() == stato, "Cella: (" + j + ", " + i + ") non è un ostacolo ma dovrebbe esserlo.");
+					assertTrue(StatoCella.OSTACOLO.is(stato), "Cella: (" + j + ", " + i + ") non è un ostacolo ma dovrebbe esserlo.");
 				} else {
-					assertTrue(StatoCella.VUOTA.value() == stato, "Cella: (" + j + ", " + i + ") è un ostacolo ma dovrebbe essere vuota.");
+					assertTrue(StatoCella.OSTACOLO.isNot(stato), "Cella: (" + j + ", " + i + ") è un ostacolo ma dovrebbe essere vuota.");
 				}
 			}
 		}

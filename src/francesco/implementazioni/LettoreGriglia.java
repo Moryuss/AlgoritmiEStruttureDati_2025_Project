@@ -20,29 +20,29 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 	
 	@Override
 	public IGriglia<?> crea(Path file) {
-	        File jsonFile = file.toFile();
-	        if (!jsonFile.exists()) {
-	        	System.out.println("Errore nella lettura del file, ritorno una griglia vuota 50x50...");
-	            Cella[][] mat = GrigliaMatrix.inizializzaMatrice(50, 50);
-				GrigliaMatrix griglia = new GrigliaMatrix(mat);
-		        return griglia;
-	        }
-
-	        // Carica il file JSON
-	        JSONObject json = loadJSONObject(jsonFile);
-	        int width = json.getInt("width");
-			int height = json.getInt("height");
-			
-			// Ora crea la matrice vuota
-			Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
-			
-			// Inizializzo una IGriglia senza ostacoli per semplicita'
-			IGriglia<ICella> griglia = new GrigliaMatrix(mat);
-			
-			// Infine aggiunge gli ostacoli
-			List<IObstacle> ostacoli = generaOstacoli(width, height, griglia, json);
-
-	        return griglia;
+		File jsonFile = file.toFile();
+		if (!jsonFile.exists()) {
+			System.out.println("Errore nella lettura del file, ritorno una griglia vuota 50x50...");
+			Cella[][] mat = GrigliaMatrix.inizializzaMatrice(50, 50);
+			GrigliaMatrix griglia = new GrigliaMatrix(mat);
+			return griglia;
+		}
+		
+		// Carica il file JSON
+		JSONObject json = loadJSONObject(jsonFile);
+		int width = json.getInt("width");
+		int height = json.getInt("height");
+		
+		// Ora crea la matrice vuota
+		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
+		
+		// Inizializzo una IGriglia senza ostacoli per semplicita'
+		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
+		
+		// Infine aggiunge gli ostacoli
+		List<IObstacle> ostacoli = generaOstacoli(width, height, griglia, json);
+		
+		return griglia;
 	}
 
 	
@@ -71,34 +71,5 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 		}
 		
 		return ostacoli;
-	}
-	
-	/**
-	 * SOLO PER TESTING
-	 */
-	public IGriglia<?> creaConDim(Path file, int width, int height) {
-//		try {
-	        File jsonFile = file.toFile();
-	        if (!jsonFile.exists()) {
-	            Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
-				GrigliaMatrix griglia = new GrigliaMatrix(mat);
-		        return griglia;
-	        }
-
-	        // Carica il file JSON
-	        JSONObject json = loadJSONObject(jsonFile);
-			
-			// Ora crea la matrice vuota
-			Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
-			
-			// Inizializzo una IGriglia senza ostacoli per semplicita'
-			IGriglia<ICella> griglia = new GrigliaMatrix(mat);
-			
-			List<IObstacle> ostacoli = generaOstacoli(width, height, griglia, json);
-			
-			// Infine aggiunge gli ostacoli
-			griglia = GrigliaMatrix.from(width, height, ostacoli);
-
-	        return griglia;
 	}
 }
