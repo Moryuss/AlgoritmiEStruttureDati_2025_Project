@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import francesco.GrigliaMatrix;
 import francesco.ICella;
 import francesco.ICella2D;
-import francesco.ICompitoUno;
 import francesco.IGriglia;
 import francesco.IObstacle;
 import francesco.StatoCella;
@@ -43,6 +42,26 @@ class LettoreGrigliaTest extends PApplet{
 		assertEquals(ostacoli.size(), somma); 
 	}
 	
+	// Attenzione: per questo test servono SOLO ostacoli semplici, altrimenti il controllo non torna
+	@Test
+	  void contaCelleOstacolo() {
+	    var path = Path.of("config.json");
+	    var json = PApplet.loadJSONObject(path.toFile());
+	    IGriglia<?> griglia = new LettoreGriglia().crea(path);
+	    
+	    int count = 0;
+	    for (int i=0; i<griglia.height(); i++) {
+	      for (int j=0; j<griglia.width(); j++) {
+	        if (griglia.getCellaAt(j, i).is(StatoCella.OSTACOLO)) count++;
+	        System.out.print(griglia.getCellaAt(j, i).stato());
+	      }
+	      System.out.println();
+	    }
+	    
+	    assertEquals(json.getInt(TipoOstacolo.SEMPLICE.toString()), count);
+	    System.out.println(count);
+	  }
+	
 	@Test
 	void testGrigliaPiccolaSenzaErrori() {
 		assertDoesNotThrow(() -> {
@@ -66,28 +85,25 @@ class LettoreGrigliaTest extends PApplet{
 	@Test
 	void testOstacoliEffettivamentePresenti() {
 		LettoreGriglia lettore = new LettoreGriglia();
-		int width = 100;
-		int height = 100;
+		JSONObject json = loadJSONObject(Path.of("config.json").toFile());
+		int width = json.getInt("width");
+		int height = json.getInt("height");
 		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
 		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
-		JSONObject json = loadJSONObject(Path.of("config.json").toFile());
 		List<IObstacle> ostacoli = lettore.generaOstacoli(width, height, griglia, json);
 		
 		assertFalse(ostacoli.isEmpty());
 		
-		IGriglia<?> grigliaDaConfrontare = lettore.creaConDim(Path.of("config.json"), width, height);
+		IGriglia<?> grigliaDaConfrontare = lettore.crea(Path.of("config.json"));
 		
-
 		for(int i = 0; i < height; i++) {
 			for(int j =0; j < width; j++) {
 				int stato = grigliaDaConfrontare.getCellaAt(j, i).stato();
-				System.out.println("Controllo lo stato: " + stato);
 				boolean isOstacolo = false;
 				
 				for(IObstacle ostacolo : ostacoli) {
 					for(ICella2D ostacoloCella : ostacolo.list()) {
 	                	if(ostacoloCella.x() == j && ostacoloCella.y() == i) {
-	                		System.out.println("Ostacolo trovato in: (" + i + ", " + j + ")");
 	                    	isOstacolo = true;
 	                        break;
 	                	}

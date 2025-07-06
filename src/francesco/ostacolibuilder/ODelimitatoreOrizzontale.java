@@ -12,7 +12,7 @@ import francesco.implementazioni.Cella2D;
 
 public class ODelimitatoreOrizzontale implements CostruttoreOstacolo {
 
-	private static final int MAX_RETRY = 3;
+	private static final int MAX_RETRY = 10;
 	
 	@Override
 	public List<ICella2D> generaCelle(int width, int height, IGriglia<? extends ICella> griglia, int randomSeed) {

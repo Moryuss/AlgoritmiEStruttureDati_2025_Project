@@ -20,7 +20,6 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 	
 	@Override
 	public IGriglia<?> crea(Path file) {
-//		try {
 	        File jsonFile = file.toFile();
 	        if (!jsonFile.exists()) {
 	        	System.out.println("Errore nella lettura del file, ritorno una griglia vuota 50x50...");
@@ -40,20 +39,10 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 			// Inizializzo una IGriglia senza ostacoli per semplicita'
 			IGriglia<ICella> griglia = new GrigliaMatrix(mat);
 			
-			List<IObstacle> ostacoli = generaOstacoli(width, height, griglia, json);
-			
 			// Infine aggiunge gli ostacoli
-			griglia = GrigliaMatrix.from(width, height, ostacoli);
+			List<IObstacle> ostacoli = generaOstacoli(width, height, griglia, json);
 
 	        return griglia;
-	        
-//	    } catch (RuntimeException e) {
-//	    	e.printStackTrace();
-////	        System.out.println("Errore nella lettura del file, ritorno una griglia vuota...");
-//	        Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
-//			GrigliaMatrix griglia = new GrigliaMatrix(mat);
-//	        return griglia;
-//	    }
 	}
 
 	
@@ -69,11 +58,12 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 					continue;
 				}
 				for(int i = 0; i < num; i++) {
-					Ostacolo daAggiungere = CentroCostruttore.costruttoreCentrico(ost, width, height, griglia, randomSeed);
+					Ostacolo daAggiungere = CentroCostruttore.costruttoreCentrico(ost, width, height, griglia, randomSeed+i);
 					if(daAggiungere != null) {
 						ostacoli.add(daAggiungere);
 					} 
 				}
+				randomSeed += num;
 			}
 			else {
 				System.err.println("Ostacolo non trovato: " + ost.toString());

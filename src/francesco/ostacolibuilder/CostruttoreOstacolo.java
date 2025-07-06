@@ -17,6 +17,8 @@ public interface CostruttoreOstacolo {
 		
 		Ostacolo result = new Ostacolo(celle);
 		
+		griglia = griglia.addObstacle(result);
+		
 		return result;
 	}
 	

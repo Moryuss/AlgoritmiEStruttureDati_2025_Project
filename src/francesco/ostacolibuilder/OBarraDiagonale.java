@@ -12,7 +12,7 @@ import francesco.implementazioni.Cella2D;
 
 public class OBarraDiagonale implements CostruttoreOstacolo {
 
-	private static final int MAX_RETRY = 3;
+	private static final int MAX_RETRY = 10;
 	private static final int MAX_HEIGHT = 7;
 	private static final int MAX_WIDTH = 7;
 	
