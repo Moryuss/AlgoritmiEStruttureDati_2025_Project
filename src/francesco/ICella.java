@@ -10,6 +10,10 @@ public interface ICella {
 		return stato.is(stato());
 	}
 	
+	default boolean isNot(StatoCella stato) {
+		return stato.isNot(stato());
+	}
+	
 	void setStato(int stato);
 	
 }

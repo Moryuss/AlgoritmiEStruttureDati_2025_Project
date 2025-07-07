@@ -1,39 +1,63 @@
 package nicolas;
 
+import java.util.Optional;
 import francesco.ICella;
 
 public enum StatoCella {
-	@Deprecated
-	VUOTA		(0b0000000),
-	CONTESTO	(0b0000001),
-	COMPLEMENTO	(0b0000010),
-	//CHIUSURA	(0b0000011),
-	FRONTIERA	(0b0000100),
-	OSTACOLO	(0b0001000),
-	ORIGINE		(0b0010000),
-	DESTINAZIONE(0b0100000),
-	LANDMARK	(0b1000000);
+	CONTESTO		(0b00000001, 0b00000001), // celle raggiungibili con cammini liberi di tipo 1
+	REGINA			(0b00000011, 0b00000010), // origine + mosse diagonali + mosse cardinali
+	ORIGINE			(0b00000111, 0b00000100), // (Ox, Oy)
+	COMPLEMENTO		(0b00001000, 0b00001000), // celle raggiungibili con solo cammini liberi di tipo 2
+	FRONTIERA		(0b00010000, 0b00010000), // celle nel contesto adiacenti a celle non nel contesto
+	DESTINAZIONE	(0b00100000, 0b00100000),
+	LANDMARK		(0b01010000, 0b01000000),
+	OSTACOLO		(0b10000000, 0b10000000),
+	CHIUSURA		(0b00000000, 0b00001001);
 	
 	
-	private final int value;
+	private final short value, mask;
 	
-	private StatoCella(int v) {
-		value = v;
+	private StatoCella(int n, int m) {
+		value = (short)n;
+		mask = (short)m;
 	}
+	
 	
 	public int value() {
 		return value;
 	}
 	
 	
+	public int addTo(int n) {
+		return n|value;
+	}
+	
+	public int toggleTo(int n) {
+		return n^value;
+	}
+	
+	public int removeTo(int n) {
+		return n&~value;
+	}
+	
+	public void addTo(ICella cella) {
+		cella.setStato(addTo(cella.stato()));
+	}
+	public void toggleTo(ICella cella) {
+		cella.setStato(toggleTo(cella.stato()));
+	}
+	public void removeTo(ICella cella) {
+		cella.setStato(removeTo(cella.stato()));
+	}
+	
+	
 	public boolean is(int n) {
-		return (value&n)>0;
+		return matches(n);
 	}
 	
 	public boolean isNot(int n) {
-		return (value&n)==0;
+		return (n&mask) == 0;
 	}
-	
 	
 	public boolean is(ICella cella) {
 		return is(cella.stato());
@@ -43,13 +67,20 @@ public enum StatoCella {
 	}
 	
 	
-	
-	public int addTo(int n) {
-		return n | value;
+	public boolean check(int n) {
+		return (n&mask) > 0;
 	}
 	
-	public int removeTo(int n) {
-		return n & ~value;
+	public boolean matches(int n) {
+		return (n&mask) == mask;
+	}
+	
+	
+	public static Optional<StatoCella> from(int n) {
+		n = 31-Integer.numberOfLeadingZeros(n);
+		var values = values();
+		if (n<0 || n>=values.length) return Optional.empty();
+		return Optional.of(values[n]);
 	}
 	
 }
