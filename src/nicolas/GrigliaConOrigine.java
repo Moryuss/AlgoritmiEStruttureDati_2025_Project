@@ -26,6 +26,14 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 				return mat[y][x];
 			}
 			@Override
+			public int x() {
+				return x;
+			}
+			@Override
+			public int y() {
+				return y;
+			}
+			@Override
 			public int distanzaTorre() {
 				return d&0xffff;
 			}
@@ -64,7 +72,7 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 	public double distanzaLiberaDa(int xd, int yd) {
 		return getCellaAt(xd, yd).distanzaDaOrigine();
 	}
-
+	
 	@Override
 	public Stream<ICella2> getFrontiera() {
 		return Stream.of(frontiera);
