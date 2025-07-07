@@ -7,8 +7,8 @@ import java.util.Random;
 import francesco.ICella;
 import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.StatoCella;
 import francesco.implementazioni.Cella2D;
+import nicolas.StatoCella;
 
 public class OSemplice implements CostruttoreOstacolo{
 

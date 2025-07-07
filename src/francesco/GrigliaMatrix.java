@@ -3,6 +3,7 @@ package francesco;
 import java.util.List;
 
 import francesco.implementazioni.Cella;
+import nicolas.StatoCella;
 
 public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 	

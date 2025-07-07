@@ -1,5 +1,7 @@
 package francesco;
 
+import nicolas.StatoCella;
+
 public interface ICella {
 	
 	int stato();

@@ -1,4 +1,4 @@
-package jtest;
+package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,24 +12,23 @@ import francesco.ICella;
 import francesco.ICella2D;
 import francesco.IGriglia;
 import francesco.IObstacle;
-import francesco.StatoCella;
 import francesco.TipoOstacolo;
 import francesco.implementazioni.Cella;
 import francesco.implementazioni.LettoreGriglia;
+import nicolas.StatoCella;
 import processing.core.PApplet;
 import processing.data.JSONObject;
 
-class LettoreGrigliaTest {
+class TestLettoreGriglia {
 
 	@Test
 	void testNumeroDiOstacoli() {
 		LettoreGriglia lettore = new LettoreGriglia();
-		JSONObject json = PApplet.loadJSONObject(Path.of("letturaTest.json").toFile());
+		JSONObject json = PApplet.loadJSONObject(Path.of("src/test/json/testContaOstacoli.json").toFile());
 		int width = json.getInt("width");
 		int height = json.getInt("height");
 		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
 		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
-//		IGriglia<?> griglia = lettore.crea(Path.of("config.json"));
 		int randomSeed = json.getInt("randomSeed");
 		List<IObstacle> ostacoli = lettore.generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
 		
@@ -43,10 +42,9 @@ class LettoreGrigliaTest {
 		assertEquals(ostacoli.size(), somma); 
 	}
 	
-	// Attenzione: per questo test servono SOLO ostacoli semplici, altrimenti il controllo non torna
 	@Test
 	void contaCelleOstacolo() {
-		var path = Path.of("letturaTest.json");
+		var path = Path.of("src/test/json/testContaCelleSemplici.json");
 		var json = PApplet.loadJSONObject(path.toFile());
 		IGriglia<?> griglia = new LettoreGriglia().crea(path);
 		
@@ -65,9 +63,14 @@ class LettoreGrigliaTest {
 	void testGrigliaPiccolaSenzaErrori() {
 		assertDoesNotThrow(() -> {
 			LettoreGriglia lettore = new LettoreGriglia();
-//			int width = 1;   // Consigli sulle misure
-//			int height = 1;
-			IGriglia<?> griglia = lettore.crea(Path.of("letturaTest.json"));
+			IGriglia<?> griglia = lettore.crea(Path.of("src/test/json/testGrigliaPiccola.json"));
+			
+			JSONObject json = PApplet.loadJSONObject(Path.of("src/test/json/testGrigliaPiccola.json").toFile());
+			int width = json.getInt("width");
+			int height = json.getInt("height");
+			
+			assertEquals(width, griglia.width());
+			assertEquals(height, griglia.height());
 		});
 	}
 	
@@ -75,16 +78,21 @@ class LettoreGrigliaTest {
 	void testGrigliaGrandeSenzaErrori() {
 		assertDoesNotThrow(() -> {
 			LettoreGriglia lettore = new LettoreGriglia();
-//			int width = 1200;    // Consigli sulle misure
-//			int height = 1200;
-			IGriglia<?> griglia = lettore.crea(Path.of("letturaTest.json"));
+			IGriglia<?> griglia = lettore.crea(Path.of("src/test/json/testGrigliaGrande.json"));
+			
+			JSONObject json = PApplet.loadJSONObject(Path.of("src/test/json/testGrigliaGrande.json").toFile());
+			int width = json.getInt("width");
+			int height = json.getInt("height");
+			
+			assertEquals(width, griglia.width());
+			assertEquals(height, griglia.height());
 		});
 	}
 	
 	@Test
 	void testOstacoliEffettivamentePresenti() {
 		LettoreGriglia lettore = new LettoreGriglia();
-		JSONObject json = PApplet.loadJSONObject(Path.of("letturaTest.json").toFile());
+		JSONObject json = PApplet.loadJSONObject(Path.of("src/test/json/testContaOstacoli.json").toFile());
 		int width = json.getInt("width");
 		int height = json.getInt("height");
 		int randomSeed = json.getInt("randomSeed");
@@ -94,7 +102,7 @@ class LettoreGrigliaTest {
 		
 		assertFalse(ostacoli.isEmpty());
 		
-		IGriglia<?> grigliaDaConfrontare = lettore.crea(Path.of("letturaTest.json"));
+		IGriglia<?> grigliaDaConfrontare = lettore.crea(Path.of("src/test/json/testContaOstacoli.json"));
 		
 		for(int i = 0; i < height; i++) {
 			for(int j =0; j < width; j++) {
@@ -120,4 +128,16 @@ class LettoreGrigliaTest {
 		}
 	}
 
+	@Test
+	void testDimensioniCorrette() {
+		LettoreGriglia lettore = new LettoreGriglia();
+		JSONObject json = PApplet.loadJSONObject(Path.of("src/test/json/testContaOstacoli.json").toFile());
+		int width = json.getInt("width");
+		int height = json.getInt("height");
+		
+		IGriglia<?> griglia = lettore.crea(Path.of("src/test/json/testContaOstacoli.json"));
+		
+		assertEquals(width, griglia.width());
+		assertEquals(height, griglia.height());
+	}
 }

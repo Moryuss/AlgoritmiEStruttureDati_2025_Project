@@ -3,7 +3,6 @@ package nicolas;
 import java.util.stream.Stream;
 import francesco.IGriglia;
 import francesco.IObstacle;
-import francesco.StatoCella;
 
 public interface IGrigliaConOrigine extends IGriglia<ICella2> {
 	

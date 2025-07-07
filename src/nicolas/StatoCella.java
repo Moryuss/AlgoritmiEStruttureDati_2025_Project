@@ -1,4 +1,6 @@
-package francesco;
+package nicolas;
+
+import francesco.ICella;
 
 public enum StatoCella {
 	@Deprecated
