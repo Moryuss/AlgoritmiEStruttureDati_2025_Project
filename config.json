@@ -1,16 +1,21 @@
 {
-	"width":1200,
-	"height":800,
+	"width":20,
+	"height":10,
 	"randomSeed": 42,
-	"SEMPLICE": 2,
-	"AGGLOMERATO": 1,
-	"BARRA_VERTICALE": 1,
-	"BARRA_ORIZZONTALE": 1,
-	"BARRA_DIAGONALE": 1,
-	"ZONA_CHIUSA": 1,
-	"DELIMITATORE_VERTICALE": 1,
-	"DELIMITATORE_ORIZZONTALE": 1,
-	"msg":"hello world",
-	"orange":"0xff8000",
-	"palette":["0xff0000", "0xff4000", "0xff8000", "0xffb000","0x000000", "0x000000", "0xffffff", "0xff0000", "0x00ff00"]
+	"maxOstacoli": {
+		"SEMPLICE": 20,
+		"AGGLOMERATO":0 ,
+		"BARRA_VERTICALE": 0,
+		"BARRA_ORIZZONTALE": 0,
+		"BARRA_DIAGONALE": 0,
+		"ZONA_CHIUSA": 0,
+		"DELIMITATORE_VERTICALE": 0,
+		"DELIMITATORE_ORIZZONTALE": 0
+	},
+	"applet":{
+		"width":1200,
+		"height":600,
+		"demo":true,
+		"palette":["0xff0000", "0xff4000", "0xff8000", "0xffb000","0x004000", "0xffffff", "0x000000", "0xff00ff", "0x00ff00"]
+	},
 }

@@ -7,12 +7,12 @@ import java.util.Random;
 import francesco.ICella;
 import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.StatoCella;
 import francesco.implementazioni.Cella2D;
+import nicolas.StatoCella;
 
 public class OZonaChiusa implements CostruttoreOstacolo {
 
-	private static final int MAX_RETRY = 3;
+	private static final int MAX_RETRY = 10;
 	private static final int MAX_WIDTH = 4;
 	private static final int MAX_HEIGHT = 7;
 	
@@ -58,7 +58,7 @@ public class OZonaChiusa implements CostruttoreOstacolo {
 			if(finito) {
 				// Lato inferiore della cornice
 				for(int i = x; i < x + tempWidth; i++) {
-					if(!griglia.isNavigabile(i, y + tempHeight)) {
+					if(!griglia.isNavigabile(i, y + tempHeight - 1)) {
 						retry++;
 						finito = false;
 						break;

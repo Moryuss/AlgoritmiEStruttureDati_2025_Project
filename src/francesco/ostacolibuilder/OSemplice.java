@@ -7,12 +7,12 @@ import java.util.Random;
 import francesco.ICella;
 import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.StatoCella;
 import francesco.implementazioni.Cella2D;
+import nicolas.StatoCella;
 
 public class OSemplice implements CostruttoreOstacolo{
 
-	private static final int MAX_RETRY = 4;
+	private static final int MAX_RETRY = 15;
 
 	public List<ICella2D> generaCelle(int width, int height, IGriglia<? extends ICella> griglia, int randomSeed){
 		boolean finito = false;

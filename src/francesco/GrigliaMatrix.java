@@ -3,6 +3,7 @@ package francesco;
 import java.util.List;
 
 import francesco.implementazioni.Cella;
+import nicolas.StatoCella;
 
 public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 	
@@ -28,7 +29,6 @@ public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 	
 	@Override
 	public IGriglia<ICella> addObstacle(IObstacle obstacle) {
-//		ICella[][] mat = new ICella[height()][width()];
 		obstacle.list().forEach(c -> {
 			mat()[c.y()][c.x()].setStato(mat()[c.y()][c.x()].stato() | c.stato());
 		});
@@ -49,7 +49,8 @@ public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 		Cella[][] mat = new Cella[height][width];
 		for(int i = 0; i < height; i++) {
 			for(int j = 0; j < width; j++) {
-				mat[i][j] = new Cella(StatoCella.VUOTA.value()); 
+//				mat[i][j] = new Cella(StatoCella.VUOTA.value()); 
+				mat[i][j] = new Cella(0); 
 			}
 		}
 		return mat;

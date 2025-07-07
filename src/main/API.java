@@ -43,7 +43,7 @@ enum TipoOstacolo {
 interface IGriglia<C extends ICella> {
 	// costruttore: crea
 	
-	// true se in (x,y) c'è un'ostacolo 
+	// true se in (x,y) non c'è un'ostacolo 
 	boolean isNavigabile(int x, int y);
 	
 	C getCellaAt(int x, int y);

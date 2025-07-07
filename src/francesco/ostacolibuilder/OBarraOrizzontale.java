@@ -7,13 +7,13 @@ import java.util.Random;
 import francesco.ICella;
 import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.StatoCella;
 import francesco.implementazioni.Cella2D;
+import nicolas.StatoCella;
 
 public class OBarraOrizzontale implements CostruttoreOstacolo{
 
 	
-	private static final int MAX_RETRY = 3;
+	private static final int MAX_RETRY = 10;
 	private static final int MAX_WIDTH = 7;
 	
 	@Override
