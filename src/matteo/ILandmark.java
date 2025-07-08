@@ -1,6 +1,7 @@
 package matteo;
 
-import francesco.ICella;
 
-public interface ILandmark extends ICella {
+import francesco.ICella2D;
+
+public interface ILandmark extends ICella2D {
 }

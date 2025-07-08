@@ -44,7 +44,7 @@ public class StatisticheEsecuzione {
             sb.append("Lunghezza cammino trovato: ").append(risultato.lunghezza()).append("\n");
             sb.append("Numero landmarks: ").append(risultato.landmarks().size()).append("\n");
             sb.append("Sequenza landmarks: ");
-            for (Landmark l : risultato.landmarks()) { //ILandmarks NON estende ICella2D, solo ICella.
+            for (ILandmark l : risultato.landmarks()) { 
                 sb.append("(").append(l.x()).append(",").append(l.y()).append(",")
                   .append(l.stato()).append(") ");
             }

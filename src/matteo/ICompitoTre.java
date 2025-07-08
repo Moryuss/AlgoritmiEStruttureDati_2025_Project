@@ -1,10 +1,10 @@
 package matteo;
 
-import francesco.ICella2D;
 import francesco.IGriglia;
+import nicolas.ICella2;
 
 public interface ICompitoTre {
 	
-	ICammino camminoMin(IGriglia<?> griglia, ICella2D O, ICella2D D);
+	ICammino camminoMin(IGriglia<?> griglia, ICella2 O, ICella2 D);
 	
 }

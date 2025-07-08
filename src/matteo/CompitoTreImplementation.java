@@ -12,7 +12,7 @@ import nicolas.ICella2;
 import nicolas.IGrigliaConOrigine;
 import matteo.Cammino;
 import matteo.Landmark;
-import francesco.StatoCella;
+import nicolas.StatoCella;
 
 public class CompitoTreImplementation implements ICompitoTre {
     
@@ -141,7 +141,7 @@ public class CompitoTreImplementation implements ICompitoTre {
         }
         
         // Verifica se frontiera è vuota
-        List<ICella2D> frontieraList = g.getFrontiera().toList();
+        List<ICella2D> frontieraList = g.getFrontiera().toList();	//problema di ICella2 vs ICella2D
         if (frontieraList.isEmpty()) {
             System.out.println(indentazione + "VICOLO CIECO: frontiera vuota");
             statistiche.aggiungiPrestazione("Vicolo cieco rilevato");
