@@ -1,8 +1,8 @@
 package nicolas;
 
-import francesco.ICella;
+import francesco.ICella2D;
 
-public interface ICella2 extends ICella {
+public interface ICella2 extends ICella2D {
 	
 	int distanzaTorre();
 	int distanzaAlfiere();
