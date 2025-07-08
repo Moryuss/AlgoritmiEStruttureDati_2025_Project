@@ -29,10 +29,11 @@ public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 	
 	@Override
 	public IGriglia<ICella> addObstacle(IObstacle obstacle) {
+		ICella[][] matClone = mat().clone();
 		obstacle.list().forEach(c -> {
-			mat()[c.y()][c.x()].setStato(mat()[c.y()][c.x()].stato() | c.stato());
+			matClone[c.y()][c.x()].setStato(matClone[c.y()][c.x()].stato() | c.stato());
 		});
-		return new GrigliaMatrix(mat);
+		return new GrigliaMatrix(matClone);
 	}
 	
 	
