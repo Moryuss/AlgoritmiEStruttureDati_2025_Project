@@ -1,10 +1,7 @@
 package matteo;
 
-import static nicolas.StatoCella.*;
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.stream.Stream;
 
 import francesco.ICella;
 import francesco.IGriglia;
@@ -48,7 +45,7 @@ public class Main  {
 		}
 
 		ICammino cammino = null;
-		System.out.println("pre chaiamata");
+		
 		
 		try {
 			cammino = c3.camminoMin(griglia, start, end);

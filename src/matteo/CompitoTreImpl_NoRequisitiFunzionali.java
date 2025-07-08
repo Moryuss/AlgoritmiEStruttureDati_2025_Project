@@ -21,16 +21,17 @@ import nicolas.StatoCella;
 
 public class CompitoTreImpl_NoRequisitiFunzionali implements ICompitoTre {
 	private int livelloRicorsione = 0;
+	private boolean debug = true;
 
 	@Override
 	public ICammino camminoMin(IGriglia<?> griglia, ICella2 O, ICella2 D) {
 		livelloRicorsione++;
 		if(livelloRicorsione>20) {
-			System.out.println("STOP ricorsione al livello " + livelloRicorsione);
+			if(debug) System.out.println("STOP ricorsione al livello " + livelloRicorsione);
 			return new Cammino(Double.POSITIVE_INFINITY,
 					new ArrayList<>());
 		}
-		System.out.println("chaiamta di camminoMinimo");
+		if(debug) System.out.println("chaiamta di camminoMinimo");
 
 		//Creazione griglia
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y()); //impl nicolas
@@ -39,7 +40,7 @@ public class CompitoTreImpl_NoRequisitiFunzionali implements ICompitoTre {
 
 		// Verifica se D è nel contesto (Caso base)
 		if (g.isInContesto(D.x(), D.y())) {
-			System.out.println("Caso base: CONTESTO");
+			if(debug) System.out.println("Caso base: CONTESTO");
 			double distanza = g.distanzaLiberaDa(D.x(), D.y());
 			return new Cammino(distanza, Arrays.asList(
 					new Landmark(StatoCella.LANDMARK.value(),
@@ -51,7 +52,9 @@ public class CompitoTreImpl_NoRequisitiFunzionali implements ICompitoTre {
 
 		// Verifica se D è nel complemento (Caso base)
 		if (g.isInComplemento(D.x(), D.y())) {
-			System.out.println("Caso base: COMPLEMENTO");
+			
+			if(debug) System.out.println("Caso base: COMPLEMENTO");
+			
 			double distanza = g.distanzaLiberaDa(D.x(), D.y());
 			return new Cammino(distanza, Arrays.asList(
 					new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
@@ -73,15 +76,16 @@ public class CompitoTreImpl_NoRequisitiFunzionali implements ICompitoTre {
 		// Crea griglia con chiusura come ostacolo
 		IGriglia<?> g2 = griglia.addObstacle(g.convertiChiusuraInOstacolo());
 
-		System.out.println("griglia");
-		griglia.print();
-		System.out.println("g2 == griglia + chiusura come ostacolo");
-		g2.print();
-
+		if(debug) {
+			System.out.println("griglia");
+			griglia.print();
+			System.out.println("g2 == griglia + chiusura come ostacolo");
+			g2.print();
+		}
 		for (ICella2 F : frontieraList) {		
 			//Provo a fare il controllo a mano
 			if(StatoCella.OSTACOLO.isNot(F.stato())) {
-				System.out.println(F.x() + "--" + F.y());
+				if(debug) System.out.println(F.x() + "--" + F.y());
 
 				double IF = F.distanzaDaOrigine();
 

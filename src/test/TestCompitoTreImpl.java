@@ -15,7 +15,8 @@ import matteo.*;
 
 public class TestCompitoTreImpl {
 
-
+	private boolean debug = true;
+	
 	LettoreGriglia lettore = new LettoreGriglia();
 	Path configFile = Paths.get("src/test/json/testCompitoTre.json"); 
 	IGriglia<ICella> griglia = null;
@@ -25,9 +26,12 @@ public class TestCompitoTreImpl {
 	public void startingSetup() {
 		try {
 			griglia = (IGriglia<ICella>) lettore.crea(configFile);
+			
+			if(debug) {
 			System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
-			// Stampa la griglia per visualizzare ostacoli e celle navigabili
 			griglia.print();
+			}
+			
 		} catch (Exception e) {
 			System.err.println("Errore durante il caricamento della griglia: " + e.getMessage());
 			e.printStackTrace();
@@ -245,9 +249,11 @@ public class TestCompitoTreImpl {
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
 	
+		if(debug) {
 		System.out.println("PERCORSO MINIMO TROVATO 1 FRONTIERA/LANDMARK");
 		System.out.println(cammino.lunghezza());
 		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
 		System.out.println("#############################");
+		}
 	}
 }
