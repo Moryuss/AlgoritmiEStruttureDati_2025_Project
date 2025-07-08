@@ -13,10 +13,6 @@ import nicolas.GrigliaConOrigineFactory;
 import nicolas.ICella2;
 import nicolas.IGrigliaConOrigine;
 import nicolas.StatoCella;
-import processing.core.PApplet;
-import processing.data.JSONObject;
-import processing.event.KeyEvent;
-import processing.event.MouseEvent;
 
 public class Main  {
 
@@ -51,9 +47,16 @@ public class Main  {
 			return;
 		}
 
+		ICammino cammino = null;
 		System.out.println("pre chaiamata");
-		ICammino cammino = c3.camminoMin(griglia, start, end);
+		
+		try {
+			cammino = c3.camminoMin(griglia, start, end);
+		} catch (Exception e2) {
+			System.err.println(e2);
+		}
 
+		System.out.println("Risultati finali");
 		System.out.println(cammino.lunghezza());
 		cammino.landmarks().forEach(
 				x->System.out.println("[" + x.x() + ", " + x.y() + "]"));

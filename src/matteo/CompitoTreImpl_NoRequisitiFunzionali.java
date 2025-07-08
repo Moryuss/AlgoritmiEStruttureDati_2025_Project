@@ -20,10 +20,16 @@ import nicolas.StatoCella;
 
 
 public class CompitoTreImpl_NoRequisitiFunzionali implements ICompitoTre {
+	private int livelloRicorsione = 0;
 
 	@Override
 	public ICammino camminoMin(IGriglia<?> griglia, ICella2 O, ICella2 D) {
-		
+		livelloRicorsione++;
+		if(livelloRicorsione>20) {
+			System.out.println("STOP ricorsione al livello " + livelloRicorsione);
+			return new Cammino(Double.POSITIVE_INFINITY,
+					new ArrayList<>());
+		}
 		System.out.println("chaiamta di camminoMinimo");
 
 		//Creazione griglia
@@ -67,27 +73,34 @@ public class CompitoTreImpl_NoRequisitiFunzionali implements ICompitoTre {
 		// Crea griglia con chiusura come ostacolo
 		IGriglia<?> g2 = griglia.addObstacle(g.convertiChiusuraInOstacolo());
 
+		System.out.println("griglia");
+		griglia.print();
+		System.out.println("g2 == griglia + chiusura come ostacolo");
+		g2.print();
+
 		for (ICella2 F : frontieraList) {		
+			//Provo a fare il controllo a mano
+			if(StatoCella.OSTACOLO.isNot(F.stato())) {
+				System.out.println(F.x() + "--" + F.y());
 
-			System.out.println(F.x() + "--" + F.y());
+				double IF = F.distanzaDaOrigine();
 
-			double IF = F.distanzaDaOrigine();
+				if (IF < lunghezzaMin) {
+					//RICORSIONE
+					ICammino camminoFD = camminoMin(g2, F, D);
+					double ITot = IF + camminoFD.lunghezza();
 
-			if (IF < lunghezzaMin) {
-				//RICORSIONE
-				ICammino camminoFD = camminoMin(g2, F, D);
-				double ITot = IF + camminoFD.lunghezza();
+					if (ITot < lunghezzaMin) {
+						lunghezzaMin = ITot;
+						seqMin = new ArrayList<>();
+						seqMin.add(new Landmark(StatoCella.ORIGINE.value(), O.x(), O.y()));
+						seqMin.add(new Landmark(StatoCella.FRONTIERA.addTo(F.stato()), F.x(), F.y()));  //non sicuro si questo stato
 
-				if (ITot < lunghezzaMin) {
-					lunghezzaMin = ITot;
-					seqMin = new ArrayList<>();
-					seqMin.add(new Landmark(StatoCella.ORIGINE.value(), O.x(), O.y()));
-					seqMin.add(new Landmark(StatoCella.FRONTIERA.addTo(F.stato()), F.x(), F.y()));  //non sicuro si questo stato
-
-					// Aggiungi i landmark dalla ricorsione (saltando il primo che dovrebbe essere l'ultimo della chaimata prima)
-					List<ILandmark> landmarksFromRecursion = camminoFD.landmarks();
-					if (!landmarksFromRecursion.isEmpty()) {
-						seqMin.addAll(landmarksFromRecursion.subList(1, landmarksFromRecursion.size()));
+						// Aggiungi i landmark dalla ricorsione (saltando il primo che dovrebbe essere l'ultimo della chaimata prima)
+						List<ILandmark> landmarksFromRecursion = camminoFD.landmarks();
+						if (!landmarksFromRecursion.isEmpty()) {
+							seqMin.addAll(landmarksFromRecursion.subList(1, landmarksFromRecursion.size()));
+						}
 					}
 				}
 			}
