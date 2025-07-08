@@ -10,7 +10,7 @@ import francesco.implementazioni.Ostacolo;
 
 public interface CostruttoreOstacolo {
 
-	default Ostacolo costruisciOstacolo(int width, int height, IGriglia<? extends ICella> griglia, int randomSeed) {
+	default IGriglia<? extends ICella> costruisciOstacolo(int width, int height, IGriglia<? extends ICella> griglia, int randomSeed) {
 		List<ICella2D> celle = new ArrayList<>();
 		
 		celle = generaCelle(width, height, griglia, randomSeed);
@@ -19,7 +19,7 @@ public interface CostruttoreOstacolo {
 		
 		griglia = griglia.addObstacle(result);
 		
-		return result;
+		return griglia;
 	}
 	
 	List<ICella2D> generaCelle(int width, int height, IGriglia<? extends ICella> griglia, int randomSeed);

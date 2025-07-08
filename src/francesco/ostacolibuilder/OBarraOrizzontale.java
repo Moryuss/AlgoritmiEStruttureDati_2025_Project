@@ -37,7 +37,7 @@ public class OBarraOrizzontale implements CostruttoreOstacolo{
 			x = rand.nextInt(width);
 			y = rand.nextInt(height);
 			
-			tempWidth = Math.min(height - y, widthOstacolo); // Vediamo se la barra sfora (sempre verso il basso)
+			tempWidth = Math.min(width - x, widthOstacolo); // Vediamo se la barra sfora (sempre verso il basso)
 			
 			// Ora viene controllato che tutti i punti all'interno dell'area siano navigabili
 			finito = true;

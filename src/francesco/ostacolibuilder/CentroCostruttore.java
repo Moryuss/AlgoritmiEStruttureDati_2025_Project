@@ -3,11 +3,10 @@ package francesco.ostacolibuilder;
 import francesco.ICella;
 import francesco.IGriglia;
 import francesco.TipoOstacolo;
-import francesco.implementazioni.Ostacolo;
 
 public class CentroCostruttore {
 
-	public static Ostacolo costruttoreCentrico(TipoOstacolo tipo, int width, int height, IGriglia<ICella> griglia, int randomSeed) {
+	public static IGriglia<? extends ICella> costruttoreCentrico(TipoOstacolo tipo, int width, int height, IGriglia<ICella> griglia, int randomSeed) {
 		switch (tipo) {
 			case TipoOstacolo.SEMPLICE: {
 				return new OSemplice().costruisciOstacolo(width, height, griglia, randomSeed);

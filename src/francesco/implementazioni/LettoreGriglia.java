@@ -41,15 +41,20 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 		
 		// Infine aggiunge gli ostacoli
 		int randomSeed = json.getInt("randomSeed");
-		List<IObstacle> ostacoli = generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
+		griglia = (IGriglia<ICella>) generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
+		
+//		for(IObstacle o : ostacoli) {
+//			griglia = griglia.addObstacle(o);
+//		}
 		
 		return griglia;
 	}
 
-	
-	public List<IObstacle> generaOstacoli(int width, int height, IGriglia<ICella> griglia, int randomSeed, JSONObject json) {
-		List<IObstacle> ostacoli = new ArrayList<>();
-		
+
+	private IGriglia<? extends ICella> generaOstacoli(int width, int height, IGriglia<ICella> griglia, int randomSeed, JSONObject json) {
+//		List<IObstacle> ostacoli = new ArrayList<>();
+		IGriglia<? extends ICella> result = griglia;
+		int ostCounter = 0;
 		for(TipoOstacolo ost : TipoOstacolo.values()) {
 			if(json.hasKey(ost.toString())) {
 				int num = json.getInt(ost.toString());
@@ -58,18 +63,20 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 					continue;
 				}
 				for(int i = 0; i < num; i++) {
-					Ostacolo daAggiungere = CentroCostruttore.costruttoreCentrico(ost, width, height, griglia, randomSeed+i);
-					if(daAggiungere != null) {
-						ostacoli.add(daAggiungere);
-					} 
+//					Ostacolo daAggiungere = CentroCostruttore.costruttoreCentrico(ost, width, height, griglia, randomSeed*(i+ostCounter));
+//					if(daAggiungere != null) {
+//						ostacoli.add(daAggiungere);
+//					} 
+					result = CentroCostruttore.costruttoreCentrico(ost, width, height, griglia, randomSeed*(i+ostCounter));
 				}
 				randomSeed += num;
 			}
 			else {
 				System.err.println("Ostacolo non trovato: " + ost.toString());
 			}
+			ostCounter++;
 		}
 		
-		return ostacoli;
+		return result;
 	}
 }
