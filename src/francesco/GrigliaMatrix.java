@@ -1,7 +1,6 @@
 package francesco;
 
 import java.util.List;
-
 import francesco.implementazioni.Cella;
 import nicolas.StatoCella;
 
@@ -29,11 +28,16 @@ public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 	
 	@Override
 	public IGriglia<ICella> addObstacle(IObstacle obstacle) {
-		ICella[][] matClone = mat().clone();
+		ICella[][] mat = inizializzaMatrice(width(), height());
+		for(int i=0; i<height(); i++) {
+			for(int j=0; j<width(); j++) {
+				mat[i][j].setStato(this.mat[i][j].stato()); 
+			}
+		}
 		obstacle.list().forEach(c -> {
-			matClone[c.y()][c.x()].setStato(matClone[c.y()][c.x()].stato() | c.stato());
+			mat[c.y()][c.x()].setStato(mat[c.y()][c.x()].stato() | c.stato());
 		});
-		return new GrigliaMatrix(matClone);
+		return new GrigliaMatrix(mat);
 	}
 	
 	
@@ -48,12 +52,12 @@ public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 	
 	public static Cella[][] inizializzaMatrice(int width, int height) {
 		Cella[][] mat = new Cella[height][width];
-		for(int i = 0; i < height; i++) {
-			for(int j = 0; j < width; j++) {
-//				mat[i][j] = new Cella(StatoCella.VUOTA.value()); 
+		for(int i=0; i<height; i++) {
+			for(int j=0; j<width; j++) {
 				mat[i][j] = new Cella(0); 
 			}
 		}
 		return mat;
 	}
+	
 }

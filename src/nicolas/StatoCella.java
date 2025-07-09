@@ -26,6 +26,9 @@ public enum StatoCella {
 	public int value() {
 		return value;
 	}
+	public int mask() {
+		return mask;
+	}
 	
 	
 	public int addTo(int n) {

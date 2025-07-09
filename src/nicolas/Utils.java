@@ -1,8 +1,22 @@
 package nicolas;
 
 import static java.lang.Math.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collector;
+import francesco.GrigliaMatrix;
+import francesco.ICella;
+import francesco.ICella2D;
+import francesco.IGriglia;
+import francesco.IHave2DCoordinate;
+import francesco.implementazioni.Cella;
+import francesco.implementazioni.Cella2D;
+import processing.core.PApplet;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
@@ -14,6 +28,19 @@ public final class Utils {
 	public static final double sqrt2 = Math.sqrt(2);
 	
 	
+	
+	
+	
+	public static Optional<Integer> parseHex(String str) {
+		if (str.startsWith("0x")) str = str.substring(2);
+		
+		try {
+			return Optional.of(Integer.parseUnsignedInt(str, 16));
+		} catch(Exception ex) {
+			return Optional.empty();
+		}
+		
+	}
 	
 	
 	
@@ -40,6 +67,10 @@ public final class Utils {
 		return d1 + d2*sqrt2;
 	}
 	
+	public static double distanzaLiberaTra(IHave2DCoordinate a, IHave2DCoordinate b) {
+		return distanzaLiberaTra(a.x(), a.y(), b.x(), b.y());
+	}
+	
 	
 	
 	public static <T> Collector<T,?,JSONArray> collectToJSONArray(BiFunction<JSONArray,T,JSONArray> appender) {
@@ -61,6 +92,57 @@ public final class Utils {
 	
 	public static Collector<JSONObject,?,JSONArray> collectToJSONArray() {
 		return collectToJSONArray(JSONArray::append);
+	}
+	
+	
+	public static IGriglia<ICella> loadSimple(File file) {
+		var jsona = PApplet.loadJSONArray(file);
+		int height = jsona.size();
+		int width = jsona.getJSONArray(0).size();
+		var list = new ArrayList<ICella2D>();
+		
+		for (int i=0; i<height; i++) {
+			var row = jsona.getJSONArray(i);
+			for (int j=0; j<width; j++) {
+				if (row.getInt(j,0)>0) {
+					list.add(new Cella2D(StatoCella.OSTACOLO.value(), j, i));
+				}
+			}
+		}
+		
+		return GrigliaMatrix.from(width, height, List.of(()->list));
+	}
+	
+	public static IGriglia<ICella> loadIntJSON(File file, IntFunction<ICella> deserialzier) {
+		var jsona = PApplet.loadJSONArray(file);
+		int height = jsona.size();
+		int width = jsona.getJSONArray(0).size();
+		ICella[][] mat = new Cella[height][width];
+		
+		for (int i=0; i<height; i++) {
+			var row = jsona.getJSONArray(i);
+			for (int j=0; j<width; j++) {
+				mat[i][j] = deserialzier.apply(row.getInt(j,0));
+			}
+		}
+		
+		return new GrigliaMatrix(mat);
+	}
+
+	public static IGriglia<ICella> loadJSON(File file, Function<JSONObject,ICella> deserialzier) {
+		var jsona = PApplet.loadJSONArray(file);
+		int height = jsona.size();
+		int width = jsona.getJSONArray(0).size();
+		ICella[][] mat = new Cella[height][width];
+		
+		for (int i=0; i<height; i++) {
+			var row = jsona.getJSONArray(i);
+			for (int j=0; j<width; j++) {
+				mat[i][j] = deserialzier.apply(row.getJSONObject(j));
+			}
+		}
+		
+		return new GrigliaMatrix(mat);
 	}
 	
 }

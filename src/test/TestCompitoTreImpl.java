@@ -1,37 +1,28 @@
 package test;
-import static org.junit.jupiter.api.Assertions.*;
 
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-
+import java.io.File;
 import francesco.*;
-import francesco.implementazioni.LettoreGriglia;
 import nicolas.*;
 import matteo.*;
 
 public class TestCompitoTreImpl {
 
-	private boolean debug = true;
-	
-	LettoreGriglia lettore = new LettoreGriglia();
-	Path configFile = Paths.get("src/test/json/testCompitoTre.json"); 
+
 	IGriglia<ICella> griglia = null;
 	ICompitoTre c = new CompitoTreImpl_NoRequisitiFunzionali();
 
 	@BeforeEach
 	public void startingSetup() {
 		try {
-			griglia = (IGriglia<ICella>) lettore.crea(configFile);
-			
-			if(debug) {
-			System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
-			griglia.print();
-			}
-			
+
+			griglia = Utils.loadSimple(new File("src/test/json/testCompitoTre.int.json"));
+			//System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
+			// Stampa la griglia per visualizzare ostacoli e celle navigabili
+			//griglia.print();
+
 		} catch (Exception e) {
 			System.err.println("Errore durante il caricamento della griglia: " + e.getMessage());
 			e.printStackTrace();

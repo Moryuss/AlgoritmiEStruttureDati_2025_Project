@@ -89,7 +89,7 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 	
 	@Override
 	public IObstacle convertiChiusuraInOstacolo() {
-		return ()->chiusura;
+		return IObstacle.of(chiusura);
 	}
 	
 	@Override
