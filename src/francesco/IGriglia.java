@@ -2,6 +2,7 @@ package francesco;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import nicolas.Utils;
 import processing.data.JSONArray;
@@ -18,7 +19,6 @@ public interface IGriglia<C extends ICella> {
 	int height();
 	
 	IGriglia<C> addObstacle(IObstacle obstacle);
-	
 	
 	
 	default void forEach(BiConsumer<Integer,Integer> action) {
@@ -44,12 +44,20 @@ public interface IGriglia<C extends ICella> {
 		System.out.println();
 	}
 	
-	default JSONArray toJSON(Function<C,JSONObject> serializer) {
+	default <T,A,R> R collect(Function<? super C,? extends T> mapper,
+			Collector<? super T,?,? extends A> rowCollector,
+			Collector<? super A,?,? extends R> collector) {
 		return IntStream.range(0, height())
 		.mapToObj(i -> IntStream.range(0, width())
-			.mapToObj(j -> serializer.apply(getCellaAt(j, i)))
-			.collect(Utils.collectToJSONArray(JSONArray::append))
-		).collect(Utils.collectToJSONArray(JSONArray::append));
+			.mapToObj(j -> mapper.apply(getCellaAt(j, i)))
+			.collect(rowCollector)
+		).collect(collector);
+	}
+	
+	default JSONArray toJSON(Function<C,JSONObject> serializer) {
+		return collect(serializer, 
+			Utils.collectToJSONArray(JSONArray::append), 
+			Utils.collectToJSONArray(JSONArray::append));
 	}
 	
 }
