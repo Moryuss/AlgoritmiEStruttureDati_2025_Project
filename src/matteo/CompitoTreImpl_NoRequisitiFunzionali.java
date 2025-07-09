@@ -21,7 +21,7 @@ import nicolas.StatoCella;
 
 public class CompitoTreImpl_NoRequisitiFunzionali implements ICompitoTre {
 	private int livelloRicorsione = 0;
-	private boolean debug = true;
+	private boolean debug = false;
 
 	@Override
 	public ICammino camminoMin(IGriglia<?> griglia, ICella2 O, ICella2 D) {

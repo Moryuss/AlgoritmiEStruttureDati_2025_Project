@@ -10,6 +10,7 @@ import matteo.*;
 
 public class TestCompitoTreImpl {
 
+	private boolean debug = true;
 
 	IGriglia<ICella> griglia = null;
 	ICompitoTre c = new CompitoTreImpl_NoRequisitiFunzionali();
@@ -242,6 +243,86 @@ public class TestCompitoTreImpl {
 	
 		if(debug) {
 		System.out.println("PERCORSO MINIMO TROVATO 1 FRONTIERA/LANDMARK");
+		System.out.println(cammino.lunghezza());
+		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
+		System.out.println("#############################");
+		}
+	}
+	
+	
+	//Griglia a forma di SPIRALE per testare molti landmark in ricorsione
+	@Test
+	void testRicorsione_Spirale() throws Exception {
+		
+		try {
+
+			griglia = Utils.loadSimple(new File("src/test/json/spirale_ostacoli.int.json"));
+			//System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
+			// Stampa la griglia per visualizzare ostacoli e celle navigabili
+			//griglia.print();
+
+		} catch (Exception e) {
+			System.err.println("Errore durante il caricamento della griglia: " + e.getMessage());
+			e.printStackTrace();
+			return; // Esci se la griglia non può essere caricata
+		}
+
+		
+		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
+		ICella2 start = g.getCellaAt(0,0);
+		ICella2 end = g.getCellaAt(10,5);
+
+		ICammino cammino = c.camminoMin(griglia, start, end);
+
+		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		assertNotNull(cammino);
+		
+		assertEquals(start.x(), cammino.landmarks().get(0).x());
+		assertEquals(start.y(), cammino.landmarks().get(0).y());
+		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
+		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
+	
+		if(debug) {
+		System.out.println("PERCORSO MINIMO TROVATO");
+		System.out.println(cammino.lunghezza());
+		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
+		System.out.println("#############################");
+		}
+	}
+	
+	@Test
+	void testRicorsione_ZigZag() throws Exception {
+		
+		try {
+
+			griglia = Utils.loadSimple(new File("src/test/json/zigZag_ostacoli.int.json"));
+			//System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
+			// Stampa la griglia per visualizzare ostacoli e celle navigabili
+			//griglia.print();
+
+		} catch (Exception e) {
+			System.err.println("Errore durante il caricamento della griglia: " + e.getMessage());
+			e.printStackTrace();
+			return; // Esci se la griglia non può essere caricata
+		}
+
+		
+		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
+		ICella2 start = g.getCellaAt(0,0);
+		ICella2 end = g.getCellaAt(0,6);
+
+		ICammino cammino = c.camminoMin(griglia, start, end);
+
+		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		assertNotNull(cammino);
+		
+		assertEquals(start.x(), cammino.landmarks().get(0).x());
+		assertEquals(start.y(), cammino.landmarks().get(0).y());
+		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
+		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
+	
+		if(debug) {
+		System.out.println("PERCORSO MINIMO TROVATO");
 		System.out.println(cammino.lunghezza());
 		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
 		System.out.println("#############################");
