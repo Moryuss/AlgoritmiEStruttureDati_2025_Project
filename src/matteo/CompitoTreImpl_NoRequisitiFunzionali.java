@@ -26,11 +26,11 @@ public class CompitoTreImpl_NoRequisitiFunzionali implements ICompitoTre {
 	@Override
 	public ICammino camminoMin(IGriglia<?> griglia, ICella2 O, ICella2 D) {
 		livelloRicorsione++;
-		if(livelloRicorsione>20) {
-			if(debug) System.out.println("STOP ricorsione al livello " + livelloRicorsione);
-			return new Cammino(Double.POSITIVE_INFINITY,
-					new ArrayList<>());
-		}
+//		if(livelloRicorsione>100) {
+//			if(debug) System.out.println("STOP ricorsione al livello " + livelloRicorsione);
+//			return new Cammino(Double.POSITIVE_INFINITY,
+//					new ArrayList<>());
+//		}
 		if(debug) System.out.println("chaiamta di camminoMinimo");
 
 		//Creazione griglia
