@@ -4,6 +4,7 @@ import static nicolas.StatoCella.DESTINAZIONE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import francesco.ICella;
@@ -62,8 +63,12 @@ public class CompitoTreImpl_NoRequisitiFunzionali implements ICompitoTre {
 					));
 		}
 
-		// Verifica se frontiera è vuota (vicolo cieco)
-		List<ICella2> frontieraList = g.getFrontiera().toList();	
+		//ordina la frontiera per distanza da origine
+		List<ICella2> frontieraList = g.getFrontiera()
+			    .sorted(Comparator.comparingDouble(ICella2::distanzaDaOrigine))
+			    .toList();
+
+		// Verifica se frontiera è vuota (vicolo cieco)	
 		if (frontieraList.isEmpty()) {
 			return new Cammino(Double.POSITIVE_INFINITY,
 					new ArrayList<>());

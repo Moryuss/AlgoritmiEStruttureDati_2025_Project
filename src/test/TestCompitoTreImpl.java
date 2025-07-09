@@ -243,6 +243,8 @@ public class TestCompitoTreImpl {
 	
 		if(debug) {
 		System.out.println("PERCORSO MINIMO TROVATO 1 FRONTIERA/LANDMARK");
+		assertEquals(12.242640687119286, cammino.lunghezza(), 0.001);
+
 		System.out.println(cammino.lunghezza());
 		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
 		System.out.println("#############################");
@@ -283,7 +285,9 @@ public class TestCompitoTreImpl {
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
 	
 		if(debug) {
-		System.out.println("PERCORSO MINIMO TROVATO");
+		System.out.println("PERCORSO MINIMO TROVATO SPIRALE");
+		assertEquals(44.89949493661167, cammino.lunghezza(), 0.001);
+
 		System.out.println(cammino.lunghezza());
 		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
 		System.out.println("#############################");
@@ -322,7 +326,9 @@ public class TestCompitoTreImpl {
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
 	
 		if(debug) {
-		System.out.println("PERCORSO MINIMO TROVATO");
+		System.out.println("PERCORSO MINIMO TROVATO: ZIGZAG");
+		assertEquals(86.56854249492376, cammino.lunghezza(), 0.001);
+
 		System.out.println(cammino.lunghezza());
 		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
 		System.out.println("#############################");
