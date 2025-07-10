@@ -1,14 +1,14 @@
 {
 	"width":20,
-	"height":10,
+	"height":20,
 	"randomSeed": 42,
 	"maxOstacoli": {
-		"SEMPLICE": 20,
+		"SEMPLICE": 0,
 		"AGGLOMERATO":0 ,
-		"BARRA_VERTICALE": 0,
-		"BARRA_ORIZZONTALE": 0,
+		"BARRA_VERTICALE": 3,
+		"BARRA_ORIZZONTALE": 4,
 		"BARRA_DIAGONALE": 0,
-		"ZONA_CHIUSA": 0,
+		"ZONA_CHIUSA": 1,
 		"DELIMITATORE_VERTICALE": 0,
 		"DELIMITATORE_ORIZZONTALE": 0
 	},

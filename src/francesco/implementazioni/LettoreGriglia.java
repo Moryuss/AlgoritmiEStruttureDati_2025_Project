@@ -53,7 +53,7 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 
 	private IGriglia<? extends ICella> generaOstacoli(int width, int height, IGriglia<ICella> griglia, int randomSeed, JSONObject json) {
 //		List<IObstacle> ostacoli = new ArrayList<>();
-		IGriglia<? extends ICella> result = griglia;
+		IGriglia<ICella> result = griglia;
 		int ostCounter = 0;
 		for(TipoOstacolo ost : TipoOstacolo.values()) {
 			if(json.hasKey(ost.toString())) {
@@ -67,7 +67,7 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 //					if(daAggiungere != null) {
 //						ostacoli.add(daAggiungere);
 //					} 
-					result = CentroCostruttore.costruttoreCentrico(ost, width, height, griglia, randomSeed*(i+ostCounter));
+					result = (IGriglia<ICella>) CentroCostruttore.costruttoreCentrico(ost, width, height, result, randomSeed*(i+ostCounter));
 				}
 				randomSeed += num;
 			}
