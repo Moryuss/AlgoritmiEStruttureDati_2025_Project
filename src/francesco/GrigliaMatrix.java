@@ -35,7 +35,8 @@ public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 			}
 		}
 		obstacle.list().forEach(c -> {
-			mat[c.y()][c.x()].setStato(mat[c.y()][c.x()].stato() | c.stato());
+//			mat[c.y()][c.x()].setStato(mat[c.y()][c.x()].stato() | c.stato());
+			mat[c.y()][c.x()].setStato(mat[c.y()][c.x()].stato() | StatoCella.OSTACOLO.value());
 		});
 		return new GrigliaMatrix(mat);
 	}
