@@ -18,6 +18,14 @@ public interface IGriglia<C extends ICella> {
 	
 	int height();
 	
+	default int getTipo(){
+		return 0;
+	}
+	
+	default IGriglia<ICella> aggiungiTipo(int statoDaAggiungere){
+		return null;
+	}
+	
 	IGriglia<C> addObstacle(IObstacle obstacle);
 	
 	

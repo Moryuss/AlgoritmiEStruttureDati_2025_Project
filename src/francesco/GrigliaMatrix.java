@@ -4,7 +4,11 @@ import java.util.List;
 import francesco.implementazioni.Cella;
 import nicolas.StatoCella;
 
-public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
+public record GrigliaMatrix(ICella[][] mat, int tipo) implements IGriglia<ICella> {
+	
+	public GrigliaMatrix(ICella[][] mat) {
+		this(mat, 0);
+	}
 	
 	@Override
 	public boolean isNavigabile(int x, int y) {
@@ -27,6 +31,11 @@ public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 	}
 	
 	@Override
+	public int getTipo() {
+		return tipo();
+	}
+	
+	@Override
 	public IGriglia<ICella> addObstacle(IObstacle obstacle) {
 		ICella[][] mat = inizializzaMatrice(width(), height());
 		for(int i=0; i<height(); i++) {
@@ -38,13 +47,13 @@ public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 //			mat[c.y()][c.x()].setStato(mat[c.y()][c.x()].stato() | c.stato());
 			mat[c.y()][c.x()].setStato(mat[c.y()][c.x()].stato() | StatoCella.OSTACOLO.value());
 		});
-		return new GrigliaMatrix(mat);
+		return new GrigliaMatrix(mat, this.getTipo());
 	}
 	
 	
 	public static IGriglia<ICella> from(int width, int height, List<IObstacle> ostacoli) {
 		ICella[][] mat = inizializzaMatrice(width, height);
-		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
+		IGriglia<ICella> griglia = new GrigliaMatrix(mat, 0);
 		for(IObstacle o : ostacoli) {
 			griglia = griglia.addObstacle(o);
 		}
@@ -61,4 +70,13 @@ public record GrigliaMatrix(ICella[][] mat) implements IGriglia<ICella> {
 		return mat;
 	}
 	
+	public IGriglia<ICella> aggiungiTipo(int statoDaAggiungere) {
+		ICella[][] mat = inizializzaMatrice(width(), height());
+		for(int i=0; i<height(); i++) {
+			for(int j=0; j<width(); j++) {
+				mat[i][j].setStato(this.mat[i][j].stato()); 
+			}
+		}
+		return new GrigliaMatrix(mat, TipoOstacolo.sommaTipi(getTipo(), statoDaAggiungere));
+	}
 }

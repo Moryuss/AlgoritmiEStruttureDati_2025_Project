@@ -1,0 +1,23 @@
+{
+	"width":20,
+	"height":20,
+	"randomSeed": 42,
+	"maxOstacoli": {
+		"SEMPLICE": 76,
+		"AGGLOMERATO":0 ,
+		"BARRA_VERTICALE": 0,
+		"BARRA_ORIZZONTALE": 0,
+		"BARRA_DIAGONALE": 0,
+		"ZONA_CHIUSA": 0,
+		"DELIMITATORE_VERTICALE": 0,
+		"DELIMITATORE_ORIZZONTALE": 0
+	},
+	"load":"example.int.json",
+	"applet":{
+		"width":1200,
+		"height":600,
+		"demo":false,
+		"palette":["0xff0000", "0xff4000", "0xff8000", "0xffb000","0x004000", "0xffffff", "0x000000", "0xff00ff", "0x00ff00"],
+		"paletteLegend":["origine","regina","contesto","complemento","frontiera","vuota","ostacolo","destinazione","landmark"]
+	},
+}

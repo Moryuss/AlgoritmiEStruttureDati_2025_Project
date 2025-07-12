@@ -28,7 +28,7 @@ class TestLettoreGriglia {
 		int width = json.getInt("width");
 		int height = json.getInt("height");
 		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
-		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
+		IGriglia<ICella> griglia = new GrigliaMatrix(mat, 0);
 		int randomSeed = json.getInt("randomSeed");
 //		List<IObstacle> ostacoli = lettore.generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
 		
@@ -97,10 +97,7 @@ class TestLettoreGriglia {
 		int height = json.getInt("height");
 		int randomSeed = json.getInt("randomSeed");
 		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
-		IGriglia<ICella> griglia = new GrigliaMatrix(mat);
-//		List<IObstacle> ostacoli = lettore.generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
-		
-//		assertFalse(ostacoli.isEmpty());
+		IGriglia<ICella> griglia = new GrigliaMatrix(mat, 0);
 		
 		IGriglia<?> grigliaDaConfrontare = lettore.crea(Path.of("src/test/json/testContaOstacoli.json"));
 		
@@ -108,15 +105,6 @@ class TestLettoreGriglia {
 			for(int j =0; j < width; j++) {
 				int stato = grigliaDaConfrontare.getCellaAt(j, i).stato();
 				boolean isOstacolo = false;
-				
-//				for(IObstacle ostacolo : ostacoli) {
-//					for(ICella2D ostacoloCella : ostacolo.list()) {
-//	                	if(ostacoloCella.x() == j && ostacoloCella.y() == i) {
-//	                    	isOstacolo = true;
-//	                        break;
-//	                	}
-//					}
-//				}
 				
 	            // Verifica lo stato della cella
 				if (isOstacolo) {
@@ -139,5 +127,38 @@ class TestLettoreGriglia {
 		
 		assertEquals(width, griglia.width());
 		assertEquals(height, griglia.height());
+	}
+	
+	@Test
+	void testTipoCorretto() {
+		LettoreGriglia lettore = new LettoreGriglia();
+		IGriglia<?> griglia = lettore.crea(Path.of("src/test/json/stati/noOstacoli.json"));
+		
+		// Test senza ostacoli
+		assertEquals(0, griglia.getTipo());
+		
+		griglia = lettore.crea(Path.of("src/test/json/stati/soloSemplici.json"));
+		
+		// Test con solo ostacoli semplici
+		assertEquals(0b00000001, griglia.getTipo());
+		
+		griglia = lettore.crea(Path.of("src/test/json/stati/tuttiOstacoli.json"));
+		
+		// Test con tutti i tipi di ostacoli
+		assertEquals(0b11111111, griglia.getTipo());
+		
+		griglia = lettore.crea(Path.of("src/test/json/stati/barreEDelimitatori.json"));
+		
+		// Test con tutte le barre ed entrambi i delimitatori
+		int expected = 
+				TipoOstacolo.sommaTipi(
+						TipoOstacolo.sommaTipi(
+								TipoOstacolo.sommaTipi(
+										TipoOstacolo.sommaTipi(TipoOstacolo.BARRA_VERTICALE.value(),
+									TipoOstacolo.BARRA_ORIZZONTALE.value()),
+								TipoOstacolo.BARRA_DIAGONALE.value()),
+						TipoOstacolo.DELIMITATORE_ORIZZONTALE.value()),
+				TipoOstacolo.DELIMITATORE_VERTICALE.value());
+		assertEquals(expected, griglia.getTipo());
 	}
 }
