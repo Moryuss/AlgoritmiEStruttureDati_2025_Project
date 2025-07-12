@@ -1,6 +1,8 @@
 package test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
@@ -10,10 +12,10 @@ import matteo.*;
 
 public class TestCompitoTreImpl {
 
-	private boolean debug = true;
+	private boolean debug = false;
 
 	IGriglia<ICella> griglia = null;
-	ICompitoTre c = new CompitoTreImpl_NoRequisitiFunzionali();
+	ICompitoTre c = new CompitoTreImplementation();
 
 	@BeforeEach
 	public void startingSetup() {
@@ -31,6 +33,13 @@ public class TestCompitoTreImpl {
 		}
 
 	}
+	
+	@AfterEach
+	public void stampaRiassunto() {
+		if (c instanceof CompitoTreImplementation && debug) {
+			System.out.println(((CompitoTreImplementation) c).getReport());
+		}
+	}
 
 	@Test
 	void testCasoBaseStartEqualsEnd() throws Exception {
@@ -38,7 +47,7 @@ public class TestCompitoTreImpl {
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
 		ICella2 start = g.getCellaAt(0,0);
 		ICella2 end = g.getCellaAt(0,0);
-
+		
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
@@ -248,7 +257,7 @@ public class TestCompitoTreImpl {
 		System.out.println(cammino.lunghezza());
 		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
 		System.out.println("#############################");
-		}
+		} 
 	}
 	
 	
