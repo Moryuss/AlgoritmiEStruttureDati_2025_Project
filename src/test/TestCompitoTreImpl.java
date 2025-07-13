@@ -13,8 +13,8 @@ import matteo.*;
 public class TestCompitoTreImpl {
 
 	private boolean debug = false;
-	private boolean riassunto = true;
-	private boolean monitorToggle = true;
+	private boolean riassunto = false;
+	private boolean monitorToggle = false;
 	
 	IGriglia<ICella> griglia = null;
 	ICompitoTre c = new CompitoTreImplementation();
@@ -40,6 +40,18 @@ public class TestCompitoTreImpl {
 	public void stampaRiassunto() {
 		if (c instanceof CompitoTreImplementation && riassunto) {
 			System.out.println(((CompitoTreImplementation) c).getReport());
+		}
+		IProgressoMonitor monitor = new ProgressoMonitor();
+
+		if (c instanceof CompitoTreImplementation) {
+			monitor = ((CompitoTreImplementation) c).getProgress();
+		}
+
+		if(monitorToggle) {
+			System.out.println("Origine: (" + monitor.getOrigine().x() + "," +monitor.getOrigine().y() + ")");
+			System.out.println("Destinazione: (" + monitor.getDestinazione().x() + "," +monitor.getDestinazione().y() + ")");
+			monitor.getCammino().landmarks()
+			.forEach(x->System.out.print("("+ x.x() +","+ x.y()+")"));
 		}
 	}
 
@@ -386,7 +398,7 @@ public class TestCompitoTreImpl {
 			System.out.println("#############################");
 		}
 
-		IProgressoMonitor monitor = new ProgressoMonitor(start, end);
+		IProgressoMonitor monitor = new ProgressoMonitor();
 
 		if (c instanceof CompitoTreImplementation) {
 			monitor = ((CompitoTreImplementation) c).getProgress();

@@ -64,7 +64,12 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			double distanza = g.distanzaLiberaDa(D.x(), D.y());
 
 			//stats.aggiungiPrestazione("Raggiunta DESTINAZIONE in CONTESTO a livello " + livelloRicorsione);
-
+			monitor.setCammino(new Cammino(distanza, Arrays.asList(
+					new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
+					new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), D.x(), D.y())
+					)));
+			
+			
 			return new Cammino(distanza, Arrays.asList(
 					new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
 					new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), D.x(), D.y())
@@ -75,7 +80,11 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			double distanza = g.distanzaLiberaDa(D.x(), D.y());
 
 			//stats.aggiungiPrestazione("Raggiunta DESTINAZIONE in COMPLEMENTO a livello " + livelloRicorsione);
-
+			monitor.setCammino(new Cammino(distanza, Arrays.asList(
+					new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
+					new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), D.x(), D.y())
+					)));
+			
 			return new Cammino(distanza, Arrays.asList(
 					new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
 					new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), D.x(), D.y())
@@ -90,7 +99,8 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		if (frontieraList.isEmpty()) {
 
 			//stats.aggiungiPrestazione("Frontiera vuota a livello " + livelloRicorsione);
-
+			monitor.setCammino(new Cammino(Double.POSITIVE_INFINITY, new ArrayList<>()));
+			
 			return new Cammino(Double.POSITIVE_INFINITY, new ArrayList<>());
 		}
 
