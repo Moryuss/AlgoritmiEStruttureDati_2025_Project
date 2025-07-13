@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Classe per raccogliere statistiche
-public class StatisticheEsecuzione {
+public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 
 	private int width;
 	private int height;
@@ -19,26 +19,27 @@ public class StatisticheEsecuzione {
     	this.height = h;
     }
     
+    
     public StatisticheEsecuzione() {
         this.tempoInizio = System.currentTimeMillis();
     }
-    
+    @Override
     public void incrementaCelleFrontiera() {
         totaleCelleFrontiera++;
     }
-    
+    @Override
     public void incrementaIterazioniCondizione() {
         totaleIterazioniCondizione++;
     }
-    
+    @Override
     public void aggiungiPrestazione(String prestazione) {
         prestazioni.add(prestazione);
     }
-    
+    @Override
     public void interrompiCalcolo() {
         calcoloInterrotto = true;
     }
-    
+    @Override
     public String generaRiassunto(ICammino risultato) {
         long tempoTotale = System.currentTimeMillis() - tempoInizio;
         StringBuilder sb = new StringBuilder();

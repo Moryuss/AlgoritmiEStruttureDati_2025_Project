@@ -21,7 +21,7 @@ import nicolas.StatoCella;
 import nicolas.Utils;
 
 
-public class CompitoTreImplementation implements ICompitoTre {
+public class CompitoTreImplementation implements ICompitoTre, IHasReport{
 
 	StatisticheEsecuzione stats;
 	String report;
@@ -133,7 +133,7 @@ public class CompitoTreImplementation implements ICompitoTre {
 		return new Cammino(lunghezzaMin, seqMin);
 	}
 
-
+	@Override
 	public String getReport() {
 		return this.report; 
 	}
