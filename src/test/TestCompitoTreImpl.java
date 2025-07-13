@@ -14,7 +14,8 @@ public class TestCompitoTreImpl {
 
 	private boolean debug = false;
 	private boolean riassunto = true;
-
+	private boolean monitorToggle = true;
+	
 	IGriglia<ICella> griglia = null;
 	ICompitoTre c = new CompitoTreImplementation();
 
@@ -34,7 +35,7 @@ public class TestCompitoTreImpl {
 		}
 
 	}
-	
+
 	@AfterEach
 	public void stampaRiassunto() {
 		if (c instanceof CompitoTreImplementation && riassunto) {
@@ -48,19 +49,19 @@ public class TestCompitoTreImpl {
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
 		ICella2 start = g.getCellaAt(0,0);
 		ICella2 end = g.getCellaAt(0,0);
-		
+
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
 		assertEquals(0.0, cammino.lunghezza());
-		
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
 	}
-	
+
 	@Test
 	void testCasoBase_Start_spostato() throws Exception {
 
@@ -73,7 +74,7 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
 		assertEquals(1, cammino.lunghezza());
-		
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
@@ -134,15 +135,15 @@ public class TestCompitoTreImpl {
 		assertEquals(3*Math.sqrt(2), cammino.lunghezza(), 0.001);
 
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da REGINA
-		
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
 
 	}
-	
-	
+
+
 	@Test
 	void testTipo1_Torre_Orizzontale() throws Exception {
 		startingSetup();
@@ -155,16 +156,16 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
 		assertEquals(10, cammino.lunghezza(), 0.001);
-		
+
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da REGINA
-		
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
 
 	}
-	
+
 	@Test
 	void testTipo1_Torre_Verticale() throws Exception {
 		startingSetup();
@@ -179,15 +180,15 @@ public class TestCompitoTreImpl {
 		assertEquals(4, cammino.lunghezza(), 0.001);
 
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da REGINA
-		
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
 
 	}
-	
-	
+
+
 	@Test
 	void testTipo1_Alfiere_Torre_Contesto() throws Exception {
 		startingSetup();
@@ -199,7 +200,7 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
-		
+
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da Alfiere-torre
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
@@ -207,7 +208,7 @@ public class TestCompitoTreImpl {
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
 	}
-	
+
 	@Test
 	void testTipo2_Torre_Alfiere_Complemento() throws Exception {
 		startingSetup();
@@ -219,7 +220,7 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
-		
+
 		assertTrue(StatoCella.COMPLEMENTO.is(end));	//dato che é raggiunto solo da torre-alfiere
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
@@ -227,13 +228,13 @@ public class TestCompitoTreImpl {
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
 	}
-	
-	
+
+
 	/**
 	 * Importante: tutte le ricorsioni perora hanno un limite, altimento sono infinite
 	 * Per ora faccio i test di frontiere che sono raggiunte in un piccolo numero di ricorsioni
 	 */
-	
+
 	@Test
 	void testRicorsione_Cella_Raggiungibile_con_1_Frontiera() throws Exception {
 		startingSetup();
@@ -245,27 +246,27 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
-		
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
-	
-		if(debug) {
-		System.out.println("PERCORSO MINIMO TROVATO 1 FRONTIERA/LANDMARK");
-		assertEquals(12.242640687119286, cammino.lunghezza(), 0.001);
 
-		System.out.println(cammino.lunghezza());
-		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
-		System.out.println("#############################");
+		if(debug) {
+			System.out.println("PERCORSO MINIMO TROVATO 1 FRONTIERA/LANDMARK");
+			assertEquals(12.242640687119286, cammino.lunghezza(), 0.001);
+
+			System.out.println(cammino.lunghezza());
+			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
+			System.out.println("#############################");
 		} 
 	}
-	
-	
+
+
 	//Griglia a forma di SPIRALE per testare molti landmark in ricorsione
 	@Test
 	void testRicorsione_Spirale() throws Exception {
-		
+
 		try {
 
 			griglia = Utils.loadSimple(new File("src/test/json/spirale_ostacoli.int.json"));
@@ -279,7 +280,7 @@ public class TestCompitoTreImpl {
 			return; // Esci se la griglia non può essere caricata
 		}
 
-		
+
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
 		ICella2 start = g.getCellaAt(0,0);
 		ICella2 end = g.getCellaAt(10,5);
@@ -288,25 +289,25 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
-		
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
-	
-		if(debug) {
-		System.out.println("PERCORSO MINIMO TROVATO SPIRALE");
-		assertEquals(44.89949493661167, cammino.lunghezza(), 0.001);
 
-		System.out.println(cammino.lunghezza());
-		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
-		System.out.println("#############################");
+		if(debug) {
+			System.out.println("PERCORSO MINIMO TROVATO SPIRALE");
+			assertEquals(44.89949493661167, cammino.lunghezza(), 0.001);
+
+			System.out.println(cammino.lunghezza());
+			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
+			System.out.println("#############################");
 		}
 	}
-	
+
 	@Test
 	void testRicorsione_ZigZag() throws Exception {
-		
+
 		try {
 
 			griglia = Utils.loadSimple(new File("src/test/json/zigZag_ostacoli.int.json"));
@@ -320,7 +321,7 @@ public class TestCompitoTreImpl {
 			return; // Esci se la griglia non può essere caricata
 		}
 
-		
+
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
 		ICella2 start = g.getCellaAt(0,0);
 		ICella2 end = g.getCellaAt(0,6);
@@ -329,19 +330,73 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
-		
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
 		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
-	
-		if(debug) {
-		System.out.println("PERCORSO MINIMO TROVATO: ZIGZAG");
-		assertEquals(86.56854249492376, cammino.lunghezza(), 0.001);
 
-		System.out.println(cammino.lunghezza());
-		cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
-		System.out.println("#############################");
+		if(debug) {
+			System.out.println("PERCORSO MINIMO TROVATO: ZIGZAG");
+			assertEquals(86.56854249492376, cammino.lunghezza(), 0.001);
+
+			System.out.println(cammino.lunghezza());
+			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
+			System.out.println("#############################");
+		}
+	}
+
+	@Test
+	void testProgressoMonitor() throws Exception {
+
+		try {
+
+			griglia = Utils.loadSimple(new File("src/test/json/zigZag_ostacoli.int.json"));
+			//System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
+			// Stampa la griglia per visualizzare ostacoli e celle navigabili
+			//griglia.print();
+
+		} catch (Exception e) {
+			System.err.println("Errore durante il caricamento della griglia: " + e.getMessage());
+			e.printStackTrace();
+			return; // Esci se la griglia non può essere caricata
+		}
+
+
+		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
+		ICella2 start = g.getCellaAt(0,0);
+		ICella2 end = g.getCellaAt(0,6);
+
+		ICammino cammino = c.camminoMin(griglia, start, end);
+
+		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		assertNotNull(cammino);
+
+		assertEquals(start.x(), cammino.landmarks().get(0).x());
+		assertEquals(start.y(), cammino.landmarks().get(0).y());
+		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
+		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
+
+		if(debug) {
+			System.out.println("PERCORSO MINIMO TROVATO: ZIGZAG");
+			assertEquals(86.56854249492376, cammino.lunghezza(), 0.001);
+
+			System.out.println(cammino.lunghezza());
+			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
+			System.out.println("#############################");
+		}
+
+		IProgressoMonitor monitor = new ProgressoMonitor(start, end);
+
+		if (c instanceof CompitoTreImplementation) {
+			monitor = ((CompitoTreImplementation) c).getProgress();
+		}
+
+		if(monitorToggle) {
+			System.out.println("Origine: (" + monitor.getOrigine().x() + "," +monitor.getOrigine().y() + ")");
+			System.out.println("Destinazione: (" + monitor.getDestinazione().x() + "," +monitor.getDestinazione().y() + ")");
+			monitor.getCammino().landmarks()
+			.forEach(x->System.out.print("("+ x.x() +","+ x.y()+")"));
 		}
 	}
 }

@@ -21,9 +21,11 @@ import nicolas.StatoCella;
 import nicolas.Utils;
 
 
-public class CompitoTreImplementation implements ICompitoTre, IHasReport{
+public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor{
 
-	StatisticheEsecuzione stats;
+	IStatisticheEsecuzione stats;	
+	IProgressoMonitor monitor;		//per monitorare l'evoluzione del cammino
+	
 	String report;
 	private int livelloRicorsione = 0;
 	private boolean debug = false;
@@ -32,7 +34,8 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport{
 	public ICammino camminoMin(IGriglia<?> griglia, ICella2 O, ICella2 D) {
 
 		stats = new StatisticheEsecuzione();
-
+		monitor = new ProgressoMonitor(O, D);
+		
 		//aggiungere le stats della griglia in stats
 		stats.saveDimensioniGriglia(griglia.height(), griglia.width());
 		stats.saveTipoGriglia(griglia.getTipo());
@@ -47,7 +50,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport{
 		return risultato;
 	}
 
-	public ICammino camminoMinConStatistiche(IGriglia<?> griglia, ICella2 O, ICella2 D, StatisticheEsecuzione stats) {
+	public ICammino camminoMinConStatistiche(IGriglia<?> griglia, ICella2 O, ICella2 D, IStatisticheEsecuzione stats) {
 		livelloRicorsione++;
 
 		stats.incrementaIterazioniCondizione();
@@ -130,12 +133,19 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport{
 				}
 			}
 		}
-
+		
+		monitor.setCammino(new Cammino(lunghezzaMin, seqMin));
+		
 		return new Cammino(lunghezzaMin, seqMin);
 	}
 
 	@Override
 	public String getReport() {
 		return this.report; 
+	}
+
+	@Override
+	public IProgressoMonitor getProgress() {
+		return this.monitor;
 	}
 }
