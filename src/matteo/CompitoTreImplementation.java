@@ -34,15 +34,16 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport{
 		stats = new StatisticheEsecuzione();
 
 		//aggiungere le stats della griglia in stats
-		stats.statsGriglia(griglia.height(), griglia.width());
-		//mancano start ed end, e il "Tipo"
-		//xxxx
+		stats.saveDimensioniGriglia(griglia.height(), griglia.width());
+		stats.saveTipoGriglia(griglia.getTipo());
+		stats.saveOrigine(O);
+		stats.saveDestinazione(D);
 		
 		ICammino risultato = camminoMinConStatistiche(griglia, O, D, stats);
 		
 		report = stats.generaRiassunto(risultato);
 		//
-		//Metti la distaza espressàcome distanza torre + distanza  alfiere che è più facile da controllare la correttezza
+		//Metti la distaza espressa come distanza torre + distanza  alfiere che è più facile da controllare la correttezza
 		return risultato;
 	}
 
@@ -106,7 +107,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport{
 
 				double IF = F.distanzaDaOrigine();
 
-				if (IF < lunghezzaMin) {		//questàcondizione può essere fatta diventare più forte
+				if (IF < lunghezzaMin) {		//questa condizione può essere fatta diventare più forte
 					ICammino camminoFD = camminoMinConStatistiche(g2, F, D, stats);
 					double ITot = IF + camminoFD.lunghezza();
 

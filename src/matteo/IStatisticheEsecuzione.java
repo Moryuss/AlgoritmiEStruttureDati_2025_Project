@@ -1,9 +1,16 @@
 package matteo;
 
+import nicolas.ICella2;
+
 public interface IStatisticheEsecuzione {
 
-	    public void statsGriglia(int h, int w);
+	    public void saveDimensioniGriglia(int h, int w);
 	    
+	    public void saveTipoGriglia(int tipo);
+	    
+	    public void saveOrigine(ICella2 origine);
+	    
+	    public void saveDestinazione(ICella2 destinazione);
 	    
 	    public void incrementaCelleFrontiera();
 	    

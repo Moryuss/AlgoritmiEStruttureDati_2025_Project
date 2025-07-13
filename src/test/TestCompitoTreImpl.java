@@ -12,7 +12,7 @@ import matteo.*;
 
 public class TestCompitoTreImpl {
 
-	private boolean debug = false;
+	private boolean debug = true;
 
 	IGriglia<ICella> griglia = null;
 	ICompitoTre c = new CompitoTreImplementation();
