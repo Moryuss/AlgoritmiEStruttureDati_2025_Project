@@ -38,9 +38,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport{
 		stats.saveTipoGriglia(griglia.getTipo());
 		stats.saveOrigine(O);
 		stats.saveDestinazione(D);
-		
+
 		ICammino risultato = camminoMinConStatistiche(griglia, O, D, stats);
-		
+
 		report = stats.generaRiassunto(risultato);
 		//
 		//Metti la distaza espressa come distanza torre + distanza  alfiere che è più facile da controllare la correttezza

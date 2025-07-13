@@ -12,7 +12,8 @@ import matteo.*;
 
 public class TestCompitoTreImpl {
 
-	private boolean debug = true;
+	private boolean debug = false;
+	private boolean riassunto = true;
 
 	IGriglia<ICella> griglia = null;
 	ICompitoTre c = new CompitoTreImplementation();
@@ -36,7 +37,7 @@ public class TestCompitoTreImpl {
 	
 	@AfterEach
 	public void stampaRiassunto() {
-		if (c instanceof CompitoTreImplementation && debug) {
+		if (c instanceof CompitoTreImplementation && riassunto) {
 			System.out.println(((CompitoTreImplementation) c).getReport());
 		}
 	}
