@@ -9,7 +9,7 @@ import francesco.IObstacle;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
-public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<ICella2D> chiusura, ICella2[] frontiera) implements IGrigliaConOrigine {
+public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<ICella2D> chiusura, ICella2[] frontiera, int tipoGriglia) implements IGrigliaConOrigine {
 	
 	@Override
 	public boolean isNavigabile(int x, int y) {
@@ -84,7 +84,7 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 		for (var c : obstacle.list()) {
 			mat[c.y()][c.x()] = OSTACOLO.addTo(mat[c.y()][c.x()]);
 		}
-		return new GrigliaConOrigine(mat, dist, Ox, Oy, chiusura, frontiera);
+		return new GrigliaConOrigine(mat, dist, Ox, Oy, chiusura, frontiera, tipoGriglia);
 	}
 	
 	@Override

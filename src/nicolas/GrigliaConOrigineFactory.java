@@ -97,7 +97,7 @@ public final class GrigliaConOrigineFactory {
 			}
 		}
 		
-		return new GrigliaConOrigine(res, dist, Ox, Oy, chiusura, frontiera.toArray(ICella2[]::new));
+		return new GrigliaConOrigine(res, dist, Ox, Oy, chiusura, frontiera.toArray(ICella2[]::new), griglia.getTipo());
 		
 	}
 	

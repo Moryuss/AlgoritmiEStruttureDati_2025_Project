@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -73,6 +74,18 @@ public final class Utils {
 	
 	
 	
+	public static <T> void forEachPair(Iterable<T> src, BiConsumer<T,T> action) {
+		var iter = src.iterator();
+		if (!iter.hasNext()) return;
+		var current = iter.next();
+		while (iter.hasNext()) {
+			action.accept(current, current=iter.next());
+		}
+	}
+	
+	
+	
+	
 	public static <T> Collector<T,?,JSONArray> collectToJSONArray(BiFunction<JSONArray,T,JSONArray> appender) {
 		class C {
 			JSONArray jsona = new JSONArray();
@@ -95,8 +108,12 @@ public final class Utils {
 	}
 	
 	
+	
 	public static IGriglia<ICella> loadSimple(File file) {
-		var jsona = PApplet.loadJSONArray(file);
+		return loadSimple(PApplet.loadJSONArray(file));
+	}
+	
+	public static IGriglia<ICella> loadSimple(JSONArray jsona) {
 		int height = jsona.size();
 		int width = jsona.getJSONArray(0).size();
 		var list = new ArrayList<ICella2D>();
@@ -113,8 +130,12 @@ public final class Utils {
 		return GrigliaMatrix.from(width, height, List.of(()->list));
 	}
 	
-	public static IGriglia<ICella> loadIntJSON(File file, IntFunction<ICella> deserialzier) {
-		var jsona = PApplet.loadJSONArray(file);
+	
+	public static IGriglia<ICella> loadIntJSON(File file, IntFunction<ICella> deserializer) {
+		return loadIntJSON(PApplet.loadJSONArray(file), deserializer);
+	}
+	
+	public static IGriglia<ICella> loadIntJSON(JSONArray jsona, IntFunction<ICella> deserializer) {
 		int height = jsona.size();
 		int width = jsona.getJSONArray(0).size();
 		ICella[][] mat = new Cella[height][width];
@@ -122,15 +143,19 @@ public final class Utils {
 		for (int i=0; i<height; i++) {
 			var row = jsona.getJSONArray(i);
 			for (int j=0; j<width; j++) {
-				mat[i][j] = deserialzier.apply(row.getInt(j,0));
+				mat[i][j] = deserializer.apply(row.getInt(j,0));
 			}
 		}
 		
 		return new GrigliaMatrix(mat);
 	}
-
-	public static IGriglia<ICella> loadJSON(File file, Function<JSONObject,ICella> deserialzier) {
-		var jsona = PApplet.loadJSONArray(file);
+	
+	
+	public static IGriglia<ICella> loadJSON(File file, Function<JSONObject,ICella> deserializer) {
+		return loadJSON(PApplet.loadJSONArray(file), deserializer);
+	}
+	
+	public static IGriglia<ICella> loadJSON(JSONArray jsona, Function<JSONObject, ICella> deserializer) {
 		int height = jsona.size();
 		int width = jsona.getJSONArray(0).size();
 		ICella[][] mat = new Cella[height][width];
@@ -138,11 +163,12 @@ public final class Utils {
 		for (int i=0; i<height; i++) {
 			var row = jsona.getJSONArray(i);
 			for (int j=0; j<width; j++) {
-				mat[i][j] = deserialzier.apply(row.getJSONObject(j));
+				mat[i][j] = deserializer.apply(row.getJSONObject(j));
 			}
 		}
 		
 		return new GrigliaMatrix(mat);
 	}
+	
 	
 }

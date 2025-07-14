@@ -2,13 +2,13 @@ package main;
 
 import static nicolas.StatoCella.*;
 import java.io.File;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import francesco.IGriglia;
 import francesco.implementazioni.LettoreGriglia;
-import matteo.CompitoTreImpl_NoRequisitiFunzionali;
+import matteo.CompitoTreImplementation;
 import matteo.ICammino;
+import matteo.IProgressoMonitor;
 import nicolas.GrigliaConOrigineFactory;
 import nicolas.ICella2;
 import nicolas.IGrigliaConOrigine;
@@ -16,6 +16,7 @@ import nicolas.Utils;
 import processing.core.PApplet;
 import processing.core.PVector;
 import processing.data.JSONObject;
+import processing.event.Event;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
@@ -32,7 +33,7 @@ public class AppletMain extends PApplet {
 	
 	int COLORE_OSTACOLO,COLORE_DESTINAZIONE,COLORE_LANDMARK,COLORE_FRONTIERA,
 		COLORE_COMPLEMENTO,COLORE_ORIGINE,COLORE_REGINA,COLORE_CONTESTO,COLORE_BASE;
-	
+	boolean showText;
 	
 	@Override
 	public void settings() {
@@ -64,13 +65,18 @@ public class AppletMain extends PApplet {
 		COLORE_BASE			 = palette[5];
 		
 		
-		griglia = Optional.ofNullable(config.getString("load", null))
-		.<IGriglia<?>>map(str -> Utils.loadSimple(new File(str)))
-		.orElseGet(()->new LettoreGriglia().crea(file.toPath()));
+		if (config.hasKey("load")) {
+			griglia = loadGriglia(config);
+		}
+		
+		if (griglia==null) {
+			griglia = new LettoreGriglia().crea(file.toPath());
+		}
 		
 		w = griglia.width();
 		h = griglia.height();
 		s = width/w;
+		showText = json.getBoolean("showText", false);
 		
 		println("w=%d, h=%d".formatted(w, h));
 		
@@ -85,6 +91,29 @@ public class AppletMain extends PApplet {
 		
 		griglia.print();
 		
+	}
+
+
+	private static IGriglia<?> loadGriglia(JSONObject config) {
+		var load = config.getJSONObject("load");
+		if (!load.hasKey("path")) {
+			System.err.println("config.load non ha l'attributo \"path\"");
+			return null;
+		}
+		if (!load.hasKey("name")) {
+			System.err.println("config.load non ha l'attributo \"name\"");
+			return null;
+		}
+		var src = PApplet.loadJSONObject(new File(load.getString("path")));
+		var nomeGriglia = load.getString("name");
+		var toLoad = src.getJSONArray(nomeGriglia);
+		
+		if (toLoad==null) {
+			System.err.println("Non è stata trovata la griglia dal nome "+nomeGriglia);
+			return null;
+		}
+		
+		return Utils.loadSimple(toLoad);
 	}
 	
 	
@@ -122,20 +151,27 @@ public class AppletMain extends PApplet {
 				circle(j*s, i*s, s);
 			}
 			
-			textAlign(CENTER, CENTER);
-			fill(150);
-			text(n, (0.5f+j)*s, (0.5f+i)*s);
-			
-			if (griglia.getCellaAt(j, i) instanceof ICella2 c2) {
-				textAlign(LEFT, TOP);
-				if (c2.isUnreachable()) text("+∞", (0f+j)*s, (+i)*s);
-				else {
-					//text("%.2f".formatted(c2.distanzaDaOrigine()), j*s, i*s);
-					text(c2.distanzaTorre()+":"+c2.distanzaAlfiere(), j*s, i*s);
+			if (showText) {
+				textAlign(CENTER, CENTER);
+				fill(150);
+				text(n, (0.5f+j)*s, (0.5f+i)*s);
+				
+				if (griglia.getCellaAt(j, i) instanceof ICella2 c2) {
+					textAlign(LEFT, TOP);
+					if (c2.isUnreachable()) text("+∞", (0f+j)*s, (+i)*s);
+					else {
+						//text("%.2f".formatted(c2.distanzaDaOrigine()), j*s, i*s);
+						text(c2.distanzaTorre()+":"+c2.distanzaAlfiere(), j*s, i*s);
+					}
 				}
 			}
 			
+			
 		});
+		
+		if (monitor!=null) {
+			cammino = monitor.getCammino();
+		}
 		
 		if (cammino!=null) {
 			stroke(0, 150, 0);
@@ -144,15 +180,8 @@ public class AppletMain extends PApplet {
 			scale(s);
 			translate(0.5f, 0.5f);
 			strokeWeight(0.1f);
-			
-			int[] prev = {0,0,0};
-			cammino.landmarks().forEach(lm -> {
-				if (prev[2]>0) {
-					dashedLine(prev[0], prev[1], lm.x(), lm.y(), 0.2f, 0.4f);
-				}
-				prev[0] = lm.x();
-				prev[1] = lm.y();
-				prev[2] = 1;
+			Utils.forEachPair(cammino.landmarks(), (a,b) -> {
+				dashedLine(a.x(), a.y(), b.x(), b.y(), 0.2f, 0.4f);
 			});
 			popMatrix();
 		}
@@ -161,6 +190,7 @@ public class AppletMain extends PApplet {
 	
 	ICella2 O,D;
 	ICammino cammino;
+	IProgressoMonitor monitor;
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -170,8 +200,9 @@ public class AppletMain extends PApplet {
 		switch(e.getButton()) {
 		case LEFT:
 			clearNonOStacoli(e.isControlDown());
-			O = D = null;
+			D = null;
 			cammino = null;
+			monitor = null;
 			var g = GrigliaConOrigineFactory.creaV0(griglia, x, y);
 			O = g.getCellaAt(x, y);
 			griglia = g;
@@ -193,11 +224,16 @@ public class AppletMain extends PApplet {
 			D.setStato(DESTINAZIONE.value());
 			
 			try {
-				var compitoTreImpl = new CompitoTreImpl_NoRequisitiFunzionali();
-				cammino = compitoTreImpl.camminoMin(griglia, O, D);
-				cammino.landmarks().forEach(lm -> {
-					LANDMARK.addTo(griglia.getCellaAt(lm.x(), lm.y()));
-				});
+				var compitoTreImpl = new CompitoTreImplementation();
+				monitor = compitoTreImpl.getProgress();
+				new Thread(()->{
+					System.out.println("inizio camminoMin");
+					cammino = compitoTreImpl.camminoMin(griglia, O, D);
+					cammino.landmarks().forEach(lm -> {
+						LANDMARK.addTo(griglia.getCellaAt(lm.x(), lm.y()));
+					});
+					System.out.println("finito");
+				}).start();
 				
 			} catch(Exception ex) {
 				ex.printStackTrace();
@@ -205,7 +241,23 @@ public class AppletMain extends PApplet {
 			break;
 		
 		case CENTER:
-			OSTACOLO.toggleTo(griglia.getCellaAt(x, y));
+			switch(e.getModifiers()) {
+			case 0 -> OSTACOLO.toggleTo(griglia.getCellaAt(x, y));
+			case Event.SHIFT|Event.CTRL|Event.ALT ->{
+				if (x+3>=w || y+3<0) return;
+				OSTACOLO.addTo(griglia.getCellaAt(x+1, y));
+				OSTACOLO.addTo(griglia.getCellaAt(x+3, y));
+				OSTACOLO.addTo(griglia.getCellaAt(x, y-1));
+				OSTACOLO.addTo(griglia.getCellaAt(x+1, y-1));
+				OSTACOLO.addTo(griglia.getCellaAt(x+2, y-1));
+				OSTACOLO.addTo(griglia.getCellaAt(x+3, y-1));
+				OSTACOLO.addTo(griglia.getCellaAt(x, y-2));
+				OSTACOLO.addTo(griglia.getCellaAt(x+1, y-2));
+				OSTACOLO.addTo(griglia.getCellaAt(x+1, y-3));
+				OSTACOLO.addTo(griglia.getCellaAt(x+2, y-3));
+				OSTACOLO.addTo(griglia.getCellaAt(x+3, y-3));
+			}
+			}
 			break;
 		}
 		
