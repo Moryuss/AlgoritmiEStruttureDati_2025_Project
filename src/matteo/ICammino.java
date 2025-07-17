@@ -6,5 +6,6 @@ public interface ICammino {
 	
 	double lunghezza();
 	List<ILandmark> landmarks();
-	
+	int lunghezzaTorre();
+	int lunghezzaAlfiere();
 }

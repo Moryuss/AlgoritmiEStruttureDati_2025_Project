@@ -4,6 +4,8 @@ import static nicolas.StatoCella.DESTINAZIONE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -24,8 +26,8 @@ import nicolas.Utils;
 public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor{
 
 	IStatisticheEsecuzione stats;	
-	IProgressoMonitor monitor;		//per monitorare l'evoluzione del cammino
-	
+	IProgressoMonitor monitor = new ProgressoMonitor();		//per monitorare l'evoluzione del cammino
+
 	String report;
 	private int livelloRicorsione = 0;
 	private boolean debug = false;
@@ -34,9 +36,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	public ICammino camminoMin(IGriglia<?> griglia, ICella2 O, ICella2 D) {
 
 		stats = new StatisticheEsecuzione();
-		monitor = new ProgressoMonitor(O, D);
-		
-		//aggiungere le stats della griglia in stats
+		monitor.setOrigine(O);
+		monitor.setDestinazione(D);
+
 		stats.saveDimensioniGriglia(griglia.height(), griglia.width());
 		stats.saveTipoGriglia(griglia.getTipo());
 		stats.saveOrigine(O);
@@ -45,8 +47,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		ICammino risultato = camminoMinConStatistiche(griglia, O, D, stats);
 
 		report = stats.generaRiassunto(risultato);
-		//
-		//Metti la distaza espressa come distanza torre + distanza  alfiere che è più facile da controllare la correttezza
+		
 		return risultato;
 	}
 
@@ -61,34 +62,40 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		DESTINAZIONE.addTo(g.getCellaAt(D.x(), D.y()));
 
 		if (g.isInContesto(D.x(), D.y())) {
-			double distanza = g.distanzaLiberaDa(D.x(), D.y());
+			//double distanza = g.distanzaLiberaDa(D.x(), D.y());
+			int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
+			int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
 
-			//stats.aggiungiPrestazione("Raggiunta DESTINAZIONE in CONTESTO a livello " + livelloRicorsione);
-			monitor.setCammino(new Cammino(distanza, Arrays.asList(
-					new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
-					new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), D.x(), D.y())
-					)));
-			
-			
-			return new Cammino(distanza, Arrays.asList(
-					new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
-					new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), D.x(), D.y())
-					));
+			monitor.setCammino(new Cammino(distanzaTorre,distanzaAlfiere,
+					Arrays.asList(
+							new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
+							new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), D.x(), D.y())
+							)));
+
+
+			return new Cammino(distanzaTorre,distanzaAlfiere,
+					Arrays.asList(
+							new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
+							new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), D.x(), D.y())
+							));
 		}
 
 		if (g.isInComplemento(D.x(), D.y())) {
-			double distanza = g.distanzaLiberaDa(D.x(), D.y());
+			//double distanza = g.distanzaLiberaDa(D.x(), D.y());
+			int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
+			int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
 
-			//stats.aggiungiPrestazione("Raggiunta DESTINAZIONE in COMPLEMENTO a livello " + livelloRicorsione);
-			monitor.setCammino(new Cammino(distanza, Arrays.asList(
-					new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
-					new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), D.x(), D.y())
-					)));
-			
-			return new Cammino(distanza, Arrays.asList(
-					new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
-					new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), D.x(), D.y())
-					));
+			monitor.setCammino(new Cammino(distanzaTorre, distanzaAlfiere,
+					Arrays.asList(
+							new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
+							new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), D.x(), D.y())
+							)));
+
+			return new Cammino(distanzaTorre, distanzaAlfiere,
+					Arrays.asList(
+							new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
+							new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), D.x(), D.y())
+							));
 		}
 
 		List<ICella2> frontieraList = g.getFrontiera()
@@ -96,17 +103,26 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 						c -> Utils.distanzaLiberaTra(c, D)))
 				.toList();
 
+
+
 		if (frontieraList.isEmpty()) {
 
 			//stats.aggiungiPrestazione("Frontiera vuota a livello " + livelloRicorsione);
-			monitor.setCammino(new Cammino(Double.POSITIVE_INFINITY, new ArrayList<>()));
-			
-			return new Cammino(Double.POSITIVE_INFINITY, new ArrayList<>());
+			monitor.setCammino(new Cammino(Integer.MAX_VALUE,
+					Integer.MAX_VALUE, 
+					new ArrayList<>()));
+
+			return new Cammino(Integer.MAX_VALUE,
+					Integer.MAX_VALUE,
+					new ArrayList<>());
 		}
 
 		//stats.aggiungiPrestazione("Frontiera di dimensione " + frontieraList.size() + " a livello " + livelloRicorsione);
 
 		double lunghezzaMin = Double.POSITIVE_INFINITY;
+		int lunghezzaTorreMin = Integer.MAX_VALUE;
+		int lunghezzaAlfiereMin = Integer.MAX_VALUE;
+		
 		List<ILandmark> seqMin = new ArrayList<>();
 
 		IGriglia<?> g2 = griglia.addObstacle(g.convertiChiusuraInOstacolo());
@@ -118,14 +134,22 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 				if(debug) System.out.println("Analizzo cella frontiera (" + F.x() + "," + F.y() + ")");
 
+				
+				int IFdistanzaTorre = g.getCellaAt(F.x(), F.y()).distanzaTorre();
+				int IFdistanzaAlfiere = g.getCellaAt(F.x(), F.y()).distanzaAlfiere();
 				double IF = F.distanzaDaOrigine();
-
+				
 				if (IF < lunghezzaMin) {		//questa condizione può essere fatta diventare più forte
 					ICammino camminoFD = camminoMinConStatistiche(g2, F, D, stats);
 					double ITot = IF + camminoFD.lunghezza();
-
+					int ITotTorre = IFdistanzaTorre + camminoFD.lunghezzaTorre();
+					int ITotAlfiere = IFdistanzaAlfiere + camminoFD.lunghezzaAlfiere();
+					
 					if (ITot < lunghezzaMin) {
 						lunghezzaMin = ITot;
+						lunghezzaTorreMin = ITotTorre;
+						lunghezzaAlfiereMin = ITotAlfiere;
+						
 						seqMin = new ArrayList<>();
 						seqMin.add(new Landmark(StatoCella.ORIGINE.value(), O.x(), O.y()));
 						seqMin.add(new Landmark(StatoCella.FRONTIERA.addTo(F.stato()), F.x(), F.y()));
@@ -143,10 +167,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				}
 			}
 		}
-		
-		monitor.setCammino(new Cammino(lunghezzaMin, seqMin));
-		
-		return new Cammino(lunghezzaMin, seqMin);
+
+		monitor.setCammino(new Cammino(lunghezzaTorreMin, lunghezzaAlfiereMin, seqMin));
+
+		return new Cammino(lunghezzaTorreMin, lunghezzaAlfiereMin, seqMin);
 	}
 
 	@Override

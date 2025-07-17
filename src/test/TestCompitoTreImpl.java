@@ -15,7 +15,7 @@ public class TestCompitoTreImpl {
 	private boolean debug = false;
 	private boolean riassunto = false;
 	private boolean monitorToggle = false;
-	
+
 	IGriglia<ICella> griglia = null;
 	ICompitoTre c = new CompitoTreImplementation();
 
@@ -66,7 +66,11 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
+
 		assertEquals(0.0, cammino.lunghezza());
+		assertEquals(0, cammino.lunghezzaTorre(), 0.001);
+		assertEquals(0, cammino.lunghezzaAlfiere(), 0.001);
+
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
@@ -85,7 +89,11 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
+
 		assertEquals(1, cammino.lunghezza());
+		assertEquals(1, cammino.lunghezzaTorre(), 0.001);
+		assertEquals(0, cammino.lunghezzaAlfiere(), 0.001);
+
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
@@ -104,7 +112,11 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
+
 		assertEquals(1.0, cammino.lunghezza(), 0.001);
+		assertEquals(1, cammino.lunghezzaTorre(), 0.001);
+		assertEquals(0, cammino.lunghezzaAlfiere(), 0.001);
+
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
@@ -124,7 +136,10 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
+
 		assertEquals(1+2*Math.sqrt(2), cammino.lunghezza(), 0.001);
+		assertEquals(1, cammino.lunghezzaTorre(), 0.001);
+		assertEquals(2, cammino.lunghezzaAlfiere(), 0.001);
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
@@ -144,7 +159,11 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
+
 		assertEquals(3*Math.sqrt(2), cammino.lunghezza(), 0.001);
+		assertEquals(3, cammino.lunghezzaAlfiere(), 0.001);
+		assertEquals(0, cammino.lunghezzaTorre(), 0.001);
+
 
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da REGINA
 
@@ -167,7 +186,11 @@ public class TestCompitoTreImpl {
 
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
+
 		assertEquals(10, cammino.lunghezza(), 0.001);
+		assertEquals(10, cammino.lunghezzaTorre(), 0.001);
+		assertEquals(0, cammino.lunghezzaAlfiere(), 0.001);
+
 
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da REGINA
 
@@ -242,10 +265,27 @@ public class TestCompitoTreImpl {
 	}
 
 
-	/**
-	 * Importante: tutte le ricorsioni perora hanno un limite, altimento sono infinite
-	 * Per ora faccio i test di frontiere che sono raggiunte in un piccolo numero di ricorsioni
-	 */
+	@Test
+	void test_distanzaCome_alfiere_e_torre() throws Exception {
+		startingSetup();
+		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
+		ICella2 start = g.getCellaAt(0,0);
+		ICella2 end = g.getCellaAt(5,3);
+
+		ICammino cammino = c.camminoMin(griglia, start, end);
+
+		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		assertNotNull(cammino);
+
+		assertEquals(cammino.lunghezzaTorre(), 2);
+		assertEquals(cammino.lunghezzaAlfiere(), 3);
+
+
+		assertEquals(start.x(), cammino.landmarks().get(0).x());
+		assertEquals(start.y(), cammino.landmarks().get(0).y());
+		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
+		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
+	}
 
 	@Test
 	void testRicorsione_Cella_Raggiungibile_con_1_Frontiera() throws Exception {
@@ -259,6 +299,8 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
 
+		assertEquals(12.242640687119286, cammino.lunghezza(), 0.001);
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
@@ -266,9 +308,10 @@ public class TestCompitoTreImpl {
 
 		if(debug) {
 			System.out.println("PERCORSO MINIMO TROVATO 1 FRONTIERA/LANDMARK");
-			assertEquals(12.242640687119286, cammino.lunghezza(), 0.001);
+			System.out.println("lunghezza totale: " + cammino.lunghezza());
+			System.out.println("Celle Torre: " + cammino.lunghezzaTorre());
+			System.out.println("Celle Alfiere: " + cammino.lunghezzaAlfiere());
 
-			System.out.println(cammino.lunghezza());
 			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
 			System.out.println("#############################");
 		} 
@@ -302,6 +345,8 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
 
+		assertEquals(44.89949493661167, cammino.lunghezza(), 0.001);
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
@@ -309,7 +354,10 @@ public class TestCompitoTreImpl {
 
 		if(debug) {
 			System.out.println("PERCORSO MINIMO TROVATO SPIRALE");
-			assertEquals(44.89949493661167, cammino.lunghezza(), 0.001);
+
+			System.out.println("lunghezza totale: " + cammino.lunghezza());
+			System.out.println("Celle Torre: " + cammino.lunghezzaTorre());
+			System.out.println("Celle Alfiere: " + cammino.lunghezzaAlfiere());
 
 			System.out.println(cammino.lunghezza());
 			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
@@ -343,6 +391,8 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
 
+		assertEquals(86.56854249492376, cammino.lunghezza(), 0.001);
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
@@ -350,7 +400,9 @@ public class TestCompitoTreImpl {
 
 		if(debug) {
 			System.out.println("PERCORSO MINIMO TROVATO: ZIGZAG");
-			assertEquals(86.56854249492376, cammino.lunghezza(), 0.001);
+			System.out.println("lunghezza totale: " + cammino.lunghezza());
+			System.out.println("Celle Torre: " + cammino.lunghezzaTorre());
+			System.out.println("Celle Alfiere: " + cammino.lunghezzaAlfiere());
 
 			System.out.println(cammino.lunghezza());
 			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
@@ -384,6 +436,8 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
 		assertNotNull(cammino);
 
+		assertEquals(86.56854249492376, cammino.lunghezza(), 0.001);
+
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
 		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
@@ -391,8 +445,10 @@ public class TestCompitoTreImpl {
 
 		if(debug) {
 			System.out.println("PERCORSO MINIMO TROVATO: ZIGZAG");
-			assertEquals(86.56854249492376, cammino.lunghezza(), 0.001);
-
+			System.out.println("lunghezza totale: " + cammino.lunghezza());
+			System.out.println("Celle Torre: " + cammino.lunghezzaTorre());
+			System.out.println("Celle Alfiere: " + cammino.lunghezzaAlfiere());
+			
 			System.out.println(cammino.lunghezza());
 			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
 			System.out.println("#############################");
