@@ -25,7 +25,7 @@ import nicolas.StatoCella;
 import nicolas.Utils;
 
 
-public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor{
+public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor, IInterrompibile{
 
 	IStatisticheEsecuzione stats;	
 	IProgressoMonitor monitor = new ProgressoMonitor();		//per monitorare l'evoluzione del cammino
@@ -33,8 +33,17 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 	private String report;
 	private int livelloRicorsione = 0;
-	private boolean debug = false;
-	private boolean monitorON = true;
+
+	public boolean debug = false;
+	public boolean monitorON = true; 	//NON mettere a false, è legato al funzionamento degli interrupt.
+	public boolean stopMessage = false;
+	
+	private boolean interrompiSuRichiesta = false;	// questo non va modificato da qui, ma da setTimeout(tempo)
+	private boolean interrompiSuTempo = false;	
+
+	private long tempoInizio;
+	private long timeoutMillis; 
+
 	private Deque<ILandmark> stackCammino = new ArrayDeque<ILandmark>();
 
 
@@ -58,177 +67,219 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	}
 
 	public ICammino camminoMinConStatistiche(IGriglia<?> griglia, ICella2 O, ICella2 D, IStatisticheEsecuzione stats) {
-		livelloRicorsione++;
-		stats.incrementaIterazioniCondizione();
+		try {
+			livelloRicorsione++;
+			stats.incrementaIterazioniCondizione();
 
-		stackCammino.push(new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()));
+			this.checkInterruzione();
 
-
-		if(debug) System.out.println("Chiamata camminoMinConStatistiche livello " + livelloRicorsione);
-
-		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y());
-		DESTINAZIONE.addTo(g.getCellaAt(D.x(), D.y()));
-
-		if (g.isInContesto(D.x(), D.y())) {
-
-			//double distanza = g.distanzaLiberaDa(D.x(), D.y());
-			int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
-			int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
-
-			livelloRicorsione--;
-			if(monitorON) {
-				monitor.setCammino(new Cammino(
-						distanzaTorre,
-						distanzaAlfiere,
-						new ArrayList<>(stackCammino)));
+			stackCammino.push(new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()));
 
 
-				stackCammino.pop();
+			if(debug) System.out.println("Chiamata camminoMinConStatistiche livello " + livelloRicorsione);
+
+			IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y());
+			DESTINAZIONE.addTo(g.getCellaAt(D.x(), D.y()));
+
+			if (g.isInContesto(D.x(), D.y())) {
+
+				//double distanza = g.distanzaLiberaDa(D.x(), D.y());
+				int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
+				int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
+
+				livelloRicorsione--;
+				if(monitorON) {
+					monitor.setCammino(new Cammino(
+							distanzaTorre,
+							distanzaAlfiere,
+							new ArrayList<>(stackCammino)));
+
+
+					stackCammino.pop();
+				}
+
+				return new Cammino(distanzaTorre,distanzaAlfiere,
+						Arrays.asList(
+								new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
+								new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), D.x(), D.y())
+								));
 			}
 
-			return new Cammino(distanzaTorre,distanzaAlfiere,
-					Arrays.asList(
-							new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
-							new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), D.x(), D.y())
-							));
-		}
+			if (g.isInComplemento(D.x(), D.y())) {
 
-		if (g.isInComplemento(D.x(), D.y())) {
+				//double distanza = g.distanzaLiberaDa(D.x(), D.y());
+				int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
+				int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
 
-			//double distanza = g.distanzaLiberaDa(D.x(), D.y());
-			int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
-			int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
+				livelloRicorsione--;
 
-			livelloRicorsione--;
-
-			if(monitorON) {
-				monitor.setCammino(new Cammino(
-						distanzaTorre,
-						distanzaAlfiere,
-						new ArrayList<>(stackCammino)));
+				if(monitorON) {
+					monitor.setCammino(new Cammino(
+							distanzaTorre,
+							distanzaAlfiere,
+							new ArrayList<>(stackCammino)));
 
 
-				stackCammino.pop();
+					stackCammino.pop();
+				}
+
+				return new Cammino(distanzaTorre, distanzaAlfiere,
+						Arrays.asList(
+								new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
+								new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), D.x(), D.y())
+								));
 			}
 
-			return new Cammino(distanzaTorre, distanzaAlfiere,
-					Arrays.asList(
-							new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
-							new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), D.x(), D.y())
-							));
-		}
-
-		List<ICella2> frontieraList = g.getFrontiera()
-				.sorted(Comparator.comparingDouble(
-						c -> Utils.distanzaLiberaTra(c, D)))
-				.toList();
+			List<ICella2> frontieraList = g.getFrontiera()
+					.sorted(Comparator.comparingDouble(
+							c -> Utils.distanzaLiberaTra(c, D)))
+					.toList();
 
 
 
-		if (frontieraList.isEmpty()) {
+			if (frontieraList.isEmpty()) {
 
-			//stats.aggiungiPrestazione("Frontiera vuota a livello " + livelloRicorsione);
+				//stats.aggiungiPrestazione("Frontiera vuota a livello " + livelloRicorsione);
 
-			livelloRicorsione--;
+				livelloRicorsione--;
 
-			if(monitorON) {
-				monitor.setCammino(new Cammino(Integer.MAX_VALUE,
-						Integer.MAX_VALUE, 
-						new ArrayList<>(stackCammino)));
+				if(monitorON) {
+					monitor.setCammino(new Cammino(Integer.MAX_VALUE,
+							Integer.MAX_VALUE, 
+							new ArrayList<>(stackCammino)));
 
-				stackCammino.pop();
+					stackCammino.pop();
+				}
+
+				return new Cammino(Integer.MAX_VALUE,
+						Integer.MAX_VALUE,
+						new ArrayList<>());
 			}
 
-			return new Cammino(Integer.MAX_VALUE,
-					Integer.MAX_VALUE,
-					new ArrayList<>());
-		}
+			//stats.aggiungiPrestazione("Frontiera di dimensione " + frontieraList.size() + " a livello " + livelloRicorsione);
 
-		//stats.aggiungiPrestazione("Frontiera di dimensione " + frontieraList.size() + " a livello " + livelloRicorsione);
+			double lunghezzaMin = Double.POSITIVE_INFINITY;
+			int lunghezzaTorreMin = Integer.MAX_VALUE;
+			int lunghezzaAlfiereMin = Integer.MAX_VALUE;
 
-		double lunghezzaMin = Double.POSITIVE_INFINITY;
-		int lunghezzaTorreMin = Integer.MAX_VALUE;
-		int lunghezzaAlfiereMin = Integer.MAX_VALUE;
+			List<ILandmark> seqMin = new ArrayList<>();
 
-		List<ILandmark> seqMin = new ArrayList<>();
+			IGriglia<?> g2 = griglia.addObstacle(g.convertiChiusuraInOstacolo());
 
-		IGriglia<?> g2 = griglia.addObstacle(g.convertiChiusuraInOstacolo());
+			for (ICella2 F : frontieraList) {
+				this.checkInterruzione();
+				
+				if (StatoCella.OSTACOLO.isNot(F.stato())) {
 
-		for (ICella2 F : frontieraList) {
-			if (StatoCella.OSTACOLO.isNot(F.stato())) {
+					stats.incrementaCelleFrontiera();
 
-				stats.incrementaCelleFrontiera();
-
-				if(debug) System.out.println("Analizzo cella frontiera (" + F.x() + "," + F.y() + ")");
+					if(debug) System.out.println("Analizzo cella frontiera (" + F.x() + "," + F.y() + ")");
 
 
-				int IFdistanzaTorre = g.getCellaAt(F.x(), F.y()).distanzaTorre();
-				int IFdistanzaAlfiere = g.getCellaAt(F.x(), F.y()).distanzaAlfiere();
-				double IF = F.distanzaDaOrigine();
+					int IFdistanzaTorre = g.getCellaAt(F.x(), F.y()).distanzaTorre();
+					int IFdistanzaAlfiere = g.getCellaAt(F.x(), F.y()).distanzaAlfiere();
+					double IF = F.distanzaDaOrigine();
 
-				if (IF < lunghezzaMin) {		//questa condizione può essere fatta diventare più forte
-					ICammino camminoFD = camminoMinConStatistiche(g2, F, D, stats);
-					double ITot = IF + camminoFD.lunghezza();
-					int ITotTorre = IFdistanzaTorre + camminoFD.lunghezzaTorre();
-					int ITotAlfiere = IFdistanzaAlfiere + camminoFD.lunghezzaAlfiere();
+					if (IF < lunghezzaMin) {		//questa condizione può essere fatta diventare più forte
+						ICammino camminoFD = camminoMinConStatistiche(g2, F, D, stats);
+						double ITot = IF + camminoFD.lunghezza();
+						int ITotTorre = IFdistanzaTorre + camminoFD.lunghezzaTorre();
+						int ITotAlfiere = IFdistanzaAlfiere + camminoFD.lunghezzaAlfiere();
 
-					if (ITot < lunghezzaMin) {
-						lunghezzaMin = ITot;
-						lunghezzaTorreMin = ITotTorre;
-						lunghezzaAlfiereMin = ITotAlfiere;
+						if (ITot < lunghezzaMin) {
+							lunghezzaMin = ITot;
+							lunghezzaTorreMin = ITotTorre;
+							lunghezzaAlfiereMin = ITotAlfiere;
 
-						seqMin = new ArrayList<>();
-						seqMin.add(new Landmark(StatoCella.ORIGINE.value(), O.x(), O.y()));
-						seqMin.add(new Landmark(StatoCella.FRONTIERA.addTo(F.stato()), F.x(), F.y()));
+							seqMin = new ArrayList<>();
+							seqMin.add(new Landmark(StatoCella.ORIGINE.value(), O.x(), O.y()));
+							seqMin.add(new Landmark(StatoCella.FRONTIERA.addTo(F.stato()), F.x(), F.y()));
 
-						List<ILandmark> landmarksFromRecursion = camminoFD.landmarks();
-						if (!landmarksFromRecursion.isEmpty()) {
-							seqMin.addAll(landmarksFromRecursion.subList(1, landmarksFromRecursion.size()));
-						}
-						
-						if(monitorON) {
-						monitorMin.setCammino(new Cammino(
-								lunghezzaTorreMin,
-								lunghezzaAlfiereMin,
-								new ArrayList<>(stackCammino)));
+							List<ILandmark> landmarksFromRecursion = camminoFD.landmarks();
+							if (!landmarksFromRecursion.isEmpty()) {
+								seqMin.addAll(landmarksFromRecursion.subList(1, landmarksFromRecursion.size()));
+							}
+
+							if(monitorON) {
+								monitorMin.setCammino(new Cammino(
+										lunghezzaTorreMin,
+										lunghezzaAlfiereMin,
+										new ArrayList<>(stackCammino)));
+							}
 						}
 					}
-				}
-				else {
-					stats.incrementaIterazioniCondizione();
-					//requisito funzionale: numero totale di volte in cui 
-					//la condizione alla riga 16/17 ha assunto il valore «falso»
+					else {
+						stats.incrementaIterazioniCondizione();
+						//requisito funzionale: numero totale di volte in cui 
+						//la condizione alla riga 16/17 ha assunto il valore «falso»
+					}
 				}
 			}
+
+			livelloRicorsione--;
+			if(monitorON) {
+				monitor.setCammino(new Cammino(
+						lunghezzaTorreMin,
+						lunghezzaAlfiereMin,
+						new ArrayList<>(stackCammino)));
+
+
+				stackCammino.pop();
+			}
+
+			return new Cammino(lunghezzaTorreMin, lunghezzaAlfiereMin, seqMin);
+			
+		}catch (InterruptedException e) {
+            // Gestisce l'interruzione
+            if(stopMessage) System.out.println(e.getMessage());
+            stats.interrompiCalcolo();
+            if(this.getProgressMin().getCammino()!= null) {
+            	return this.getProgressMin().getCammino();
+            }
+            else if(this.getProgress().getCammino()!= null) {
+            	if(stopMessage) System.out.println("Cammino non trovato");
+            	return this.getProgress().getCammino();
+            }
+            else {
+            	if(stopMessage) System.out.println("Calcolo non andato a buon fine");
+            	return null;
+            }
+        }
+	}
+		@Override
+		public String getReport() {
+			return this.report; 
 		}
 
-		livelloRicorsione--;
-		if(monitorON) {
-			monitor.setCammino(new Cammino(
-					lunghezzaTorreMin,
-					lunghezzaAlfiereMin,
-					new ArrayList<>(stackCammino)));
-			
-			
-			stackCammino.pop();
+		@Override
+		public IProgressoMonitor getProgress() {
+			return this.monitor;
 		}
 
-		return new Cammino(lunghezzaTorreMin, lunghezzaAlfiereMin, seqMin);
-	}
+		@Override
+		public IProgressoMonitor getProgressMin() {
+			return this.monitorMin;
+		}
 
-	@Override
-	public String getReport() {
-		return this.report; 
-	}
+		@Override
+		public void interrupt() {
+			this.interrompiSuRichiesta = true;
+		}
 
-	@Override
-	public IProgressoMonitor getProgress() {
-		return this.monitor;
+		@Override
+		public void setTimeout(long timeoutMillis) {
+			this.timeoutMillis = timeoutMillis;
+			this.tempoInizio = System.currentTimeMillis();
+			this.interrompiSuTempo = true;
+		}
+		
+		private void checkInterruzione() throws InterruptedException {
+			if (interrompiSuRichiesta) {
+				throw new InterruptedException("Interrotto su richiesta");
+			}
+
+			if (interrompiSuTempo && (System.currentTimeMillis() - tempoInizio) > timeoutMillis) {
+				throw new InterruptedException("Timeout raggiunto");
+			}
+		}
 	}
-	
-	@Override
-	public IProgressoMonitor getProgressMin() {
-		return this.monitorMin;
-	}
-	
-}

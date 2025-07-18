@@ -6,6 +6,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import francesco.*;
 import nicolas.*;
 import matteo.*;
@@ -13,16 +19,16 @@ import matteo.*;
 public class TestCompitoTreImpl {
 
 	private boolean debug = false;
-	private boolean riassunto = false;
-	private boolean monitorToggle = false;
+	private boolean riassunto = true;
+	private boolean monitorON = false;
 
 	IGriglia<ICella> griglia = null;
-	ICompitoTre c = new CompitoTreImplementation();
+	ICompitoTre c;
 
 	@BeforeEach
 	public void startingSetup() {
 		try {
-
+			c = new CompitoTreImplementation();
 			griglia = Utils.loadSimple(new File("src/test/json/testCompitoTre.int.json"));
 			//System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
 			// Stampa la griglia per visualizzare ostacoli e celle navigabili
@@ -47,7 +53,7 @@ public class TestCompitoTreImpl {
 			monitor = ((CompitoTreImplementation) c).getProgress();
 		}
 
-		if(monitorToggle) {
+		if(monitorON) {
 			System.out.println("Origine: (" + monitor.getOrigine().x() + "," +monitor.getOrigine().y() + ")");
 			System.out.println("Destinazione: (" + monitor.getDestinazione().x() + "," +monitor.getDestinazione().y() + ")");
 			monitor.getCammino().landmarks()
@@ -460,11 +466,85 @@ public class TestCompitoTreImpl {
 			monitor = ((CompitoTreImplementation) c).getProgress();
 		}
 
-		if(monitorToggle) {
+		if(monitorON) {
 			System.out.println("Origine: (" + monitor.getOrigine().x() + "," +monitor.getOrigine().y() + ")");
 			System.out.println("Destinazione: (" + monitor.getDestinazione().x() + "," +monitor.getDestinazione().y() + ")");
 			monitor.getCammino().landmarks()
 			.forEach(x->System.out.print("("+ x.x() +","+ x.y()+")"));
 		}
 	}
+	
+	
+
+    @Test
+    void testInterruzioneSuRichiesta() throws Exception {
+        // Carica la griglia
+        try {
+            griglia = Utils.loadSimple(new File("src/test/json/zigZag_ostacoli.int.json"));
+        } catch (Exception e) {
+            fail("Errore durante il caricamento della griglia: " + e.getMessage());
+        }
+
+        IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
+        ICella2 start = g.getCellaAt(0, 0);
+        ICella2 end = g.getCellaAt(0, 6);
+
+        
+        // Crea un thread separato per l'esecuzione
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<ICammino> future = executor.submit(() -> c.camminoMin(griglia, start, end));
+
+        // Interrompi dopo un breve ritardo
+        Thread.sleep(100);
+        ((IInterrompibile)c).interrupt();
+
+        try {
+            ICammino cammino = future.get(1, TimeUnit.SECONDS);
+            
+            
+            if (debug) {
+                System.out.println("TEST INTERRUZIONE SU RICHIESTA");
+                System.out.println("Cammino dopo interruzione:");
+                cammino.landmarks().forEach(x -> System.out.print("(" + x.x() + "," + x.y() + ") "));
+                System.out.println("\n#############################");
+            }
+            
+        } catch (TimeoutException e) {
+            fail("L'esecuzione non è stata interrotta tempestivamente");
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+	@Test
+    void testInterruzioneSuTimeout() throws Exception {
+        // Carica una griglia più complessa per testare il timeout
+        try {
+            griglia = Utils.loadSimple(new File("src/test/json/zigZag_ostacoli.int.json"));
+        } catch (Exception e) {
+            fail("Errore durante il caricamento della griglia: " + e.getMessage());
+        }
+
+        IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
+        ICella2 start = g.getCellaAt(0, 0);
+		ICella2 end = g.getCellaAt(0,6);
+
+        // Configura il timeout a 500ms
+        ((CompitoTreImplementation)c).setTimeout(500);
+
+        long startTime = System.currentTimeMillis();
+        ICammino cammino = c.camminoMin(griglia, start, end);
+        long duration = System.currentTimeMillis() - startTime;
+
+        // Verifica che l'esecuzione sia stata interrotta
+        assertTrue(duration >= 500 && duration < 1000, 
+                  "L'esecuzione dovrebbe essere interrotta dopo circa 500ms");
+       
+        if (debug) {
+            System.out.println("TEST INTERRUZIONE SU TIMEOUT");
+            System.out.println("Tempo di esecuzione: " + duration + "ms");
+            System.out.println("Cammino dopo timeout:");
+            cammino.landmarks().forEach(x -> System.out.print("(" + x.x() + "," + x.y() + ") "));
+            System.out.println("\n#############################");
+        }
+    }
 }
