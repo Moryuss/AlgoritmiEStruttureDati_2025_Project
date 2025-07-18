@@ -62,7 +62,12 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 	public int height() {
 		return mat.length;
 	}
-
+	
+	@Override
+	public int getTipo() {
+		return tipoGriglia;
+	}
+	
 	@Override
 	public ICella2 getOrigine() {
 		return getCellaAt(Ox, Oy);

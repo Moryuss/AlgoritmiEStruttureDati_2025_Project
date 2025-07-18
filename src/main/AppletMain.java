@@ -80,15 +80,6 @@ public class AppletMain extends PApplet {
 		
 		println("w=%d, h=%d".formatted(w, h));
 		
-		
-		if (config.hasKey("load")==false && json.getBoolean("demo", false)) {
-//			griglia = GrigliaConOrigineFactory.creaV0(griglia, 2, 2);
-//			LANDMARK.addTo(griglia.getCellaAt(14, 9));
-//			DESTINAZIONE.addTo(griglia.getCellaAt(w-1, h-1));
-			
-			griglia = GrigliaConOrigineFactory.creaV0(griglia, 6, 4);
-		}
-		
 		griglia.print();
 		
 	}
@@ -130,6 +121,7 @@ public class AppletMain extends PApplet {
 		background(255);
 		fill(0);
 		noStroke();
+		rectMode(CORNER);
 		
 		griglia.forEach((j,i) -> {
 			int n = griglia.getCellaAt(j, i).stato();
@@ -170,27 +162,53 @@ public class AppletMain extends PApplet {
 		});
 		
 		if (monitor!=null) {
-			cammino = monitor.getCammino();
+			var cammino = monitor.getCammino();
+			if (cammino!=null) {
+				stroke(200);
+				drawCammino(cammino);
+			}
 		}
 		
-		if (cammino!=null) {
-			stroke(0, 150, 0);
-			noFill();
-			pushMatrix();
-			scale(s);
-			translate(0.5f, 0.5f);
-			strokeWeight(0.1f);
-			Utils.forEachPair(cammino.landmarks(), (a,b) -> {
-				dashedLine(a.x(), a.y(), b.x(), b.y(), 0.2f, 0.4f);
-			});
-			popMatrix();
+		if (monitorMin!=null) {
+			var cammino = monitorMin.getCammino();
+			if (cammino!=null) {
+				stroke(0, 150, 0);
+				drawCammino(cammino);
+				textAlign(CENTER, CENTER);
+				var msg = "%.2f".formatted(cammino.lunghezza(), cammino.landmarks().size());
+				translate((O.x()+0.5f)*s, (O.y()+0.5f)*s);
+				rectMode(CENTER);
+				fill(255);
+				rect(0, 0, textWidth(msg)+s/2, s, s/2);
+				fill(0);
+				text(msg, 0, 0);
+			}
 		}
 		
 	}
+
+
+	private void drawCammino(ICammino cammino) {
+		noFill();
+		pushMatrix();
+		scale(s);
+		translate(0.5f, 0.5f);
+		strokeWeight(0.1f);
+		float dl = 0.2f, ds=0.4f;
+		Utils.forEachPair(cammino.landmarks(), (a,b) -> {
+			//dashedLine(a.x(), a.y(), b.x(), b.y(), 0.2f, 0.4f);
+			if (b.is(COMPLEMENTO)) {
+				camminoLibero2(a.x(), a.y(), b.x(), b.y(), dl, ds);
+			} else {
+				camminoLibero1(a.x(), a.y(), b.x(), b.y(), dl, ds);
+			}
+		});
+		popMatrix();
+	}
 	
 	ICella2 O,D;
-	ICammino cammino;
-	IProgressoMonitor monitor;
+	IProgressoMonitor monitor,monitorMin;
+	CompitoTreImplementation compitoTreImpl;
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -201,8 +219,7 @@ public class AppletMain extends PApplet {
 		case LEFT:
 			clearNonOStacoli(e.isControlDown());
 			D = null;
-			cammino = null;
-			monitor = null;
+			monitor = monitorMin = null;
 			var g = GrigliaConOrigineFactory.creaV0(griglia, x, y);
 			O = g.getCellaAt(x, y);
 			griglia = g;
@@ -217,22 +234,27 @@ public class AppletMain extends PApplet {
 				}
 			});
 			maskGriglia((DESTINAZIONE.mask()-1) | OSTACOLO.mask());
-			cammino = null;
+			griglia = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y());
+			O = (ICella2) griglia.getCellaAt(O.x(), O.y());
 			
 			DESTINAZIONE.toggleTo(griglia.getCellaAt(x, y));
 			D = (ICella2)griglia.getCellaAt(x, y);
 			D.setStato(DESTINAZIONE.value());
 			
 			try {
-				var compitoTreImpl = new CompitoTreImplementation();
+				compitoTreImpl = new CompitoTreImplementation();
 				monitor = compitoTreImpl.getProgress();
+				monitorMin = compitoTreImpl.getProgressMin();
 				new Thread(()->{
 					System.out.println("inizio camminoMin");
-					cammino = compitoTreImpl.camminoMin(griglia, O, D);
+					var cammino = compitoTreImpl.camminoMin(griglia, O, D);
 					cammino.landmarks().forEach(lm -> {
 						LANDMARK.addTo(griglia.getCellaAt(lm.x(), lm.y()));
 					});
-					System.out.println("finito");
+					System.out.print("finito: ");
+					System.out.printf("%d+%d√2=%f\n",cammino.lunghezzaTorre(),
+							cammino.lunghezzaAlfiere(), cammino.lunghezza());
+					monitor=null;
 				}).start();
 				
 			} catch(Exception ex) {
@@ -311,11 +333,15 @@ public class AppletMain extends PApplet {
 		case 'C':
 			clearNonOStacoli(e.isControlDown());
 			O = D = null;
-			cammino = null;
 			break;
 		case 'K':
 			if (griglia instanceof IGrigliaConOrigine gco) {
 				griglia = gco.addObstacle(gco.convertiChiusuraInOstacolo());
+			}
+			break;
+		case 'I':
+			if (compitoTreImpl!=null) {
+				compitoTreImpl.interrupt();
 			}
 			break;
 		}
@@ -334,7 +360,31 @@ public class AppletMain extends PApplet {
 		});
 	}
 	
-	public void dashedLine(float x1, float y1, float x2, float y2, float dl, float ds) {
+	private void camminoLibero1(int x1, int y1, int x2, int y2, float dl, float ds) {
+		var dx = (x2-x1);
+		var dy = (y2-y1);
+		if (abs(dx) > abs(dy)) {
+			dashedLine(x1, y1, x1+abs(dy)*Math.signum(dx), y2, dl, ds);
+			dashedLine(x1+abs(dy)*Math.signum(dx), y2, x2, y2, dl, ds);
+		} else {
+			dashedLine(x1, y1, x2, y1+abs(dx)*Math.signum(dy), dl, ds);
+			dashedLine(x2, y1+abs(dx)*Math.signum(dy), x2, y2, dl, ds);
+		}
+	}
+	private void camminoLibero2(int x1, int y1, int x2, int y2, float dl, float ds) {
+		var dx = (x1-x2);
+		var dy = (y1-y2);
+		if (abs(dx) > abs(dy)) {
+			dashedLine(x1, y1, x2+abs(dy)*Math.signum(dx), y1, dl, ds);
+			dashedLine(x2+abs(dy)*Math.signum(dx), y1, x2, y2, dl, ds);
+		} else {
+			dashedLine(x1, y1, x1, y2+abs(dx)*Math.signum(dy), dl, ds);
+			dashedLine(x1, y2+abs(dx)*Math.signum(dy), x2, y2, dl, ds);
+		}
+	}
+	
+	
+	private void dashedLine(float x1, float y1, float x2, float y2, float dl, float ds) {
 		beginShape(LINES);
 		
 		var start = new PVector(x1, y1);
