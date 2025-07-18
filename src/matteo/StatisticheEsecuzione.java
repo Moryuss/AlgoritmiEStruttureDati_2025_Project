@@ -44,7 +44,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	}
     
     public StatisticheEsecuzione() {
-        this.tempoInizio = System.currentTimeMillis();
+        this.tempoInizio = System.nanoTime();
     }
     @Override
     public void incrementaCelleFrontiera() {
@@ -64,14 +64,15 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
     }
     @Override
     public String generaRiassunto(ICammino risultato) {
-        long tempoTotale = System.currentTimeMillis() - tempoInizio;
+    	  long tempoTotaleNs = System.nanoTime() - tempoInizio;
+          double tempoTotaleMs = tempoTotaleNs / 1_000_000.0;
         StringBuilder sb = new StringBuilder();
         sb.append("=== RIASSUNTO ESECUZIONE CAMMINOMIN ===\n");
         sb.append("Dimensioni griglia: Width = ").append(this.width).append(", Height = ").append(this.height).append("\n");
         sb.append("Tipo griglia: ").append(this.tipoGriglia).append("\n");
         sb.append("Origine: (").append(origine.x()).append(",").append(origine.y()).append(")").append("\n");
         sb.append("Destinazione: (").append(destinazione.x()).append(",").append(destinazione.y()).append(")").append("\n");
-        sb.append("Tempo di esecuzione: ").append(tempoTotale).append(" ms\n");
+        sb.append("Tempo di esecuzione: ").append(tempoTotaleNs).append(" ns (").append(tempoTotaleMs).append(" ms)\n");
         sb.append("Totale celle di frontiera considerate: ").append(totaleCelleFrontiera).append("\n");
         sb.append("Totale iterazioni condizione (riga 16/17): ").append(totaleIterazioniCondizione).append("\n");
         sb.append("Calcolo interrotto: ").append(calcoloInterrotto ? "SI" : "NO").append("\n");
