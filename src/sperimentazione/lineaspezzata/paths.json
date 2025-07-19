@@ -1,0 +1,9 @@
+{
+	"path": ["piccolaGriglia.int.json", "mediaGriglia.int.json", "grandeGriglia.int.json"],
+	"name": ["Griglia Piccola", "Griglia Media", "Griglia Grande"],
+	"ox": [0, 0, 0],
+	"oy": [0, 0, 0],
+	"dx": [19, 39, 79],
+	"dy": [0, 0, 0],
+	"txt": "analisiLineaSpezzata.txt",
+}
