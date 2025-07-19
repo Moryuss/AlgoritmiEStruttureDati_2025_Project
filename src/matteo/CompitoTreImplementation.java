@@ -1,26 +1,21 @@
 package matteo;
 
 import static nicolas.StatoCella.DESTINAZIONE;
+import static nicolas.StatoCella.ORIGINE;
+
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 
-import francesco.ICella;
-import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.implementazioni.Cella2D;
-import nicolas.Cella2;
 import nicolas.GrigliaConOrigineFactory;
 import nicolas.ICella2;
 import nicolas.IGrigliaConOrigine;
-import matteo.Cammino;
-import matteo.Landmark;
 import nicolas.StatoCella;
 import nicolas.Utils;
 
@@ -61,6 +56,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stats.saveOrigine(O);
 		stats.saveDestinazione(D);
 
+		DESTINAZIONE.addTo(griglia.getCellaAt(D.x(), D.y()));
+		ORIGINE.addTo(griglia.getCellaAt(D.x(), D.y()));
+
+
 		try {
 			ICammino risultato = camminoMinConStatistiche(griglia, O, D, stats);
 
@@ -92,130 +91,61 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 		this.checkInterruzione();
 
-		ILandmark currentLandmark;
-		if (livelloRicorsione == 1) {
-			currentLandmark = new Landmark(
-					StatoCella.LANDMARK.addTo(StatoCella.ORIGINE.value()),
-					O.x(), O.y());
-		} else {
-			currentLandmark = new Landmark(
-					StatoCella.LANDMARK.addTo(O.stato()),
-					O.x(), O.y());
-		}
+		ILandmark currentLandmark = new Landmark(
+				StatoCella.LANDMARK.addTo(O.stato()),
+				O.x(), O.y());
+
+
 		stackCammino.push(currentLandmark);
-
-		if(monitorON) {
-
-			List<ILandmark> percorsoCorrente = new ArrayList<>(stackCammino);
-			Collections.reverse(percorsoCorrente);
-			
-			monitor.setCammino(new Cammino(
-					Integer.MAX_VALUE,
-					Integer.MAX_VALUE,
-					percorsoCorrente));
-		}
 
 		if(debug) System.out.println("Chiamata camminoMinConStatistiche livello " + livelloRicorsione);
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y());
-		DESTINAZIONE.addTo(g.getCellaAt(D.x(), D.y()));
 
-		if (g.isInContesto(D.x(), D.y())) {
-
-			//double distanza = g.distanzaLiberaDa(D.x(), D.y());
+		if(monitorON) {
 			int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
 			int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
-
-
-//			ILandmark destLandmark = new Landmark(
-//					StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), 
-//					D.x(), D.y());
-//			stackCammino.push(destLandmark);
-
-//
-//			if(monitorON) {
-//				monitor.setCammino(new Cammino(
-//						distanzaTorre,
-//						distanzaAlfiere,
-//						new ArrayList<>(stackCammino)));
-//			}
-
-			// Pop destinazione e punto corrente prima di uscire
-//			stackCammino.pop(); // rimuove destinazione
-			stackCammino.pop(); // rimuove punto corrente
-			livelloRicorsione--;
-
-			return new Cammino(distanzaTorre,distanzaAlfiere,
-					Arrays.asList(
-							new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
-							new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()), D.x(), D.y())
-							));
+			updateMonitor(distanzaTorre,distanzaAlfiere);
 		}
 
-		if (g.isInComplemento(D.x(), D.y())) {
-
-			//double distanza = g.distanzaLiberaDa(D.x(), D.y());
-			int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
-			int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
-
-			// Push destinazione raggiunta
-//			ILandmark destLandmark = new Landmark(
-//					StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), 
-//					D.x(), D.y());
-//			stackCammino.push(destLandmark);
-
-//			if(monitorON) {
-//				monitor.setCammino(new Cammino(
-//						distanzaTorre,
-//						distanzaAlfiere,
-//						new ArrayList<>(stackCammino)));
-//			}
-
-			// Pop destinazione e punto corrente prima di uscire
-//			stackCammino.pop(); // rimuove destinazione
-			stackCammino.pop(); // rimuove punto corrente
+		if (g.isInContesto(D.x(), D.y()) || g.isInComplemento(D.x(), D.y())) {
+			if(monitorON) {
+				int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
+				int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
+				updateMonitor(distanzaTorre,distanzaAlfiere);
+				if(livelloRicorsione==1) {
+					stackCammino.push(new Landmark(
+							StatoCella.LANDMARK.addTo(O.stato()),
+							D.x(), D.y()));
+					updateMonitorMin(distanzaTorre,distanzaAlfiere);
+				}
+			}
+			stackCammino.pop();
 			livelloRicorsione--;
 
-			return new Cammino(distanzaTorre, distanzaAlfiere,
-					Arrays.asList(
-							new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
-							new Landmark(StatoCella.LANDMARK.addTo(StatoCella.COMPLEMENTO.value()), D.x(), D.y())
-							));
+			return createPassoCammino(O, D, g);
 		}
+
 
 		List<ICella2> frontieraList = g.getFrontiera()
 				.sorted(Comparator.comparingDouble(
 						c -> Utils.distanzaLiberaTra(c, D)))
 				.toList();
 
-
-
 		if (frontieraList.isEmpty()) {
-
-			//stats.aggiungiPrestazione("Frontiera vuota a livello " + livelloRicorsione);
-
-			// Push destinazione irraggiungibile
-//			ILandmark unreachableLandmark = new Landmark(
-//					StatoCella.LANDMARK.value(),
-//					D.x(), D.y());
-//			stackCammino.push(unreachableLandmark);
-
-//			if(monitorON) {
-//				monitor.setCammino(new Cammino(Integer.MAX_VALUE,
-//						Integer.MAX_VALUE, 
-//						new ArrayList<>(stackCammino)));
-//			}
-
-			// Pop destinazione irraggiungibile e punto corrente
-//			stackCammino.pop(); // rimuove destinazione irraggiungibile
+			if(monitorON) {
+				int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
+				int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
+				updateMonitor(distanzaTorre,distanzaAlfiere);
+				updateMonitorMin(distanzaTorre,distanzaAlfiere);
+				
+			}
 			stackCammino.pop(); // rimuove punto corrente
 			livelloRicorsione--;
-
-
-			return new Cammino(Integer.MAX_VALUE,
-					Integer.MAX_VALUE,
-					new ArrayList<>());
+			
+			return passoInfinitoCammino();
 		}
+
 
 		//stats.aggiungiPrestazione("Frontiera di dimensione " + frontieraList.size() + " a livello " + livelloRicorsione);
 
@@ -243,27 +173,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 				if (IF < lunghezzaMin) {		//questa condizione può essere fatta diventare più forte
 
-					// Push della frontiera che stiamo esplorando
-//					ILandmark frontieraLandmark = new Landmark(
-//							StatoCella.FRONTIERA.addTo(F.stato()), 
-//							F.x(), F.y());
-//					stackCammino.push(frontieraLandmark);
-
-//					if(monitorON) {
-//					    // Crea una copia dello stack nell'ordine corretto
-//					    List<ILandmark> percorsoCorrente = new ArrayList<>(stackCammino);
-//					    Collections.reverse(percorsoCorrente);
-//					    
-//					    monitor.setCammino(new Cammino(
-//					        Integer.MAX_VALUE,
-//					        Integer.MAX_VALUE,
-//					        percorsoCorrente));
-//					}
-
 					ICammino camminoFD = camminoMinConStatistiche(g2, F, D, stats);
-
-//					// Pop della frontiera dopo la ricorsione
-//					stackCammino.pop();
 
 					double ITot = IF + camminoFD.lunghezza();
 					int ITotTorre = IFdistanzaTorre + camminoFD.lunghezzaTorre();
@@ -279,7 +189,6 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 						seqMin.add(new Landmark(StatoCella.ORIGINE.value(), O.x(), O.y()));
 						seqMin.addAll(camminoFD.landmarks());			
 
-						// T_T
 						List<ILandmark> stackReversed = new ArrayList<>(stackCammino);
 						Collections.reverse(stackReversed);
 
@@ -299,8 +208,14 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 									lunghezzaTorreMin,
 									lunghezzaAlfiereMin,
 									new ArrayList<>(union))); 
+
+							monitorMin.setCammino(new Cammino(
+									lunghezzaTorreMin,
+									lunghezzaAlfiereMin,
+									new ArrayList<>(union))); 
 						}
-						
+
+
 					}
 				}
 				else {
@@ -316,11 +231,54 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		livelloRicorsione--;
 
 
-
 		return new Cammino(lunghezzaTorreMin, lunghezzaAlfiereMin, seqMin);
 
 
 	}
+
+	private ICammino passoInfinitoCammino() {
+		return new Cammino(Integer.MAX_VALUE,
+				Integer.MAX_VALUE,
+				new ArrayList<>());
+	}
+
+	private ICammino createPassoCammino(ICella2 O, ICella2 D, IGrigliaConOrigine g) {
+		int distanzaTorre = g.getCellaAt(D.x(), D.y()).distanzaTorre();
+		int distanzaAlfiere = g.getCellaAt(D.x(), D.y()).distanzaAlfiere();
+
+
+		return new Cammino(distanzaTorre,distanzaAlfiere,
+				Arrays.asList(
+						new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
+						new Landmark(StatoCella.LANDMARK.addTo(D.stato()), D.x(), D.y())
+						));
+	}
+
+	private void updateMonitor(int distanzaTorre, int distanzaAlfiere) {
+
+		List<ILandmark> percorsoCorrente = new ArrayList<>(stackCammino);
+		Collections.reverse(percorsoCorrente);
+
+		monitor.setCammino((new Cammino(
+				distanzaTorre,
+				distanzaAlfiere,
+				percorsoCorrente)));
+	}
+	/**
+	 * Utilizzato nei casi base, per gli edge case che non entrano nel ciclo for
+	 * @param d 
+	 * @param g 
+	 */
+	private void updateMonitorMin(int distanzaTorre, int distanzaAlfiere) {
+		List<ILandmark> percorsoCorrente = new ArrayList<>(stackCammino);
+		Collections.reverse(percorsoCorrente);
+
+		monitorMin.setCammino(new Cammino(
+				distanzaTorre,
+				distanzaAlfiere,
+				percorsoCorrente));
+	}
+
 	@Override
 	public String getReport() {
 		return this.report; 

@@ -48,16 +48,23 @@ public class TestCompitoTreImpl {
 			System.out.println(((CompitoTreImplementation) c).getReport());
 		}
 		IProgressoMonitor monitor = new ProgressoMonitor();
+		IProgressoMonitor monitorMin = new ProgressoMonitor();
 
-		if (c instanceof CompitoTreImplementation) {
+		if (c instanceof CompitoTreImplementation && monitorON) {
 			monitor = ((CompitoTreImplementation) c).getProgress();
-		}
-
-		if(monitorON) {
-			System.out.println("Origine: (" + monitor.getOrigine().x() + "," +monitor.getOrigine().y() + ")");
+			monitorMin = ((CompitoTreImplementation) c).getProgressMin();
+			System.out.println("\nOrigine: (" + monitor.getOrigine().x() + "," +monitor.getOrigine().y() + ")");
 			System.out.println("Destinazione: (" + monitor.getDestinazione().x() + "," +monitor.getDestinazione().y() + ")");
+			System.out.println("Cammino:");
 			monitor.getCammino().landmarks()
 			.forEach(x->System.out.print("("+ x.x() +","+ x.y()+")"));
+			System.out.println("\nDistanza:");
+			System.out.println(monitor.getCammino().lunghezza());
+			System.out.println("\nCammino minimo:");
+			monitorMin.getCammino().landmarks()
+			.forEach(x->System.out.print("("+ x.x() +","+ x.y()+")"));
+			System.out.println("\nDistanza:");
+			System.out.println(monitorMin.getCammino().lunghezza());
 		}
 	}
 
