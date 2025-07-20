@@ -20,8 +20,11 @@ public class TestCompitoTreImpl {
 
 	private boolean debug = false;
 	private boolean riassunto = true;
-	private boolean monitorON = false;
+	private boolean monitorON = true;
+	private boolean bit = false;	//stampa lo stato in bit
 
+	IProgressoMonitor monitor = new ProgressoMonitor();
+	IProgressoMonitor monitorMin = new ProgressoMonitor();
 	IGriglia<ICella> griglia = null;
 	ICompitoTre c;
 
@@ -47,8 +50,6 @@ public class TestCompitoTreImpl {
 		if (c instanceof CompitoTreImplementation && riassunto) {
 			System.out.println(((CompitoTreImplementation) c).getReport());
 		}
-		IProgressoMonitor monitor = new ProgressoMonitor();
-		IProgressoMonitor monitorMin = new ProgressoMonitor();
 
 		if (c instanceof CompitoTreImplementation && monitorON) {
 			monitor = ((CompitoTreImplementation) c).getProgress();
@@ -67,7 +68,12 @@ public class TestCompitoTreImpl {
 			System.out.println(monitorMin.getCammino().lunghezza());
 		}
 	}
-
+	
+	private void bitPrint(int numero) {
+		String bit = String.format("%32s", Integer.toBinaryString(numero)).replace(' ', '0');
+		System.out.println(bit);
+	}
+	
 	@Test
 	void testCasoBaseStartEqualsEnd() throws Exception {
 
@@ -77,9 +83,17 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.ORIGINE.is(end));
 		assertNotNull(cammino);
-
+	
 		assertEquals(0.0, cammino.lunghezza());
 		assertEquals(0, cammino.lunghezzaTorre(), 0.001);
 		assertEquals(0, cammino.lunghezzaAlfiere(), 0.001);
@@ -94,13 +108,21 @@ public class TestCompitoTreImpl {
 	@Test
 	void testCasoBase_Start_spostato() throws Exception {
 
-		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
+		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 1,0);
 		ICella2 start = g.getCellaAt(1,0);
 		ICella2 end = g.getCellaAt(0,0);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.REGINA.is(end));
 		assertNotNull(cammino);
 
 		assertEquals(1, cammino.lunghezza());
@@ -123,8 +145,17 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.REGINA.is(end));
 		assertNotNull(cammino);
+	
 
 		assertEquals(1.0, cammino.lunghezza(), 0.001);
 		assertEquals(1, cammino.lunghezzaTorre(), 0.001);
@@ -147,8 +178,17 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.CONTESTO.is(end));
 		assertNotNull(cammino);
+	
 
 		assertEquals(1+2*Math.sqrt(2), cammino.lunghezza(), 0.001);
 		assertEquals(1, cammino.lunghezzaTorre(), 0.001);
@@ -170,15 +210,22 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.REGINA.is(end));
+		assertTrue(StatoCella.CONTESTO.is(end));	//sicuro che sia corretto?
 		assertNotNull(cammino);
+	
 
 		assertEquals(3*Math.sqrt(2), cammino.lunghezza(), 0.001);
 		assertEquals(3, cammino.lunghezzaAlfiere(), 0.001);
 		assertEquals(0, cammino.lunghezzaTorre(), 0.001);
-
-
-		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da REGINA
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
 		assertEquals(start.y(), cammino.landmarks().get(0).y());
@@ -197,7 +244,16 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.REGINA.is(end));
+		assertTrue(StatoCella.CONTESTO.is(end));
 		assertNotNull(cammino);
 
 		assertEquals(10, cammino.lunghezza(), 0.001);
@@ -223,8 +279,17 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.CONTESTO.is(end));
 		assertNotNull(cammino);
+		
 		assertEquals(4, cammino.lunghezza(), 0.001);
 
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da REGINA
@@ -246,9 +311,18 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.CONTESTO.is(end));
+		assertTrue(StatoCella.REGINA.isNot(end));
 		assertNotNull(cammino);
-
+		
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da Alfiere-torre
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
@@ -266,7 +340,16 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.COMPLEMENTO.is(end));
+		assertTrue(StatoCella.REGINA.isNot(end));
 		assertNotNull(cammino);
 
 		assertTrue(StatoCella.COMPLEMENTO.is(end));	//dato che é raggiunto solo da torre-alfiere
@@ -287,7 +370,16 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		assertTrue(StatoCella.COMPLEMENTO.is(end));
+		assertTrue(StatoCella.REGINA.isNot(end));
 		assertNotNull(cammino);
 
 		assertEquals(cammino.lunghezzaTorre(), 2);
@@ -308,10 +400,26 @@ public class TestCompitoTreImpl {
 		ICella2 end = g.getCellaAt(11,3);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
-
-		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		
+		if (c instanceof CompitoTreImplementation && monitorON) {
+			monitor = ((CompitoTreImplementation) c).getProgress();
+			monitorMin = ((CompitoTreImplementation) c).getProgressMin();
+		}
+		end = monitorMin.getDestinazione();
+		
+		if(bit) {
+			System.out.print("\nStart: ");
+			bitPrint(start.stato());
+			System.out.print("\nEnd: ");
+			bitPrint(end.stato());
+		}
+		assertTrue(StatoCella.OSTACOLO.isNot(end));
+		assertTrue(StatoCella.ORIGINE.is(start));
+		//assertTrue(StatoCella.DESTINAZIONE.is(end), "Not dest");
+		assertTrue(StatoCella.COMPLEMENTO.isNot(end));
+		assertTrue(StatoCella.REGINA.isNot(end));
 		assertNotNull(cammino);
-
+		
 		assertEquals(12.242640687119286, cammino.lunghezza(), 0.001);
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());

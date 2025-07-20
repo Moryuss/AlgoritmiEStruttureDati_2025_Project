@@ -30,7 +30,7 @@ public class Main  {
 			return; // Esci se la griglia non può essere caricata
 		}
 
-		ICompitoTre c3 = new CompitoTreImpl_NoRequisitiFunzionali();
+		ICompitoTre c3 = new CompitoTreImplementation();
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0); //impl nicolas
 		
