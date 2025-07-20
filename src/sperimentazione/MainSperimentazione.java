@@ -10,6 +10,7 @@ import matteo.ICompitoTre;
 import matteo.ILandmark;
 import nicolas.GrigliaConOrigineFactory;
 import nicolas.ICella2;
+import nicolas.ICompitoDue;
 import nicolas.IGrigliaConOrigine;
 import nicolas.Utils;
 import processing.core.PApplet;
@@ -20,10 +21,17 @@ public class MainSperimentazione {
 	// Per il controllo su cammini uguali
 	private static final double MAX_DIFF = 1e-10;
 	private static final String LINEA_SPEZZATA_PATH = "src/sperimentazione/lineaspezzata";
+	private static final String VARIAZIONE_OSTACOLI_PATH = "src/sperimentazione/varostacoli";
 	
-	private static final List<String> CARTELLE = List.of(LINEA_SPEZZATA_PATH);
+	private static final List<String> CARTELLE = List.of(LINEA_SPEZZATA_PATH
+															, VARIAZIONE_OSTACOLI_PATH
+																						);
+	
+	private static final List<ICompitoTre> TRES = List.of(new CompitoTreImplementation());
+	private static final List<ICompitoDue> DUES = List.of();
 	
 	private static String pathTxt;
+	private static String compitiUsati;
 
 	// Per qualsiasi cosa, controlla classe Test Compito Tre
 	// ma guarda la lettura da file da AppletMain
@@ -41,60 +49,66 @@ public class MainSperimentazione {
 		// COMMENTI: niente
 		// ================================================================
     	
-		for(String cartella : CARTELLE) {
-			System.out.println("Cartella: " + cartella + "\n");
-			
-			List<String> nomi = new ArrayList<>();
-			List<CoordinateCella> origini = new ArrayList<>();
-			List<CoordinateCella> destinazioni = new ArrayList<>();
-			// nomi, origini e destinazioni vengono riempiti in loco
-			List<JSONArray> files = getGriglie(cartella, nomi, origini, destinazioni);
-			if (files == null || files.isEmpty()) {
-				System.err.println("Cartella non trovata o vuota: " + cartella);
-				continue;
-			}
-			ScritturaFile.pulisciFile(pathTxt);
-			for(int i = 0; i < files.size(); i++) {
-				try {
-					scriviEStampa("Nuova Griglia: " + nomi.get(i));
+		
+		for(ICompitoTre tre : TRES) {
+			for(ICompitoDue due : DUES) {
+				compitiUsati = tre.getClass().getSimpleName() + "&" + due.getClass().getSimpleName();
+				for(String cartella : CARTELLE) {
+					System.out.println("Cartella: " + cartella + "\n");
 					
-					// Carica la griglia dal JSONArray
-					IGriglia<?> griglia = Utils.loadSimple(files.get(i));
-					
-					CoordinateCella origine = origini.get(i);
-					IGrigliaConOrigine gO = GrigliaConOrigineFactory.creaV0(griglia, origine.x(), origine.y()); 
-					ICella2 start = gO.getCellaAt(origine.x(), origine.y());
-					
-					CoordinateCella destinazione = destinazioni.get(i);
-					ICella2 end = gO.getCellaAt(destinazione.x(), destinazione.y()); 
-					
-					ICompitoTre solver = new CompitoTreImplementation();
-					ICammino cammino1 = solver.camminoMin(griglia, start, end);
-					
-					String report = ((CompitoTreImplementation) solver).getReport();
-					
-					// Report ottenuto dal cammino
-					scriviEStampa(report);
-					scriviEStampa("==============================");
-					System.out.println("Inizio veririfica correttezza...");
-					// Utilizzo  di un secondo solver ed un secondo cammino per verificare la correttezza
-					// Questa verifica non deve inficiare sul tempo d'esecuzione del primo cammino
-					ICompitoTre solverCorrettezza = new CompitoTreImplementation();
-					ICammino cammino2 = solverCorrettezza.camminoMin(griglia, end, start);
-					boolean corretto = isLunghezzaUguale(cammino1, cammino2);
-					scriviEStampa("e' corretto?: " + corretto);
-					
-					System.out.println("Inizio verifica opposizione...");
-					boolean opposto = isOpposto(cammino1.landmarks(), cammino2.landmarks());
-					scriviEStampa("e' opposto?: " + opposto);
-					
-					// Questi sono generati per poi scrivere sul file txt in caso servano osservazioni
-					scriviEStampa("# COMMENTI: niente");
-					scriviEStampa("==============================");
-					scriviEStampa("\n\n");
-				} catch (Exception e) {
-	            	System.err.println("Errore nella sperimentazione sulla griglia numero " + i + ": " + e.getMessage());
-	            	e.printStackTrace();
+					List<String> nomi = new ArrayList<>();
+					List<CoordinateCella> origini = new ArrayList<>();
+					List<CoordinateCella> destinazioni = new ArrayList<>();
+					// nomi, origini e destinazioni vengono riempiti in loco
+					List<JSONArray> files = getGriglie(cartella, nomi, origini, destinazioni);
+					if (files == null || files.isEmpty()) {
+						System.err.println("Cartella non trovata o vuota: " + cartella);
+						continue;
+					}
+					ScritturaFile.pulisciFile(pathTxt);
+					for(int i = 0; i < files.size(); i++) {
+						try {
+							scriviEStampa("Nuova Griglia: " + nomi.get(i));
+							
+							// Carica la griglia dal JSONArray
+							IGriglia<?> griglia = Utils.loadSimple(files.get(i));
+							
+							CoordinateCella origine = origini.get(i);
+							//TODO CAMBIARE CON "due" QUANDO CI SARA'
+							IGrigliaConOrigine gO = GrigliaConOrigineFactory.creaV0(griglia, origine.x(), origine.y()); 
+							ICella2 start = gO.getCellaAt(origine.x(), origine.y());
+							
+							CoordinateCella destinazione = destinazioni.get(i);
+							ICella2 end = gO.getCellaAt(destinazione.x(), destinazione.y()); 
+//							ICompitoTre solver = new CompitoTreImplementation();
+							ICammino cammino1 = tre.camminoMin(griglia, start, end);
+							
+							String report = tre.getReport();
+							
+							// Report ottenuto dal cammino
+							scriviEStampa(report);
+							scriviEStampa("==============================");
+							System.out.println("Inizio veririfica correttezza...");
+							// Utilizzo  di un secondo solver ed un secondo cammino per verificare la correttezza
+							// Questa verifica non deve inficiare sul tempo d'esecuzione del primo cammino
+//							ICompitoTre solverCorrettezza = new CompitoTreImplementation();
+							ICammino cammino2 = tre.camminoMin(griglia, end, start);
+							boolean corretto = isLunghezzaUguale(cammino1, cammino2);
+							scriviEStampa("e' corretto?: " + corretto);
+							
+							System.out.println("Inizio verifica opposizione...");
+							boolean opposto = isOpposto(cammino1.landmarks(), cammino2.landmarks());
+							scriviEStampa("e' opposto?: " + opposto);
+							
+							// Questi sono generati per poi scrivere sul file txt in caso servano osservazioni
+							scriviEStampa("# COMMENTI: niente");
+							scriviEStampa("==============================");
+							scriviEStampa("\n\n");
+						} catch (Exception e) {
+			            	System.err.println("Errore nella sperimentazione sulla griglia numero " + i + ": " + e.getMessage());
+			            	e.printStackTrace();
+						}
+					}
 				}
 			}
 		}
@@ -232,7 +246,7 @@ public class MainSperimentazione {
 	
 	private static void scriviEStampa(String msg) {
 		System.out.println(msg);
-		ScritturaFile.writeToFile(pathTxt, msg);
+		ScritturaFile.writeToFile(pathTxt + "_" + compitiUsati + ".txt", msg);
 	}
 }
 

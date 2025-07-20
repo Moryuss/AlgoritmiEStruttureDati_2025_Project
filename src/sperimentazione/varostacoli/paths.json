@@ -1,0 +1,9 @@
+{
+	"path": ["BarreSemplici.int.json"],
+	"name": ["BarreSemplici"],
+	"ox": [0],
+	"oy": [0],
+	"dx": [12],
+	"dy": [6],
+	"txt": "analisiVariazioneOstacoli",
+}

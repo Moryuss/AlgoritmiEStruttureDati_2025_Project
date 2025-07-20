@@ -3,7 +3,7 @@
 	"name": ["Griglia Piccola", "Griglia Media", "Griglia Grande"],
 	"ox": [0, 0, 0],
 	"oy": [0, 0, 0],
-	"dx": [9, 19, 39],
-	"dy": [19, 0, 0],
-	"txt": "analisiLineaSpezzata",
+	"dx": [19, 39, 79],
+	"dy": [0, 0, 0],
+	"txt": "analisiVariazioneDimensioni",
 }
