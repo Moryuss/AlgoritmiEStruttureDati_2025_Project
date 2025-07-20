@@ -3,15 +3,12 @@ package test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.file.Path;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import francesco.GrigliaMatrix;
 import francesco.ICella;
-import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.IObstacle;
 import francesco.TipoOstacolo;
 import francesco.implementazioni.Cella;
 import francesco.implementazioni.LettoreGriglia;

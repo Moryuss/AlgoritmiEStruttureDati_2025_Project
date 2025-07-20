@@ -18,9 +18,7 @@ public interface IGriglia<C extends ICella> {
 	
 	int height();
 	
-	default int getTipo(){
-		return 0;
-	}
+	int getTipo();
 	
 	default IGriglia<ICella> aggiungiTipo(int statoDaAggiungere){
 		return null;
