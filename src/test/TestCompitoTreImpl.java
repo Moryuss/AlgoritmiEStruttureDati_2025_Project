@@ -47,8 +47,8 @@ public class TestCompitoTreImpl {
 
 	@AfterEach
 	public void stampaRiassunto() {
-		if (c instanceof CompitoTreImplementation && riassunto) {
-			System.out.println(((CompitoTreImplementation) c).getReport());
+		if (riassunto) {
+			System.out.println(c.getReport());
 		}
 
 		if (c instanceof CompitoTreImplementation && monitorON) {
