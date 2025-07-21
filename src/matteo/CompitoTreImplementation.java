@@ -22,7 +22,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	public boolean debug = false;
 	public boolean monitorON = true; 	//NON mettere a false, è legato al funzionamento degli interrupt.
 	public boolean stopMessage = false;
-	public boolean stateCheck= false;	//stampa lo stato di celle considerate
+	public boolean stateCheck = false;	//stampa lo stato di celle considerate
 	
 	private boolean interrompiSuRichiesta = false;	// questo non va modificato da qui, ma da setTimeout(tempo)
 	private boolean interrompiSuTempo = false;	
@@ -133,12 +133,17 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				int distanzaAlfiere = g.getCellaAt(dest.x(), dest.y()).distanzaAlfiere();
 				
 				if(monitorON) {
+					ILandmark landmarkDestinazione = new Landmark(
+							StatoCella.LANDMARK.addTo(dest.stato()),
+							dest.x(), dest.y());
+					
+					stackCammino.push(landmarkDestinazione);
 					updateMonitor(distanzaTorre,distanzaAlfiere);
-
+					stackCammino.pop();
+					
+					
 					if(livelloRicorsione==1) {
-						stackCammino.push(new Landmark(
-								StatoCella.LANDMARK.addTo(dest.stato()),
-								dest.x(), dest.y()));
+						stackCammino.push(landmarkDestinazione);
 						updateMonitorMin(distanzaTorre,distanzaAlfiere);
 					}
 				}
