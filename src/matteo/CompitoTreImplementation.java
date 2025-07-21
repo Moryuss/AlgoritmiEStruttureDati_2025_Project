@@ -27,6 +27,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	private boolean interrompiSuRichiesta = false;	// questo non va modificato da qui, ma da setTimeout(tempo)
 	private boolean interrompiSuTempo = false;	
 	
+	boolean sortedFrontiera = true;	//applica sort alla frontiera, considera prima quelle più vicine a destinazione
+	boolean condizioneRafforzata = false; // Imposta a false per usare la condizione originale
+	
 	private long tempoInizio;
 	private long timeoutMillis; 
 	
@@ -41,6 +44,38 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			this.bitPrint(O.stato());
 			this.bitPrint(D.stato());
 		}
+		
+		inizializzazione(griglia, O, D);
+		
+		try {
+			ICammino risultato = camminoMinConStatistiche(griglia, O, D, stats);
+
+			report = stats.generaRiassunto(risultato);
+
+			return risultato;
+		} catch (InterruptedException e) {
+			return gestisciInterruzione(e);
+		}
+	}
+
+	private ICammino gestisciInterruzione(InterruptedException e) {
+		if(stopMessage) System.out.println(e.getMessage());
+		stats.interrompiCalcolo();
+		if(this.getProgressMin().getCammino()!= null) {
+			if(stopMessage) System.out.println("Cammino trovato");
+			return this.getProgressMin().getCammino();
+		}
+		else if(this.getProgress().getCammino()!= null) {
+			if(stopMessage) System.out.println("Cammino non trovato");
+			return this.getProgress().getCammino();
+		}
+		else {
+			if(stopMessage) System.out.println("Calcolo non andato a buon fine");
+			return null;
+		}
+	}
+
+	private void inizializzazione(IGriglia<?> griglia, ICella2 O, ICella2 D) {
 		stats = new StatisticheEsecuzione();
 		monitor.setOrigine(O);
 		monitor.setDestinazione(D);
@@ -52,34 +87,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stats.saveTipoGriglia(griglia.getTipo());
 		stats.saveOrigine(O);
 		stats.saveDestinazione(D);
-		try {
-			ICammino risultato = camminoMinConStatistiche(griglia, O, D, stats);
-
-			report = stats.generaRiassunto(risultato);
-
-			return risultato;
-		} catch (InterruptedException e) {
-
-			if(stopMessage) System.out.println(e.getMessage());
-			stats.interrompiCalcolo();
-			if(this.getProgressMin().getCammino()!= null) {
-				if(stopMessage) System.out.println("Cammino trovato");
-				return this.getProgressMin().getCammino();
-			}
-			else if(this.getProgress().getCammino()!= null) {
-				if(stopMessage) System.out.println("Cammino non trovato");
-				return this.getProgress().getCammino();
-			}
-			else {
-				if(stopMessage) System.out.println("Calcolo non andato a buon fine");
-				return null;
-			}
-		}
 	}
 	
 	public ICammino camminoMinConStatistiche(IGriglia<?> griglia, ICella2 O, ICella2 D, IStatisticheEsecuzione stats) throws InterruptedException {
 			livelloRicorsione++;
-			stats.incrementaIterazioniCondizione();
 			
 			this.checkInterruzione();
 			
@@ -142,11 +153,15 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			}
 			
 			
-			
-			List<ICella2> frontieraList = g.getFrontiera()
+			List<ICella2> frontieraList;
+			if(sortedFrontiera) {
+			frontieraList = g.getFrontiera()
 					.sorted(Comparator.comparingDouble(
 							c -> Utils.distanzaLiberaTra(c, dest)))
 					.toList();
+			}else {
+				frontieraList = g.getFrontiera().toList();
+			}
 			
 			if (frontieraList.isEmpty()) {
 				
@@ -193,7 +208,16 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 					int IFdistanzaAlfiere = g.getCellaAt(F.x(), F.y()).distanzaAlfiere();
 					double IF = F.distanzaDaOrigine();
 					
-					if (IF < lunghezzaMin) {		//questa condizione può essere fatta diventare più forte
+					boolean condizioneSoddisfatta;
+			        if (condizioneRafforzata) {
+			        	double limiteInferioreDistanza = Utils.distanzaLiberaTra(F, dest);
+			            condizioneSoddisfatta = (IF + limiteInferioreDistanza < lunghezzaMin);
+			        } else {
+			            condizioneSoddisfatta = (IF < lunghezzaMin);
+			        }
+
+					if (condizioneSoddisfatta) {
+//						System.out.println("condizione 16/17 triggerata");
 						ICammino camminoFD = camminoMinConStatistiche(g2, F, dest, stats);
 						double ITot = IF + camminoFD.lunghezza();
 						int ITotTorre = IFdistanzaTorre + camminoFD.lunghezzaTorre();
@@ -212,7 +236,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
                             lunghezzaAlfiereMin = ITotAlfiere;
                             
                             seqMin.clear();
-//                            StatoCella.LANDMARK.addTo(O);
+//                          StatoCella.LANDMARK.addTo(O);
                             seqMin.add(new Landmark(O.stato(), O.x(), O.y()));
                             seqMin.addAll(camminoFD.landmarks());
                             

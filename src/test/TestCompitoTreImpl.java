@@ -59,12 +59,12 @@ public class TestCompitoTreImpl {
 			System.out.println("Cammino:");
 			monitor.getCammino().landmarks()
 			.forEach(x->System.out.print("("+ x.x() +","+ x.y()+")"));
-			System.out.println("\nDistanza:");
+			System.out.println("\nDistanza monitor:");
 			System.out.println(monitor.getCammino().lunghezza());
 			System.out.println("\nCammino minimo:");
 			monitorMin.getCammino().landmarks()
 			.forEach(x->System.out.print("("+ x.x() +","+ x.y()+")"));
-			System.out.println("\nDistanza:");
+			System.out.println("\nDistanza monitorMin:");
 			System.out.println(monitorMin.getCammino().lunghezza());
 		}
 	}
@@ -582,6 +582,12 @@ public class TestCompitoTreImpl {
 			monitor = ((CompitoTreImplementation) c).getProgress();
 			monitorMin = ((CompitoTreImplementation) c).getProgressMin();
 		}
+		
+		 assertEquals(cammino.landmarks().size(), monitorMin.getCammino().landmarks().size());
+		    for(int i = 0; i < cammino.landmarks().size(); i++) {
+		        assertEquals(cammino.landmarks().get(i).x(), monitorMin.getCammino().landmarks().get(i).x());
+		        assertEquals(cammino.landmarks().get(i).y(), monitorMin.getCammino().landmarks().get(i).y());
+		    }
 
 		if(monitorON) {
 			System.out.println("----------------------------------------------------");
