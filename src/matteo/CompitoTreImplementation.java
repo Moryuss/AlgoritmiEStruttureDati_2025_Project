@@ -59,7 +59,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			ICammino risultato = camminoMinConStatistiche(griglia, O, D, stats);
 
 			report = stats.generaRiassunto(risultato);
-
+			if(stateCheck) {
+			System.out.println("stato destinazione");
+			bitPrint(risultato.landmarks().getLast().stato());
+			}
 			return risultato;
 		} catch (InterruptedException e) {
 			return gestisciInterruzione(e);
@@ -147,11 +150,34 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		if(debug) System.out.println("Chiamata camminoMinConStatistiche livello " + livelloRicorsione);
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y());
-
+		
+		if(stateCheck) {
+		System.out.println("PRIMA: " );
+		bitPrint(g.getCellaAt(D.x(), D.y()).stato());
+	}
+		StatoCella.DESTINAZIONE.addTo(g.getCellaAt(D.x(), D.y()));
+		
+		
+		if(stateCheck) {
+		System.out.println("DOPO MODIFICA A D: " );
+		bitPrint(g.getCellaAt(D.x(), D.y()).stato());
+		}
+		
 		ICella2 dest = g.getCellaAt(D.x(), D.y());
-		StatoCella.DESTINAZIONE.addTo(dest);
-
-
+		if(stateCheck) {
+			System.out.println("Dest PRIMA: " );
+			bitPrint(g.getCellaAt(dest.x(), dest.y()).stato());
+			}
+		
+		//Non dovrebbe servire
+		//StatoCella.DESTINAZIONE.addTo(dest);
+		
+		if(stateCheck) {
+		System.out.println("Dest dopo: " );
+		bitPrint(g.getCellaAt(dest.x(), dest.y()).stato());
+		System.out.println("end");
+		}
+		
 		if(stateCheck) {
 			System.out.println("Stato destinazione presa da D");
 			this.bitPrint(dest.stato());
@@ -191,7 +217,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			ICammino risultato = new Cammino(distanzaTorre,distanzaAlfiere,
 					Arrays.asList(
 							new Landmark(StatoCella.LANDMARK.value(), O.x(), O.y()),
-							new Landmark(StatoCella.LANDMARK.addTo(StatoCella.CONTESTO.value()),
+							new Landmark(StatoCella.LANDMARK.addTo(dest.stato()),
 									dest.x(), dest.y())
 							));
 
@@ -246,8 +272,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 		List<ILandmark> seqMin = new ArrayList<>();
 
-		IGriglia<?> g2 = griglia.addObstacle(g.convertiChiusuraInOstacolo());
+		IGriglia<ICella2> g2 = g.addObstacle(g.convertiChiusuraInOstacolo());
 
+		 
 		for (ICella2 F : frontieraList) {
 			this.checkInterruzione();
 			if(stateCheck) {
