@@ -22,4 +22,10 @@ public interface IStatisticheEsecuzione {
 	    
 	    public String generaRiassunto(ICammino risultato);
 
+		public void incrementaCacheHit();
+		
+		public void setCache(boolean cahceStatus);
+		
+		public void setFrontieraStored(boolean frontieraStored);
+
 }

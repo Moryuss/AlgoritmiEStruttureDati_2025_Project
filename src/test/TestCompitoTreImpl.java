@@ -68,12 +68,12 @@ public class TestCompitoTreImpl {
 			System.out.println(monitorMin.getCammino().lunghezza());
 		}
 	}
-	
+
 	private void bitPrint(int numero) {
 		String bit = String.format("%32s", Integer.toBinaryString(numero)).replace(' ', '0');
 		System.out.println(bit);
 	}
-	
+
 	@Test
 	void testCasoBaseStartEqualsEnd() throws Exception {
 
@@ -93,7 +93,7 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.ORIGINE.is(start));
 		assertTrue(StatoCella.ORIGINE.is(end));
 		assertNotNull(cammino);
-	
+
 		assertEquals(0.0, cammino.lunghezza());
 		assertEquals(0, cammino.lunghezzaTorre(), 0.001);
 		assertEquals(0, cammino.lunghezzaAlfiere(), 0.001);
@@ -155,7 +155,7 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.ORIGINE.is(start));
 		assertTrue(StatoCella.REGINA.is(end));
 		assertNotNull(cammino);
-	
+
 
 		assertEquals(1.0, cammino.lunghezza(), 0.001);
 		assertEquals(1, cammino.lunghezzaTorre(), 0.001);
@@ -188,7 +188,7 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.ORIGINE.is(start));
 		assertTrue(StatoCella.CONTESTO.is(end));
 		assertNotNull(cammino);
-	
+
 
 		assertEquals(1+2*Math.sqrt(2), cammino.lunghezza(), 0.001);
 		assertEquals(1, cammino.lunghezzaTorre(), 0.001);
@@ -221,7 +221,7 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.REGINA.is(end));
 		assertTrue(StatoCella.CONTESTO.is(end));	//sicuro che sia corretto?
 		assertNotNull(cammino);
-	
+
 
 		assertEquals(3*Math.sqrt(2), cammino.lunghezza(), 0.001);
 		assertEquals(3, cammino.lunghezzaAlfiere(), 0.001);
@@ -289,7 +289,7 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.ORIGINE.is(start));
 		assertTrue(StatoCella.CONTESTO.is(end));
 		assertNotNull(cammino);
-		
+
 		assertEquals(4, cammino.lunghezza(), 0.001);
 
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da REGINA
@@ -322,7 +322,7 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.CONTESTO.is(end));
 		assertTrue(StatoCella.REGINA.isNot(end));
 		assertNotNull(cammino);
-		
+
 		assertTrue(StatoCella.CONTESTO.is(end));	//dato che é raggiunto da Alfiere-torre
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
@@ -400,13 +400,13 @@ public class TestCompitoTreImpl {
 		ICella2 end = g.getCellaAt(11,3);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
-		
+
 		if (c instanceof CompitoTreImplementation && monitorON) {
 			monitor = ((CompitoTreImplementation) c).getProgress();
 			monitorMin = ((CompitoTreImplementation) c).getProgressMin();
 		}
 		end = monitorMin.getDestinazione();
-		
+
 		if(bit) {
 			System.out.print("\nStart: ");
 			bitPrint(start.stato());
@@ -419,7 +419,7 @@ public class TestCompitoTreImpl {
 		assertTrue(StatoCella.COMPLEMENTO.isNot(end));
 		assertTrue(StatoCella.REGINA.isNot(end));
 		assertNotNull(cammino);
-		
+
 		assertEquals(12.242640687119286, cammino.lunghezza(), 0.001);
 
 		assertEquals(start.x(), cammino.landmarks().get(0).x());
@@ -582,12 +582,12 @@ public class TestCompitoTreImpl {
 			monitor = ((CompitoTreImplementation) c).getProgress();
 			monitorMin = ((CompitoTreImplementation) c).getProgressMin();
 		}
-		
-		 assertEquals(cammino.landmarks().size(), monitorMin.getCammino().landmarks().size());
-		    for(int i = 0; i < cammino.landmarks().size(); i++) {
-		        assertEquals(cammino.landmarks().get(i).x(), monitorMin.getCammino().landmarks().get(i).x());
-		        assertEquals(cammino.landmarks().get(i).y(), monitorMin.getCammino().landmarks().get(i).y());
-		    }
+
+		assertEquals(cammino.landmarks().size(), monitorMin.getCammino().landmarks().size());
+		for(int i = 0; i < cammino.landmarks().size(); i++) {
+			assertEquals(cammino.landmarks().get(i).x(), monitorMin.getCammino().landmarks().get(i).x());
+			assertEquals(cammino.landmarks().get(i).y(), monitorMin.getCammino().landmarks().get(i).y());
+		}
 
 		if(monitorON) {
 			System.out.println("----------------------------------------------------");
@@ -652,6 +652,7 @@ public class TestCompitoTreImpl {
 	}
 	@Test
 	void testInterruzioneSuTimeout() throws Exception {
+
 		// Carica una griglia più complessa per testare il timeout
 		try {
 			griglia = Utils.loadSimple(new File("src/test/json/zigZag_ostacoli.int.json"));
@@ -665,6 +666,7 @@ public class TestCompitoTreImpl {
 
 		// Configura il timeout a 500ms
 		((CompitoTreImplementation)c).setTimeout(500);
+		((CompitoTreImplementation)c).cacheEnabled = false; // Disabilita la cache per il test
 
 		long startTime = System.currentTimeMillis();
 		ICammino cammino = c.camminoMin(griglia, start, end);
@@ -678,6 +680,52 @@ public class TestCompitoTreImpl {
 			System.out.println("TEST INTERRUZIONE SU TIMEOUT");
 			System.out.println("Tempo di esecuzione: " + duration + "ms");
 			System.out.println("Cammino dopo timeout:");
+			cammino.landmarks().forEach(x -> System.out.print("(" + x.x() + "," + x.y() + ") "));
+			System.out.println("\n#############################");
+		}
+	}
+	@Test
+	void test_Cache() throws Exception {
+
+		// Carica una griglia più complessa per testare il timeout
+		try {
+			griglia = Utils.loadSimple(new File("src/test/json/zigZag_ostacoli.int.json"));
+		} catch (Exception e) {
+			fail("Errore durante il caricamento della griglia: " + e.getMessage());
+		}
+
+		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
+		ICella2 start = g.getCellaAt(0, 0);
+		ICella2 end = g.getCellaAt(0,6);
+
+
+		((CompitoTreImplementation)c).debug= false;
+		((CompitoTreImplementation)c).sortedFrontiera = true;
+		((CompitoTreImplementation)c).condizioneRafforzata= true;
+		((CompitoTreImplementation)c).cacheEnabled = false; // Disabilita la cache per il test
+		ICammino cammino = c.camminoMin(griglia, start, end);
+
+		if(debug) {
+			((CompitoTreImplementation)c).debug= true;
+		}
+		((CompitoTreImplementation)c).cacheEnabled = true; // abilita la cache per il test
+		ICammino camminoCache = c.camminoMin(griglia, start, end);
+
+		// Verifica che i cammini siano uguali
+		assertNotNull(cammino);
+		assertNotNull(camminoCache);
+		assertEquals(cammino.lunghezza(), camminoCache.lunghezza(), 0.001);
+		assertEquals(cammino.lunghezzaTorre(), camminoCache.lunghezzaTorre(), 0.001);
+		assertEquals(cammino.lunghezzaAlfiere(), camminoCache.lunghezzaAlfiere(), 0.001);
+		assertEquals(cammino.landmarks().size(), camminoCache.landmarks().size());
+		for (int i = 0; i < cammino.landmarks().size(); i++) {
+			assertEquals(cammino.landmarks().get(i).x(), camminoCache.landmarks().get(i).x());
+			assertEquals(cammino.landmarks().get(i).y(), camminoCache.landmarks().get(i).y());
+		}
+
+		if (debug) {
+			System.out.println("TEST Cache");
+			System.out.println("Cammino ");
 			cammino.landmarks().forEach(x -> System.out.print("(" + x.x() + "," + x.y() + ") "));
 			System.out.println("\n#############################");
 		}
