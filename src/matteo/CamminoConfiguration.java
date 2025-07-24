@@ -32,8 +32,20 @@ public class CamminoConfiguration {
     public static CamminoConfiguration createPerformanceModeNoCondizione() {
         return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_CONDIZIONE);
     }
-    
-    // Metodi per creare varianti dinamicamente
+    public static CamminoConfiguration createPerformanceModeNoCondizioneNoCache() {
+		return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_CONDIZIONE_NO_CACHE);
+	}
+    public static CamminoConfiguration createPerformanceModeNoSortedFrontiera() {
+		return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_SORTED_FRONTIERA);
+	}
+    public static CamminoConfiguration createPerformanceModeNoSortedFrontieraNoCache() {
+    			return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_SORTED_FRONTIERA_NO_CACHE);
+    }
+    /**
+     * Se trova una modalità con i flag specificati la ritorna.
+     * @param flag
+     * @return
+     */
     public CamminoConfiguration withFlag(ConfigurationFlag flag) {
         return new CamminoConfiguration(mode.withFlags(flag));
     }
