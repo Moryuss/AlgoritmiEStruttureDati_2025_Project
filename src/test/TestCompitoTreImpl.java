@@ -31,7 +31,7 @@ public class TestCompitoTreImpl {
 	@BeforeEach
 	public void startingSetup() {
 		try {
-			c = new CompitoTreImplementation();
+			c = new CompitoTreImplementation(CamminoConfiguration.createDefault());
 			griglia = Utils.loadSimple(new File("src/test/json/testCompitoTre.int.json"));
 			//System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
 			// Stampa la griglia per visualizzare ostacoli e celle navigabili
@@ -624,6 +624,9 @@ public class TestCompitoTreImpl {
 		ICella2 start = g.getCellaAt(0, 0);
 		ICella2 end = g.getCellaAt(0, 6);
 
+		((CompitoTreImplementation)c).setConfiguration(new CamminoConfiguration(debug, true, false, 
+				false,false, false, false));
+		
 
 		// Crea un thread separato per l'esecuzione
 		ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -666,8 +669,9 @@ public class TestCompitoTreImpl {
 
 		// Configura il timeout a 500ms
 		((CompitoTreImplementation)c).setTimeout(500);
-		((CompitoTreImplementation)c).cacheEnabled = false; // Disabilita la cache per il test
-
+		((CompitoTreImplementation)c).setConfiguration(new CamminoConfiguration(debug, true, false, 
+				false,false, false, false));
+		
 		long startTime = System.currentTimeMillis();
 		ICammino cammino = c.camminoMin(griglia, start, end);
 		long duration = System.currentTimeMillis() - startTime;
@@ -698,17 +702,14 @@ public class TestCompitoTreImpl {
 		ICella2 start = g.getCellaAt(0, 0);
 		ICella2 end = g.getCellaAt(0,6);
 
-
-		((CompitoTreImplementation)c).debug= false;
-		((CompitoTreImplementation)c).sortedFrontiera = true;
-		((CompitoTreImplementation)c).condizioneRafforzata= true;
-		((CompitoTreImplementation)c).cacheEnabled = false; // Disabilita la cache per il test
+		((CompitoTreImplementation)c).setConfiguration(new CamminoConfiguration(debug, true, false, 
+				false,true, true, false));
+		
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		if(debug) {
-			((CompitoTreImplementation)c).debug= true;
-		}
-		((CompitoTreImplementation)c).cacheEnabled = true; // abilita la cache per il test
+		((CompitoTreImplementation)c).getConfiguration().setDebugEnabled(debug);
+
+		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createPerformanceMode());
 		ICammino camminoCache = c.camminoMin(griglia, start, end);
 
 		// Verifica che i cammini siano uguali

@@ -23,28 +23,51 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	private String report;
 	private int livelloRicorsione = 0;
 
-	public boolean debug = false;	//per debug, stampa informazioni utili
-	public boolean monitorON = true; 	//NON mettere a false, è legato al funzionamento degli interrupt.
-	public boolean stopMessage = false;
-	public boolean stateCheck = false;	//stampa lo stato di celle considerate
+	private CamminoConfiguration config = new CamminoConfiguration(); // Configurazione del cammino
+//	public boolean debug = false;	//per debug, stampa informazioni utili
+//	public boolean monitorON = true; 	//NON mettere a false, è legato al funzionamento degli interrupt.
+//	public boolean stopMessage = false;
+//	public boolean stateCheck = false;	//stampa lo stato di celle considerate
 
 	private boolean interrompiSuRichiesta = false;	// questo non va modificato da qui, ma da setTimeout(tempo)
 	private boolean interrompiSuTempo = false;	
 
-	public boolean sortedFrontiera = false;	//applica sort alla frontiera, considera prima quelle più vicine a destinazione
-	public boolean condizioneRafforzata = false; // Imposta a false per usare la condizione originale
-	public boolean cacheEnabled = false; // Flag per abilitare/disabilitare la cache
+//	public boolean sortedFrontiera = false;	//applica sort alla frontiera, considera prima quelle più vicine a destinazione
+//	public boolean condizioneRafforzata = false; // Imposta a false per usare la condizione originale
+//	public boolean cacheEnabled = false; // Flag per abilitare/disabilitare la cache
 
 	private long tempoInizio;
 	private long timeoutMillis; 
 
 	private Deque<ILandmark> stackCammino = new ArrayDeque<ILandmark>();
 
-
+	/**
+	 * Constructor con configurazione di default
+	 */
+    public CompitoTreImplementation() {
+        this(CamminoConfiguration.createDefault());
+    }
+    /**
+     * Constructor che accetta una configurazione personalizzata. <br>
+     * Usa CamminoConfiguration.createDefault() per una configurazione di base.<br>
+     * Usa CamminoConfiguration.createDebugMode per una configurazione che stampa a video i log.<br>
+     * Usa CamminoConfiguration.createPerformanceMode() per una configurazione che utilizza tutti 
+     * i metodi a disposizione per diminuire il tempo di esecuzione.
+     * @param config La configurazione da utilizzare
+     */
+    public CompitoTreImplementation(CamminoConfiguration config) {
+        this.config = config;
+    }
+    public void setConfiguration(CamminoConfiguration config) {
+        this.config = config;
+    }
+    public CamminoConfiguration getConfiguration() {
+        return config;
+    }
 	@Override
 	public ICammino camminoMin(IGriglia<?> griglia, ICella2 O, ICella2 D) {
 
-		if(stateCheck) {
+		if(config.isStateCheckEnabled()) {
 			System.out.println("Origine e destinazione stati");
 			this.bitPrint(O.stato());
 			this.bitPrint(D.stato());
@@ -56,7 +79,8 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			ICammino risultato = camminoMinConStatistiche(griglia, O, D, stats);
 
 			report = stats.generaRiassunto(risultato);
-			if(stateCheck) {
+			
+			if(config.isStateCheckEnabled()) {
 				System.out.println("stato destinazione");
 				bitPrint(risultato.landmarks().getLast().stato());
 			}
@@ -67,18 +91,18 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	}
 
 	private ICammino gestisciInterruzione(InterruptedException e) {
-		if(stopMessage) System.out.println(e.getMessage());
+		if(config.isStopMessageEnabled()) System.out.println(e.getMessage());
 		stats.interrompiCalcolo();
 		if(this.getProgressMin().getCammino()!= null) {
-			if(stopMessage) System.out.println("Cammino trovato");
+			if(config.isStopMessageEnabled()) System.out.println("Cammino trovato");
 			return this.getProgressMin().getCammino();
 		}
 		else if(this.getProgress().getCammino()!= null) {
-			if(stopMessage) System.out.println("Cammino non trovato");
+			if(config.isStopMessageEnabled()) System.out.println("Cammino non trovato");
 			return this.getProgress().getCammino();
 		}
 		else {
-			if(stopMessage) System.out.println("Calcolo non andato a buon fine");
+			if(config.isStopMessageEnabled()) System.out.println("Calcolo non andato a buon fine");
 			return null;
 		}
 	}
@@ -87,8 +111,8 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stats = new StatisticheEsecuzione();
 
 		// Inizializza la cache
-		pathCache.setEnabled(cacheEnabled);
-		pathCache.setDebugMode(debug);
+		pathCache.setEnabled(config.isCacheEnabled());
+		pathCache.setDebugMode(config.isDebugEnabled());
 		stats.setCache(pathCache.isEnabled());
 
 		monitor.setOrigine(O);
@@ -102,7 +126,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stats.saveOrigine(O);
 		stats.saveDestinazione(D);
 
-		stats.setFrontieraStored(sortedFrontiera);
+		stats.setFrontieraStored(config.isSortedFrontieraEnabled());
 	}
 
 	public ICammino camminoMinConStatistiche(IGriglia<?> griglia, ICella2 O, ICella2 D, IStatisticheEsecuzione stats) throws InterruptedException {
@@ -126,7 +150,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				StatoCella.LANDMARK.addTo(O.stato()),
 				O.x(), O.y());
 
-		if(stateCheck) {
+		if(config.isStateCheckEnabled()) {
 			System.out.println("Current landmark");
 			this.bitPrint(currentLandmark.stato());
 		}
@@ -134,24 +158,24 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stackCammino.push(currentLandmark);
 
 
-		if(debug) System.out.println("Chiamata camminoMinConStatistiche livello " + livelloRicorsione);
+		if(config.isDebugEnabled()) System.out.println("Chiamata camminoMinConStatistiche livello " + livelloRicorsione);
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y());
 
-		if(stateCheck) {
+		if(config.isStateCheckEnabled()) {
 			System.out.println("PRIMA: " );
 			bitPrint(g.getCellaAt(D.x(), D.y()).stato());
 		}
 		StatoCella.DESTINAZIONE.addTo(g.getCellaAt(D.x(), D.y()));
 
 
-		if(stateCheck) {
+		if(config.isStateCheckEnabled()) {
 			System.out.println("DOPO MODIFICA A D: " );
 			bitPrint(g.getCellaAt(D.x(), D.y()).stato());
 		}
 
 		ICella2 dest = g.getCellaAt(D.x(), D.y());
-		if(stateCheck) {
+		if(config.isStateCheckEnabled()) {
 			System.out.println("Dest PRIMA: " );
 			bitPrint(g.getCellaAt(dest.x(), dest.y()).stato());
 		}
@@ -159,31 +183,31 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		//Non dovrebbe servire
 		//StatoCella.DESTINAZIONE.addTo(dest);
 
-		if(stateCheck) {
+		if(config.isStateCheckEnabled()) {
 			System.out.println("Dest dopo: " );
 			bitPrint(g.getCellaAt(dest.x(), dest.y()).stato());
 			System.out.println("end");
 		}
 
-		if(stateCheck) {
+		if(config.isStateCheckEnabled()) {
 			System.out.println("Stato destinazione presa da D");
 			this.bitPrint(dest.stato());
 			System.out.println("Stato destinazione presa da griglia (dest)");
 			this.bitPrint(dest.stato());
 		}
-		if(monitorON) {
+		if(config.isMonitorEnabled()) {
 			int distanzaTorre = g.getCellaAt(dest.x(), dest.y()).distanzaTorre();
 			int distanzaAlfiere = g.getCellaAt(dest.x(), dest.y()).distanzaAlfiere();
 			updateMonitor(distanzaTorre,distanzaAlfiere);
 		}
 		if (g.isInContesto(dest.x(), dest.y()) || g.isInComplemento(dest.x(), dest.y())) {
 
-			if(debug) System.out.println("caso base");
+			if(config.isDebugEnabled()) System.out.println("caso base");
 
 			int distanzaTorre = g.getCellaAt(dest.x(), dest.y()).distanzaTorre();
 			int distanzaAlfiere = g.getCellaAt(dest.x(), dest.y()).distanzaAlfiere();
 
-			if(monitorON) {
+			if(config.isMonitorEnabled()) {
 				ILandmark landmarkDestinazione = new Landmark(
 						StatoCella.LANDMARK.addTo(dest.stato()),
 						dest.x(), dest.y());
@@ -216,7 +240,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 
 		List<ICella2> frontieraList;
-		if(sortedFrontiera) {
+		if(config.isSortedFrontieraEnabled()) {
 			frontieraList = g.getFrontiera()
 					.sorted(Comparator.comparingDouble(
 							c -> Utils.distanzaLiberaTra(c, dest)))
@@ -229,7 +253,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 			livelloRicorsione--;
 
-			if(monitorON) {
+			if(config.isMonitorEnabled()) {
 				monitor.setCammino(new Cammino(Integer.MAX_VALUE,
 						Integer.MAX_VALUE, 
 						new ArrayList<>(stackCammino)));
@@ -237,7 +261,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				stackCammino.pop();
 			}
 
-			if(debug) System.out.println("caso base infinity");
+			if(config.isDebugEnabled()) System.out.println("caso base infinity");
 
 			ICammino risultato = new Cammino(Integer.MAX_VALUE,
 					Integer.MAX_VALUE,
@@ -260,7 +284,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 		for (ICella2 F : frontieraList) {
 			this.checkInterruzione();
-			if(stateCheck) {
+			if(config.isStateCheckEnabled()) {
 				System.out.println("Frontiera stato");
 				this.bitPrint(F.stato());
 			}
@@ -269,7 +293,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 				stats.incrementaCelleFrontiera();
 
-				if(debug) System.out.println("Analizzo cella frontiera (" + F.x() + "," + F.y() + ")");
+				if(config.isDebugEnabled()) System.out.println("Analizzo cella frontiera (" + F.x() + "," + F.y() + ")");
 
 
 				int IFdistanzaTorre = g.getCellaAt(F.x(), F.y()).distanzaTorre();
@@ -277,7 +301,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				double IF = F.distanzaDaOrigine();
 
 				boolean condizioneSoddisfatta;
-				if (condizioneRafforzata) {
+				if (config.isConditioneRafforziataEnabled()) {
 					double limiteInferioreDistanza = Utils.distanzaLiberaTra(F, dest);
 					condizioneSoddisfatta = (IF + limiteInferioreDistanza < lunghezzaMin);
 				} else {
@@ -291,7 +315,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 					int ITotTorre = IFdistanzaTorre + camminoFD.lunghezzaTorre();
 					int ITotAlfiere = IFdistanzaAlfiere + camminoFD.lunghezzaAlfiere();
 
-					if (monitorON) {
+					if (config.isMonitorEnabled()) {
 						monitor.setCammino(new Cammino(
 								lunghezzaTorreMin, 
 								lunghezzaAlfiereMin,
@@ -314,7 +338,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 							seqMin.get(1).setStato(F.stato());
 
 
-						if (monitorON && O.x()==monitor.getOrigine().x() && O.y()==monitor.getOrigine().y()) {
+						if (config.isMonitorEnabled() 
+								&& O.x()==monitor.getOrigine().x() 
+								&& O.y()==monitor.getOrigine().y()) {
 							monitorMin.setCammino(new Cammino(lunghezzaTorreMin, lunghezzaAlfiereMin, seqMin));
 						}
 
@@ -333,7 +359,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stackCammino.pop();
 
 
-		if(debug) System.out.println("end");
+		if(config.isDebugEnabled()) System.out.println("end");
 		ICammino risultatoFinale = new Cammino(lunghezzaTorreMin, 
 				lunghezzaAlfiereMin, 
 				seqMin);
