@@ -7,17 +7,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import francesco.IGriglia;
 import nicolas.*;
 
 public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor, IInterrompibile{
 
-	private final Map<String, ICammino> pathCache = new HashMap<>(); //cache per i cammini già calcolati
+	private final CamminoCache pathCache = new CamminoCache(); //cache per i cammini già calcolati
 
 	IStatisticheEsecuzione stats;	
 	IProgressoMonitor monitor = new ProgressoMonitor();		//per monitorare l'evoluzione del cammino
@@ -60,8 +57,8 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 			report = stats.generaRiassunto(risultato);
 			if(stateCheck) {
-			System.out.println("stato destinazione");
-			bitPrint(risultato.landmarks().getLast().stato());
+				System.out.println("stato destinazione");
+				bitPrint(risultato.landmarks().getLast().stato());
 			}
 			return risultato;
 		} catch (InterruptedException e) {
@@ -88,6 +85,12 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 	private void inizializzazione(IGriglia<?> griglia, ICella2 O, ICella2 D) {
 		stats = new StatisticheEsecuzione();
+
+		// Inizializza la cache
+		pathCache.setEnabled(cacheEnabled);
+		pathCache.setDebugMode(debug);
+		stats.setCache(pathCache.isEnabled());
+
 		monitor.setOrigine(O);
 		monitor.setDestinazione(D);
 		monitorMin.setOrigine(O);
@@ -98,36 +101,20 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stats.saveTipoGriglia(griglia.getTipo());
 		stats.saveOrigine(O);
 		stats.saveDestinazione(D);
-		stats.setCache(cacheEnabled);
+
 		stats.setFrontieraStored(sortedFrontiera);
 	}
 
 	public ICammino camminoMinConStatistiche(IGriglia<?> griglia, ICella2 O, ICella2 D, IStatisticheEsecuzione stats) throws InterruptedException {
 
-		//stampa tutti gli elementi in cache
-		if (debug && cacheEnabled) {
-			System.out.println("Cache corrente:");
-			for (Map.Entry<String, ICammino> entry : pathCache.entrySet()) {
-				System.out.println("Chiave: " + entry.getKey() + ", Cammino: ");
-				entry.getValue().landmarks().forEach(lm -> {
-					System.out.println("  - " + lm.x() + "," + lm.y() + " Stato: " + lm.stato());
-				});
-			}
-		}
+		//stampa tutti gli elementi in cache se debug abilitato
+		pathCache.printCacheContents();
+
 		//CHACHE
-		String cacheKey = null;
-		if (cacheEnabled) {
-			cacheKey = generaChiaveCache(griglia, O, D);
-
-			// Controlla se il risultato è già presente nella cache
-			ICammino cached = pathCache.get(cacheKey);
-			if (cached != null) {
-				if (debug) System.out.println("Cache HIT per chiave: " + cacheKey);
-			stats.incrementaCacheHit(); 
-				return cached;
-			}
-
-			if (debug) System.out.println("Cache MISS per chiave: " + cacheKey);
+		ICammino cached = pathCache.getCammino(griglia, O, D);
+		if (cached != null) {
+			stats.incrementaCacheHit();
+			return cached;
 		}
 		//END CACHE CHECK
 
@@ -150,34 +137,34 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		if(debug) System.out.println("Chiamata camminoMinConStatistiche livello " + livelloRicorsione);
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y());
-		
+
 		if(stateCheck) {
-		System.out.println("PRIMA: " );
-		bitPrint(g.getCellaAt(D.x(), D.y()).stato());
-	}
-		StatoCella.DESTINAZIONE.addTo(g.getCellaAt(D.x(), D.y()));
-		
-		
-		if(stateCheck) {
-		System.out.println("DOPO MODIFICA A D: " );
-		bitPrint(g.getCellaAt(D.x(), D.y()).stato());
+			System.out.println("PRIMA: " );
+			bitPrint(g.getCellaAt(D.x(), D.y()).stato());
 		}
-		
+		StatoCella.DESTINAZIONE.addTo(g.getCellaAt(D.x(), D.y()));
+
+
+		if(stateCheck) {
+			System.out.println("DOPO MODIFICA A D: " );
+			bitPrint(g.getCellaAt(D.x(), D.y()).stato());
+		}
+
 		ICella2 dest = g.getCellaAt(D.x(), D.y());
 		if(stateCheck) {
 			System.out.println("Dest PRIMA: " );
 			bitPrint(g.getCellaAt(dest.x(), dest.y()).stato());
-			}
-		
+		}
+
 		//Non dovrebbe servire
 		//StatoCella.DESTINAZIONE.addTo(dest);
-		
+
 		if(stateCheck) {
-		System.out.println("Dest dopo: " );
-		bitPrint(g.getCellaAt(dest.x(), dest.y()).stato());
-		System.out.println("end");
+			System.out.println("Dest dopo: " );
+			bitPrint(g.getCellaAt(dest.x(), dest.y()).stato());
+			System.out.println("end");
 		}
-		
+
 		if(stateCheck) {
 			System.out.println("Stato destinazione presa da D");
 			this.bitPrint(dest.stato());
@@ -221,10 +208,8 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 									dest.x(), dest.y())
 							));
 
-			// Salva il risultato nella cache
-			if (cacheEnabled && cacheKey != null) {
-				pathCache.put(cacheKey, risultato);
-			}
+			// Salva il risultato nella cache se la cache è abilitata
+			pathCache.putCammino(g, O, dest, risultato);
 
 			return risultato;
 		}
@@ -251,7 +236,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 				stackCammino.pop();
 			}
-			
+
 			if(debug) System.out.println("caso base infinity");
 
 			ICammino risultato = new Cammino(Integer.MAX_VALUE,
@@ -259,9 +244,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 					new ArrayList<>());
 
 			// Salva anche i risultati "infiniti" nella cache
-			if (cacheEnabled && cacheKey != null) {
-				pathCache.put(cacheKey, risultato);
-			}
+			pathCache.putCammino(griglia, O, dest, risultato);
 
 			return risultato;
 		}
@@ -274,7 +257,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 		IGriglia<ICella2> g2 = g.addObstacle(g.convertiChiusuraInOstacolo());
 
-		 
+
 		for (ICella2 F : frontieraList) {
 			this.checkInterruzione();
 			if(stateCheck) {
@@ -326,10 +309,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 						seqMin.addAll(camminoFD.landmarks());
 
 
-						//╔═══════════════════════════════════════════╗
-						/*║*/if (camminoFD.landmarks().size()>1)    //║
-							/*║*/    seqMin.get(1).setStato(F.stato()); //║ 
-						//╚═══════════════════════════════════════════╝
+
+						if (camminoFD.landmarks().size()>1)    
+							seqMin.get(1).setStato(F.stato());
+
 
 						if (monitorON && O.x()==monitor.getOrigine().x() && O.y()==monitor.getOrigine().y()) {
 							monitorMin.setCammino(new Cammino(lunghezzaTorreMin, lunghezzaAlfiereMin, seqMin));
@@ -356,10 +339,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				seqMin);
 
 		// SALVA IL RISULTATO CALCOLATO NELLA CACHE
-		if (cacheEnabled && cacheKey != null) {
-			pathCache.put(cacheKey, risultatoFinale);
-			if (debug) System.out.println("Salvato in cache con chiave: " + cacheKey);
-		}
+		//
+		//Serve test per controllare che griglia sia corretto (invece di g o g2)
+		//
+	     pathCache.putCammino(griglia, O, D, risultatoFinale);
 
 		return risultatoFinale;
 	}
@@ -430,39 +413,39 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				percorsoCorrente));
 	}
 
-	private String generaChiaveCache(IGriglia<?> griglia, ICella2 origine, ICella2 destinazione) {
-		return origine.x() + "," + origine.y() + "->" + 
-				destinazione.x() + "," + destinazione.y() + "|" + 
-				calcolaHashOstacoli(griglia);
-	}
+//		private String generaChiaveCache(IGriglia<?> griglia, ICella2 origine, ICella2 destinazione) {
+//			return origine.x() + "," + origine.y() + "->" + 
+//					destinazione.x() + "," + destinazione.y() + "|" + 
+//					calcolaHashOstacoli(griglia);
+//		}
 
 	/**
 	 * Calcola un hash degli ostacoli presenti nella griglia
 	 */
-	private int calcolaHashOstacoli(IGriglia<?> griglia) {
-		List<Point> ostacoli = new ArrayList<>();
-		for (int x = 0; x < griglia.width(); x++) {
-			for (int y = 0; y < griglia.height(); y++) {
-				if (StatoCella.OSTACOLO.is(griglia.getCellaAt(x, y).stato())) {
-					ostacoli.add(new Point(x, y));
-				}
-			}
-		}
-		int hash = Objects.hash(ostacoli);
-		return hash;
-	}
+	//	private int calcolaHashOstacoli(IGriglia<?> griglia) {
+	//		List<Point> ostacoli = new ArrayList<>();
+	//		for (int x = 0; x < griglia.width(); x++) {
+	//			for (int y = 0; y < griglia.height(); y++) {
+	//				if (StatoCella.OSTACOLO.is(griglia.getCellaAt(x, y).stato())) {
+	//					ostacoli.add(new Point(x, y));
+	//				}
+	//			}
+	//		}
+	//		int hash = Objects.hash(ostacoli);
+	//		return hash;
+	//	}
 	/**
 	 * Pulisce la cache, utile per test / gestione memoria
 	 */
-	public void clearCache() {
-		pathCache.clear();
-	}
+		public void clearCache() {
+			pathCache.clear();
+		}
 
 	/**
 	 * Restituisce statistiche della cache
 	 */
-	public int getCacheSize() {
-		return pathCache.size();
-	}
+		public int getCacheSize() {
+			return pathCache.size();
+		}
 
 }
