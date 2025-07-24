@@ -50,7 +50,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
     /**
      * Constructor che accetta una configurazione personalizzata. <br>
      * Usa CamminoConfiguration.createDefault() per una configurazione di base.<br>
-     * Usa CamminoConfiguration.createDebugMode per una configurazione che stampa a video i log.<br>
+     * Usa CamminoConfiguration.createDebugMode() per una configurazione che stampa a video i log.<br>
      * Usa CamminoConfiguration.createPerformanceMode() per una configurazione che utilizza tutti 
      * i metodi a disposizione per diminuire il tempo di esecuzione.
      * @param config La configurazione da utilizzare
@@ -301,7 +301,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				double IF = F.distanzaDaOrigine();
 
 				boolean condizioneSoddisfatta;
-				if (config.isConditioneRafforziataEnabled()) {
+				if (config.isCondizioneRafforzataEnabled()) {
 					double limiteInferioreDistanza = Utils.distanzaLiberaTra(F, dest);
 					condizioneSoddisfatta = (IF + limiteInferioreDistanza < lunghezzaMin);
 				} else {

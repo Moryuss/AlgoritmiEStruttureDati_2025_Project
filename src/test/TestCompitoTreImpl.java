@@ -31,7 +31,7 @@ public class TestCompitoTreImpl {
 	@BeforeEach
 	public void startingSetup() {
 		try {
-			c = new CompitoTreImplementation(CamminoConfiguration.createDefault());
+			c = new CompitoTreImplementation();	//QUI si può modificare per cambiare la modalità
 			griglia = Utils.loadSimple(new File("src/test/json/testCompitoTre.int.json"));
 			//System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
 			// Stampa la griglia per visualizzare ostacoli e celle navigabili
@@ -624,10 +624,10 @@ public class TestCompitoTreImpl {
 		ICella2 start = g.getCellaAt(0, 0);
 		ICella2 end = g.getCellaAt(0, 6);
 
-		((CompitoTreImplementation)c).setConfiguration(new CamminoConfiguration(debug, true, false, 
-				false,false, false, false));
-		
 
+		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createDefault());
+
+		
 		// Crea un thread separato per l'esecuzione
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		Future<ICammino> future = executor.submit(() -> c.camminoMin(griglia, start, end));
@@ -669,8 +669,7 @@ public class TestCompitoTreImpl {
 
 		// Configura il timeout a 500ms
 		((CompitoTreImplementation)c).setTimeout(500);
-		((CompitoTreImplementation)c).setConfiguration(new CamminoConfiguration(debug, true, false, 
-				false,false, false, false));
+		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createDefault());
 		
 		long startTime = System.currentTimeMillis();
 		ICammino cammino = c.camminoMin(griglia, start, end);
@@ -689,11 +688,12 @@ public class TestCompitoTreImpl {
 		}
 	}
 	@Test
-	void test_Cache() throws Exception {
+	void test_Cache_zigZag() throws Exception {
 
 		// Carica una griglia più complessa per testare il timeout
 		try {
 			griglia = Utils.loadSimple(new File("src/test/json/zigZag_ostacoli.int.json"));
+
 		} catch (Exception e) {
 			fail("Errore durante il caricamento della griglia: " + e.getMessage());
 		}
@@ -702,12 +702,50 @@ public class TestCompitoTreImpl {
 		ICella2 start = g.getCellaAt(0, 0);
 		ICella2 end = g.getCellaAt(0,6);
 
-		((CompitoTreImplementation)c).setConfiguration(new CamminoConfiguration(debug, true, false, 
-				false,true, true, false));
+		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createPerformanceModeNoCache());
 		
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		((CompitoTreImplementation)c).getConfiguration().setDebugEnabled(debug);
+		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createPerformanceMode());
+		ICammino camminoCache = c.camminoMin(griglia, start, end);
+
+		// Verifica che i cammini siano uguali
+		assertNotNull(cammino);
+		assertNotNull(camminoCache);
+		assertEquals(cammino.lunghezza(), camminoCache.lunghezza(), 0.001);
+		assertEquals(cammino.lunghezzaTorre(), camminoCache.lunghezzaTorre(), 0.001);
+		assertEquals(cammino.lunghezzaAlfiere(), camminoCache.lunghezzaAlfiere(), 0.001);
+		assertEquals(cammino.landmarks().size(), camminoCache.landmarks().size());
+		for (int i = 0; i < cammino.landmarks().size(); i++) {
+			assertEquals(cammino.landmarks().get(i).x(), camminoCache.landmarks().get(i).x());
+			assertEquals(cammino.landmarks().get(i).y(), camminoCache.landmarks().get(i).y());
+		}
+
+		if (debug) {
+			System.out.println("TEST Cache");
+			System.out.println("Cammino ");
+			cammino.landmarks().forEach(x -> System.out.print("(" + x.x() + "," + x.y() + ") "));
+			System.out.println("\n#############################");
+		}
+	}
+	@Test
+	void test_Cache_spirale() throws Exception {
+
+		// Carica una griglia più complessa per testare il timeout
+		try {
+			griglia = Utils.loadSimple(new File("src/test/json/spirale_ostacoli.int.json"));
+
+		} catch (Exception e) {
+			fail("Errore durante il caricamento della griglia: " + e.getMessage());
+		}
+
+		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
+		ICella2 start = g.getCellaAt(0, 0);
+		ICella2 end = g.getCellaAt(10,5);
+
+		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createPerformanceModeNoCache());
+		
+		ICammino cammino = c.camminoMin(griglia, start, end);
 
 		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createPerformanceMode());
 		ICammino camminoCache = c.camminoMin(griglia, start, end);

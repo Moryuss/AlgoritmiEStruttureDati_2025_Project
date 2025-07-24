@@ -1,84 +1,60 @@
 package matteo;
 
 public class CamminoConfiguration {
-	// Campi privati con valori di default
-	private boolean debug = false;
-	private boolean monitorEnabled = true;
-	private boolean stopMessage = false;
-	private boolean stateCheck = false;
-	private boolean sortedFrontiera = false;
-	private boolean condizioneRafforzata = false;
-	private boolean cacheEnabled = false;
-
-	// Constructor di default (usa i valori sopra)
-	public CamminoConfiguration(){};
-	
-	public CamminoConfiguration(boolean debug, boolean monitorEnabled, boolean stopMessage, 
-			boolean stateCheck, boolean sortedFrontiera, 
-			boolean condizioneRafforzata, boolean cacheEnabled) {
-		this.debug = debug;
-		this.monitorEnabled = monitorEnabled;
-		this.stopMessage = stopMessage;
-		this.stateCheck = stateCheck;
-		this.sortedFrontiera = sortedFrontiera;
-		this.condizioneRafforzata = condizioneRafforzata;
-		this.cacheEnabled = cacheEnabled;
-	}
-	
-	// Metodi di utilità per configurazioni predefinite
+    private final ConfigurationMode mode;
+    
+    public CamminoConfiguration() {
+        this.mode = ConfigurationMode.DEFAULT;
+    }
+    
+    public CamminoConfiguration(ConfigurationMode mode) {
+        this.mode = mode;
+    }
+    
+    // Factory methods
     public static CamminoConfiguration createDefault() {
-        return new CamminoConfiguration();
+        return new CamminoConfiguration(ConfigurationMode.DEFAULT);
     }
-    /*
-     * Crea una configurazione per la modalità debug.
-     */
+    
     public static CamminoConfiguration createDebugMode() {
-    	CamminoConfiguration config = new CamminoConfiguration();
-        config.setDebugEnabled(true);
-        config.setStopMessageEnabled(true);
-        config.setStateCheckEnabled(true);
-        return config;
+        return new CamminoConfiguration(ConfigurationMode.DEBUG);
     }
-    /**
-	 * Crea una configurazione per avere la massima performance.
-	 */
+    
     public static CamminoConfiguration createPerformanceMode() {
-    	CamminoConfiguration config = new CamminoConfiguration();
-        config.setCacheEnabled(true);
-        config.setSortedFrontieraEnabled(true);
-        config.setCondizioneRafforzataEnabled(true);
-        return config;
+        return new CamminoConfiguration(ConfigurationMode.PERFORMANCE);
     }
-	
-	// Getters
-    public boolean isDebugEnabled() { return debug; }
-    public boolean isMonitorEnabled() { return monitorEnabled; }
-    public boolean isStopMessageEnabled() { return stopMessage; }
-    public boolean isStateCheckEnabled() { return stateCheck; }
-    public boolean isSortedFrontieraEnabled() { return sortedFrontiera; }
-    public boolean isConditioneRafforziataEnabled() { return condizioneRafforzata; }
-    public boolean isCacheEnabled() { return cacheEnabled; }
     
-    // Setters 
-    public void setDebugEnabled(boolean debug) { this.debug = debug; }
-    public void setMonitorEnabled(boolean monitorEnabled) { this.monitorEnabled = monitorEnabled; }
-    public void setStopMessageEnabled(boolean stopMessage) { this.stopMessage = stopMessage; }
-    public void setStateCheckEnabled(boolean stateCheck) { this.stateCheck = stateCheck; }
-    public void setSortedFrontieraEnabled(boolean sortedFrontier) { this.sortedFrontiera = sortedFrontier; }
-    public void setCondizioneRafforzataEnabled(boolean enhancedCondition) { this.condizioneRafforzata = enhancedCondition; }
-    public void setCacheEnabled(boolean cacheEnabled) { this.cacheEnabled = cacheEnabled; }
+    // Nuovi factory methods per le varianti
+    public static CamminoConfiguration createPerformanceModeNoCache() {
+        return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_CACHE);
+    }
     
+    public static CamminoConfiguration createPerformanceModeNoCondizione() {
+        return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_CONDIZIONE);
+    }
+    
+    // Metodi per creare varianti dinamicamente
+    public CamminoConfiguration withFlag(ConfigurationFlag flag) {
+        return new CamminoConfiguration(mode.withFlags(flag));
+    }
+    
+    public CamminoConfiguration withoutFlag(ConfigurationFlag flag) {
+        return new CamminoConfiguration(mode.withoutFlags(flag));
+    }
+    
+    // Getters che delegano al mode
+    public boolean isDebugEnabled() { return mode.isDebugEnabled(); }
+    public boolean isMonitorEnabled() { return mode.isMonitorEnabled(); }
+    public boolean isStopMessageEnabled() { return mode.isStopMessageEnabled(); }
+    public boolean isStateCheckEnabled() { return mode.isStateCheckEnabled(); }
+    public boolean isSortedFrontieraEnabled() { return mode.isSortedFrontieraEnabled(); }
+    public boolean isCondizioneRafforzataEnabled() { return mode.isCondizioneRafforzataEnabled(); }
+    public boolean isCacheEnabled() { return mode.isCacheEnabled(); }
+    
+    public ConfigurationMode getMode() { return mode; }
     
     @Override
     public String toString() {
-        return "PathfindingConfiguration{" +
-               "debug=" + debug +
-               ", monitorEnabled=" + monitorEnabled +
-               ", stopMessage=" + stopMessage +
-               ", stateCheck=" + stateCheck +
-               ", sortedFrontier=" + sortedFrontiera +
-               ", enhancedCondition=" + condizioneRafforzata +
-               ", cacheEnabled=" + cacheEnabled +
-               '}';
+        return "CamminoConfiguration{mode=" + mode + "}";
     }
 }
