@@ -2,6 +2,7 @@ package main;
 
 import static nicolas.StatoCella.*;
 import java.io.File;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import francesco.IGriglia;
@@ -9,10 +10,7 @@ import francesco.implementazioni.LettoreGriglia;
 import matteo.CompitoTreImplementation;
 import matteo.ICammino;
 import matteo.IProgressoMonitor;
-import nicolas.GrigliaConOrigineFactory;
-import nicolas.ICella2;
-import nicolas.IGrigliaConOrigine;
-import nicolas.Utils;
+import nicolas.*;
 import processing.core.PApplet;
 import processing.core.PVector;
 import processing.data.JSONObject;
@@ -28,12 +26,13 @@ public class AppletMain extends PApplet {
 	
 	
 	int w,h,s;
-	int[] palette;
+	int[] palette, colors;
 	IGriglia<?> griglia;
 	
 	int COLORE_OSTACOLO,COLORE_DESTINAZIONE,COLORE_LANDMARK,COLORE_FRONTIERA,
 		COLORE_COMPLEMENTO,COLORE_ORIGINE,COLORE_REGINA,COLORE_CONTESTO,COLORE_BASE;
 	boolean showText;
+	
 	
 	@Override
 	public void settings() {
@@ -53,6 +52,13 @@ public class AppletMain extends PApplet {
 		.mapToInt(e -> Utils.parseHex(e).orElse(0))
 		.map(n->n|0xff000000)
 		.toArray();
+		
+		colors = Stream.of(json.getString("colors", "\"0x404040,0x808080,0xff0000,0xff6a00,0xffd800,0xb6ff00,0x4cff00,0x00ff21,0x00ff90,0x00ffff,0x0094ff,0x0026ff,0x4800ff,0xb200ff,0xff00dc,0xff006e\"").split("[\\[\",\\]\\s]+"))
+		.skip(1)
+		.mapToInt(e -> Utils.parseHex(e).orElse(0))
+		.map(n->n|0xff000000)
+		.toArray();
+		
 		
 		COLORE_OSTACOLO		 = palette[6];
 		COLORE_DESTINAZIONE	 = palette[7];
@@ -83,8 +89,8 @@ public class AppletMain extends PApplet {
 		griglia.print();
 		
 	}
-
-
+	
+	
 	private static IGriglia<?> loadGriglia(JSONObject config) {
 		var load = config.getJSONObject("load");
 		if (!load.hasKey("path")) {
@@ -127,11 +133,11 @@ public class AppletMain extends PApplet {
 			int n = griglia.getCellaAt(j, i).stato();
 			
 			if (OSTACOLO.check(n)) fill(COLORE_OSTACOLO);
+			else if (ORIGINE.check(n)) fill(COLORE_ORIGINE);
 			else if (DESTINAZIONE.check(n)) fill(COLORE_DESTINAZIONE);
 			else if (LANDMARK.check(n)) fill(COLORE_LANDMARK);
 			//else if (FRONTIERA.check(n)) fill(COLORE_FRONTIERA);
 			else if (COMPLEMENTO.check(n)) fill(COLORE_COMPLEMENTO);
-			else if (ORIGINE.check(n)) fill(COLORE_ORIGINE);
 			else if (REGINA.check(n)) fill(COLORE_REGINA);
 			else if (CONTESTO.check(n)) fill(COLORE_CONTESTO);
 			else fill(COLORE_BASE);
@@ -161,6 +167,35 @@ public class AppletMain extends PApplet {
 			
 		});
 		
+		if (grigliaNazione!=null) {
+			int i=0;
+			for (var regione : grigliaNazione.regioni()) {
+				fill(getColor(i));
+				regione.celle().forEach(c -> {
+					rect(c.x()*s, c.y()*s, s, s);
+				});
+				i++;
+			}
+			
+			int x = mouseX * w / width;
+			int y = mouseY * h / height;
+			Optional<Regione> res = grigliaNazione.getRegioneContenente(x, y);
+			if (res.isPresent()) {
+				stroke(0);
+				res.get().frontiera().forEach(c -> {
+					line(c.x()*s, c.y()*s, c.x()*s+s, c.y()*s+s);
+				});
+			}
+		}
+		
+		stroke(100);
+		noFill();
+		griglia.forEach((j,i) -> {
+			line(0, i*s, width, i*s);
+			line(j*s, 0, j*s, height);
+		});
+		
+		
 		if (monitor!=null) {
 			var cammino = monitor.getCammino();
 			if (cammino!=null) {
@@ -169,13 +204,14 @@ public class AppletMain extends PApplet {
 			}
 		}
 		
-		if (monitorMin!=null) {
+		if (monitorMin!=null) { // 48+21√2=77,698485
 			var cammino = monitorMin.getCammino();
 			if (cammino!=null) {
 				stroke(0, 150, 0);
 				drawCammino(cammino);
 				textAlign(CENTER, CENTER);
 				var msg = "%.2f".formatted(cammino.lunghezza(), cammino.landmarks().size());
+				if (Double.isInfinite(cammino.lunghezza())) msg="+∞";
 				translate((O.x()+0.5f)*s, (O.y()+0.5f)*s);
 				rectMode(CENTER);
 				fill(255);
@@ -186,8 +222,12 @@ public class AppletMain extends PApplet {
 		}
 		
 	}
-
-
+	
+	private int getColor(int index) {
+		return colors[index%colors.length];
+	}
+	
+	
 	private void drawCammino(ICammino cammino) {
 		noFill();
 		pushMatrix();
@@ -196,7 +236,6 @@ public class AppletMain extends PApplet {
 		strokeWeight(0.1f);
 		float dl = 0.2f, ds=0.4f;
 		Utils.forEachPair(cammino.landmarks(), (a,b) -> {
-			//dashedLine(a.x(), a.y(), b.x(), b.y(), 0.2f, 0.4f);
 			if (b.is(COMPLEMENTO)) {
 				camminoLibero2(a.x(), a.y(), b.x(), b.y(), dl, ds);
 			} else {
@@ -209,11 +248,14 @@ public class AppletMain extends PApplet {
 	ICella2 O,D;
 	IProgressoMonitor monitor,monitorMin;
 	CompitoTreImplementation compitoTreImpl;
+	GrigliaConRegioni<ICella2> grigliaNazione;
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX() * w / width;
 		int y = e.getY() * h / height;
+		
+		grigliaNazione = null;
 		
 		switch(e.getButton()) {
 		case LEFT:
@@ -248,13 +290,16 @@ public class AppletMain extends PApplet {
 				new Thread(()->{
 					System.out.println("inizio camminoMin");
 					var cammino = compitoTreImpl.camminoMin(griglia, O, D);
+					System.out.println("(%d)".formatted(cammino.landmarks().size()));
 					cammino.landmarks().forEach(lm -> {
 						LANDMARK.addTo(griglia.getCellaAt(lm.x(), lm.y()));
+						System.out.println("(%d,%d)".formatted(lm.x(), lm.y()));
 					});
 					System.out.print("finito: ");
 					System.out.printf("%d+%d√2=%f\n",cammino.lunghezzaTorre(),
 							cammino.lunghezzaAlfiere(), cammino.lunghezza());
 					monitor=null;
+					System.out.println(compitoTreImpl.getReport());
 				}).start();
 				
 			} catch(Exception ex) {
@@ -332,22 +377,43 @@ public class AppletMain extends PApplet {
 			break;
 		case 'C':
 			clearNonOStacoli(e.isControlDown());
+			monitorMin = monitor = null;
+			grigliaNazione = null;
 			O = D = null;
-			break;
-		case 'K':
-			if (griglia instanceof IGrigliaConOrigine gco) {
-				griglia = gco.addObstacle(gco.convertiChiusuraInOstacolo());
-			}
 			break;
 		case 'I':
 			if (compitoTreImpl!=null) {
 				compitoTreImpl.interrupt();
 			}
 			break;
+		case 'M':
+			int x = mouseX * w / width;
+			int y = mouseY * h / height;
+			println("(%d,%d)".formatted(x, y));
+			break;
+		case 'U':
+			if (griglia instanceof IGrigliaConOrigine gco) {
+				grigliaNazione = RegioneFactory.from(gco);
+				System.out.println(grigliaNazione.regioni().length);
+				var str = grigliaNazione.collect(c2d->grigliaNazione.getRegioneIndexContenente(c2d)
+						.map("%2d"::formatted)
+						.orElse("  "),
+						Collectors.joining("|"), Collectors.joining("\n"));
+				System.out.println(str);
+				var regione = grigliaNazione.getRegioneContenente(28, 19);
+				System.out.println(regione);
+			}
+			break;
+		case 'F':
+			if (griglia instanceof IGrigliaConOrigine gco) {
+				gco.getFrontiera().forEach(System.out::println);
+			}
+			break;
 		}
 	}
-
-
+	
+	
+	
 	private void clearNonOStacoli(boolean isControlDown) {
 		var mask = isControlDown ? 0 : OSTACOLO.value();
 		maskGriglia(mask);

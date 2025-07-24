@@ -4,15 +4,22 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
+import nicolas.StatoCella;
 import nicolas.Utils;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
 public interface IGriglia<C extends ICella> {
 	
-	boolean isNavigabile(int x, int y);
+	default boolean isNavigabile(int x, int y) {
+		return getCellaAt(x,y).isNot(StatoCella.OSTACOLO);
+	}
 	
 	C getCellaAt(int x, int y);
+	
+	default C getCellaAt(IHave2DCoordinate c) {
+		return getCellaAt(c.x(), c.y());
+	}
 	
 	int width();
 	

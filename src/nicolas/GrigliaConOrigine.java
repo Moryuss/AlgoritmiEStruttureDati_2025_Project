@@ -52,12 +52,12 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 			}
 		};
 	}
-
+	
 	@Override
 	public int width() {
 		return mat[0].length;
 	}
-
+	
 	@Override
 	public int height() {
 		return mat.length;
@@ -72,7 +72,7 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 	public ICella2 getOrigine() {
 		return getCellaAt(Ox, Oy);
 	}
-
+	
 	@Override
 	public double distanzaLiberaDa(int xd, int yd) {
 		return getCellaAt(xd, yd).distanzaDaOrigine();

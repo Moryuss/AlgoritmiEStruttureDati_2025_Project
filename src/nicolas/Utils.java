@@ -3,13 +3,18 @@ package nicolas;
 import static java.lang.Math.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collector;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
+
 import francesco.GrigliaMatrix;
 import francesco.ICella;
 import francesco.ICella2D;
@@ -83,6 +88,47 @@ public final class Utils {
 		}
 	}
 	
+	
+	public static <T,R> Collector<T,?,Stream<R>> collectPairs(BiFunction<T,T,R> func) {
+		class C {
+			List<R> list = new LinkedList<R>();
+			T previous = null;
+			C accept(T t) {
+				if (previous!=null) {
+					list.add(func.apply(previous, t));
+				}
+				previous = t;
+				return this;
+			}
+			C merge(C other) {
+				throw new UnsupportedOperationException();
+			}
+			Stream<R> finish() {
+				return list.stream();
+			}
+		}
+		return Collector.of(C::new, C::accept, C::merge, C::finish);
+	}
+	public static <T,R> Collector<T,?,DoubleStream> collectPairsToDouble(ToDoubleBiFunction<T,T> func) {
+		class C {
+			List<Double> list = new LinkedList<Double>();
+			T previous = null;
+			C accept(T t) {
+				if (previous!=null) {
+					list.add(func.applyAsDouble(previous, t));
+				}
+				previous = t;
+				return this;
+			}
+			C merge(C other) {
+				throw new UnsupportedOperationException();
+			}
+			DoubleStream finish() {
+				return list.stream().mapToDouble(e->e);
+			}
+		}
+		return Collector.of(C::new, C::accept, C::merge, C::finish);
+	}
 	
 	
 	

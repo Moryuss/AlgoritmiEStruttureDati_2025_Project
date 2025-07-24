@@ -6,6 +6,12 @@ public record Cella2(int x, int y, int[] s, int distanzaTorre, int distanzaAlfie
 		this(x, y, new int[] {stato}, distanzaTorre, distanzaAlfiere);
 	}
 	
+	@Override
+	public final String toString() {
+		return "Cella2[x=%d, y=%d, s=%d, distanzaTorre=%d, distanzaAlfiere=%d]"
+		.formatted(x, y, s[0], distanzaTorre, distanzaAlfiere);
+	}
+	
 	
 	@Override
 	public int stato() {
