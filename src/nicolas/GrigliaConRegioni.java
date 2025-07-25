@@ -17,10 +17,9 @@ public record GrigliaConRegioni<C extends ICella>(IGriglia<C> oldGriglia, int[] 
 	@Override
 	public int getTipo() {return oldGriglia.getTipo();}
 	@Override
-	public IGriglia<C> addObstacle(IObstacle obstacle) {return oldGriglia.addObstacle(obstacle);}
-	
-	
-	
+	public IGriglia<C> addObstacle(IObstacle obstacle, int tipoOstacolo) {return oldGriglia.addObstacle(obstacle, tipoOstacolo);}
+	@Override
+	public void setStato(int x, int y, int s) {oldGriglia.setStato(x, y, s);}
 	
 	public Optional<Integer> getRegioneIndexContenente(IHave2DCoordinate c) {
 		return getRegioneIndexContenente(c.x(), c.y());

@@ -1,5 +1,6 @@
-package nicolas;
+package utils;
 
+import static nicolas.StatoCella.*;
 import static java.lang.Math.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collector;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
-
 import francesco.GrigliaMatrix;
 import francesco.ICella;
 import francesco.ICella2D;
@@ -168,7 +168,7 @@ public final class Utils {
 			var row = jsona.getJSONArray(i);
 			for (int j=0; j<width; j++) {
 				if (row.getInt(j,0)>0) {
-					list.add(new Cella2D(StatoCella.OSTACOLO.value(), j, i));
+					list.add(new Cella2D(OSTACOLO.value(), j, i));
 				}
 			}
 		}

@@ -1,8 +1,10 @@
 package matteo;
 
 public class CamminoConfiguration {
-    private final ConfigurationMode mode;
     
+	private final ConfigurationMode mode;
+    
+	
     public CamminoConfiguration() {
         this.mode = ConfigurationMode.DEFAULT;
     }
@@ -11,36 +13,7 @@ public class CamminoConfiguration {
         this.mode = mode;
     }
     
-    // Factory methods
-    public static CamminoConfiguration createDefault() {
-        return new CamminoConfiguration(ConfigurationMode.DEFAULT);
-    }
     
-    public static CamminoConfiguration createDebugMode() {
-        return new CamminoConfiguration(ConfigurationMode.DEBUG);
-    }
-    
-    public static CamminoConfiguration createPerformanceMode() {
-        return new CamminoConfiguration(ConfigurationMode.PERFORMANCE);
-    }
-    
-    // Nuovi factory methods per le varianti
-    public static CamminoConfiguration createPerformanceModeNoCache() {
-        return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_CACHE);
-    }
-    
-    public static CamminoConfiguration createPerformanceModeNoCondizione() {
-        return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_CONDIZIONE);
-    }
-    public static CamminoConfiguration createPerformanceModeNoCondizioneNoCache() {
-		return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_CONDIZIONE_NO_CACHE);
-	}
-    public static CamminoConfiguration createPerformanceModeNoSortedFrontiera() {
-		return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_SORTED_FRONTIERA);
-	}
-    public static CamminoConfiguration createPerformanceModeNoSortedFrontieraNoCache() {
-    			return new CamminoConfiguration(ConfigurationMode.PERFORMANCE_NO_SORTED_FRONTIERA_NO_CACHE);
-    }
     /**
      * Se trova una modalità con i flag specificati la ritorna.
      * @param flag

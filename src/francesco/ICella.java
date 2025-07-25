@@ -6,6 +6,7 @@ public interface ICella {
 	
 	int stato();
 	
+	
 	default boolean is(StatoCella stato) {
 		return stato.is(stato());
 	}
@@ -13,7 +14,5 @@ public interface ICella {
 	default boolean isNot(StatoCella stato) {
 		return stato.isNot(stato());
 	}
-	
-	void setStato(int stato);
 	
 }

@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import francesco.IGriglia;
 import francesco.implementazioni.LettoreGriglia;
 import matteo.CompitoTreImplementation;
+import matteo.ConfigurationMode;
 import matteo.ICammino;
 import matteo.IProgressoMonitor;
 import nicolas.*;
@@ -17,6 +18,7 @@ import processing.data.JSONObject;
 import processing.event.Event;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
+import utils.Utils;
 
 public class AppletMain extends PApplet {
 	
@@ -154,7 +156,7 @@ public class AppletMain extends PApplet {
 				fill(150);
 				text(n, (0.5f+j)*s, (0.5f+i)*s);
 				
-				if (griglia.getCellaAt(j, i) instanceof ICella2 c2) {
+				if (griglia.getCellaAt(j, i) instanceof ICellaConDistanze c2) {
 					textAlign(LEFT, TOP);
 					if (c2.isUnreachable()) text("+∞", (0f+j)*s, (+i)*s);
 					else {
@@ -245,10 +247,10 @@ public class AppletMain extends PApplet {
 		popMatrix();
 	}
 	
-	ICella2 O,D;
+	ICellaConDistanze O,D;
 	IProgressoMonitor monitor,monitorMin;
 	CompitoTreImplementation compitoTreImpl;
-	GrigliaConRegioni<ICella2> grigliaNazione;
+	GrigliaConRegioni<ICellaConDistanze> grigliaNazione;
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -272,27 +274,27 @@ public class AppletMain extends PApplet {
 			griglia.forEach((j,i) -> {
 				var cella = griglia.getCellaAt(j, i);
 				if (LANDMARK.matches(cella.stato())) {
-					LANDMARK.removeTo(cella);
+					LANDMARK.removeTo(griglia, x, y);
 				}
 			});
 			maskGriglia((DESTINAZIONE.mask()-1) | OSTACOLO.mask());
 			griglia = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y());
-			O = (ICella2) griglia.getCellaAt(O.x(), O.y());
+			O = (ICellaConDistanze) griglia.getCellaAt(O.x(), O.y());
 			
-			DESTINAZIONE.toggleTo(griglia.getCellaAt(x, y));
-			D = (ICella2)griglia.getCellaAt(x, y);
-			D.setStato(DESTINAZIONE.value());
+			D = (ICellaConDistanze)griglia.getCellaAt(x, y);
+			griglia.setStato(x, y, DESTINAZIONE.value());
 			
 			try {
 				compitoTreImpl = new CompitoTreImplementation();
+				compitoTreImpl.setConfiguration(ConfigurationMode.PERFORMANCE);
 				monitor = compitoTreImpl.getProgress();
 				monitorMin = compitoTreImpl.getProgressMin();
 				new Thread(()->{
 					System.out.println("inizio camminoMin");
-					var cammino = compitoTreImpl.camminoMin(griglia, O, D);
+					var cammino = compitoTreImpl.camminoMin(griglia, O, D, CompitoDueImpl.V0);
 					System.out.println("(%d)".formatted(cammino.landmarks().size()));
 					cammino.landmarks().forEach(lm -> {
-						LANDMARK.addTo(griglia.getCellaAt(lm.x(), lm.y()));
+						LANDMARK.addTo(griglia, lm.x(), lm.y());
 						System.out.println("(%d,%d)".formatted(lm.x(), lm.y()));
 					});
 					System.out.print("finito: ");
@@ -309,20 +311,20 @@ public class AppletMain extends PApplet {
 		
 		case CENTER:
 			switch(e.getModifiers()) {
-			case 0 -> OSTACOLO.toggleTo(griglia.getCellaAt(x, y));
+			case 0 -> OSTACOLO.toggleTo(griglia, x, y);
 			case Event.SHIFT|Event.CTRL|Event.ALT ->{
 				if (x+3>=w || y+3<0) return;
-				OSTACOLO.addTo(griglia.getCellaAt(x+1, y));
-				OSTACOLO.addTo(griglia.getCellaAt(x+3, y));
-				OSTACOLO.addTo(griglia.getCellaAt(x, y-1));
-				OSTACOLO.addTo(griglia.getCellaAt(x+1, y-1));
-				OSTACOLO.addTo(griglia.getCellaAt(x+2, y-1));
-				OSTACOLO.addTo(griglia.getCellaAt(x+3, y-1));
-				OSTACOLO.addTo(griglia.getCellaAt(x, y-2));
-				OSTACOLO.addTo(griglia.getCellaAt(x+1, y-2));
-				OSTACOLO.addTo(griglia.getCellaAt(x+1, y-3));
-				OSTACOLO.addTo(griglia.getCellaAt(x+2, y-3));
-				OSTACOLO.addTo(griglia.getCellaAt(x+3, y-3));
+				OSTACOLO.addTo(griglia, x+1, y);
+				OSTACOLO.addTo(griglia, x+3, y);
+				OSTACOLO.addTo(griglia, x, y-1);
+				OSTACOLO.addTo(griglia, x+1, y-1);
+				OSTACOLO.addTo(griglia, x+2, y-1);
+				OSTACOLO.addTo(griglia, x+3, y-1);
+				OSTACOLO.addTo(griglia, x, y-2);
+				OSTACOLO.addTo(griglia, x+1, y-2);
+				OSTACOLO.addTo(griglia, x+1, y-3);
+				OSTACOLO.addTo(griglia, x+2, y-3);
+				OSTACOLO.addTo(griglia, x+3, y-3);
 			}
 			}
 			break;
@@ -341,10 +343,10 @@ public class AppletMain extends PApplet {
 		
 		switch(e.getButton()) {
 		case LEFT:
-			griglia.getCellaAt(x, y).setStato(OSTACOLO.value());
+			griglia.setStato(x, y, OSTACOLO.value());
 			break;
 		case RIGHT:
-			OSTACOLO.removeTo(griglia.getCellaAt(x, y));
+			OSTACOLO.removeTo(griglia, x, y);
 			break;
 		case CENTER:
 			break;
@@ -421,8 +423,7 @@ public class AppletMain extends PApplet {
 	
 	private void maskGriglia(int mask) {
 		griglia.forEach((x,y) -> {
-			var cella = griglia.getCellaAt(x, y);
-			cella.setStato(cella.stato()&mask);
+			griglia.setStato(x, y, griglia.getCellaAt(x, y).stato()&mask);
 		});
 	}
 	

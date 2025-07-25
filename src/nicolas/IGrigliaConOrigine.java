@@ -5,33 +5,31 @@ import francesco.IGriglia;
 import francesco.IObstacle;
 import processing.data.JSONArray;
 
-public interface IGrigliaConOrigine extends IGriglia<ICella2> {
+public interface IGrigliaConOrigine extends IGriglia<ICellaConDistanze> {
 	
-	ICella2 getOrigine();
+	ICellaConDistanze getOrigine();
+	
 	
 	default boolean isInContesto(int x, int y) {
 		return getCellaAt(x, y).is(StatoCella.CONTESTO);
 	}
-	
 	
 	default boolean isInComplemento(int x, int y) {
 		return getCellaAt(x, y).is(StatoCella.COMPLEMENTO);
 	}
 	
 	default boolean isInChiusura(int x, int y) {
-		return getCellaAt(x, y).is(StatoCella.CHIUSURA);
+		return StatoCella.CHIUSURA.check(getCellaAt(x, y).stato());
 	}
-	
 	
 	default boolean isInFrontiera(int x, int y) {
 		return getCellaAt(x, y).is(StatoCella.FRONTIERA);
 	}
 	
-	// se (xd,yd) è nella chiusura restitiusco la distanza
-	// altrimenti Double.infinity;
+	
 	double distanzaLiberaDa(int xd, int yd);
 	
-	Stream<ICella2> getFrontiera();
+	Stream<ICellaConDistanze> getFrontiera();
 	
 	IObstacle convertiChiusuraInOstacolo();
 	

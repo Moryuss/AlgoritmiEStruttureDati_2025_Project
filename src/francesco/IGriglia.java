@@ -5,15 +5,12 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import nicolas.StatoCella;
-import nicolas.Utils;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
+import utils.Utils;
 
 public interface IGriglia<C extends ICella> {
 	
-	default boolean isNavigabile(int x, int y) {
-		return getCellaAt(x,y).isNot(StatoCella.OSTACOLO);
-	}
 	
 	C getCellaAt(int x, int y);
 	
@@ -27,11 +24,19 @@ public interface IGriglia<C extends ICella> {
 	
 	int getTipo();
 	
-	default IGriglia<ICella> aggiungiTipo(int statoDaAggiungere){
-		return null;
+	void setStato(int x, int y, int s);
+	
+	IGriglia<C> addObstacle(IObstacle obstacle, int tipoOstacolo);
+	
+	
+	default void addStato(int x, int y, int s) {
+		setStato(x, y, getCellaAt(x, y).stato()|s);
 	}
 	
-	IGriglia<C> addObstacle(IObstacle obstacle);
+	
+	default boolean isNavigabile(int x, int y) {
+		return getCellaAt(x,y).isNot(StatoCella.OSTACOLO);
+	}
 	
 	
 	default void forEach(BiConsumer<Integer,Integer> action) {

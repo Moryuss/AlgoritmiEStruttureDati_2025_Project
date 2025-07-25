@@ -14,6 +14,7 @@ import java.util.concurrent.TimeoutException;
 
 import francesco.*;
 import nicolas.*;
+import utils.Utils;
 import matteo.*;
 
 public class TestCompitoTreImpl {
@@ -52,9 +53,9 @@ public class TestCompitoTreImpl {
 			System.out.println(c.getReport());
 		}
 
-		if (c instanceof CompitoTreImplementation && monitorON && debugMonitor) {
-			monitor = ((CompitoTreImplementation) c).getProgress();
-			monitorMin = ((CompitoTreImplementation) c).getProgressMin();
+		if (c instanceof CompitoTreImplementation c2 && monitorON && debugMonitor) {
+			monitor = c2.getProgress();
+			monitorMin = c2.getProgressMin();
 			System.out.println("\nOrigine: (" + monitor.getOrigine().x() + "," +monitor.getOrigine().y() + ")");
 			System.out.println("Destinazione: (" + monitor.getDestinazione().x() + "," +monitor.getDestinazione().y() + ")");
 			System.out.println("Cammino:");
@@ -79,8 +80,8 @@ public class TestCompitoTreImpl {
 	void testCasoBaseStartEqualsEnd() throws Exception {
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(0,0);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(0,0);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -110,8 +111,8 @@ public class TestCompitoTreImpl {
 	void testCasoBase_Start_spostato() throws Exception {
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 1,0);
-		ICella2 start = g.getCellaAt(1,0);
-		ICella2 end = g.getCellaAt(0,0);
+		ICellaConDistanze start = g.getCellaAt(1,0);
+		ICellaConDistanze end = g.getCellaAt(0,0);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -141,8 +142,8 @@ public class TestCompitoTreImpl {
 	void testCelleAdiacenti() throws Exception {
 		startingSetup();
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(0,1); // adiacente in basso, REGINA
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(0,1); // adiacente in basso, REGINA
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -174,8 +175,8 @@ public class TestCompitoTreImpl {
 	void testCamminoPercorsoMinimoNoto() throws Exception {
 		startingSetup();
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(2,3);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(2,3);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -206,8 +207,8 @@ public class TestCompitoTreImpl {
 	void testTipo1_Alfiere() throws Exception {
 		startingSetup();
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(3,3);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(3,3);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -240,8 +241,8 @@ public class TestCompitoTreImpl {
 	void testTipo1_Torre_Orizzontale() throws Exception {
 		startingSetup();
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(10,0);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(10,0);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -275,8 +276,8 @@ public class TestCompitoTreImpl {
 	void testTipo1_Torre_Verticale() throws Exception {
 		startingSetup();
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(0,4);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(0,4);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -307,8 +308,8 @@ public class TestCompitoTreImpl {
 	void testTipo1_Alfiere_Torre_Contesto() throws Exception {
 		startingSetup();
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(8,2);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(8,2);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -336,8 +337,8 @@ public class TestCompitoTreImpl {
 	void testTipo2_Torre_Alfiere_Complemento() throws Exception {
 		startingSetup();
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(5,3);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(5,3);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -366,8 +367,8 @@ public class TestCompitoTreImpl {
 	void test_distanzaCome_alfiere_e_torre() throws Exception {
 		startingSetup();
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(5,3);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(5,3);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -459,8 +460,8 @@ public class TestCompitoTreImpl {
 
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(10,5);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(10,5);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -505,8 +506,8 @@ public class TestCompitoTreImpl {
 
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(0,6);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(0,6);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -550,8 +551,8 @@ public class TestCompitoTreImpl {
 
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(0,6);
+		ICellaConDistanze start = g.getCellaAt(0,0);
+		ICellaConDistanze end = g.getCellaAt(0,6);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
@@ -622,11 +623,8 @@ public class TestCompitoTreImpl {
 		}
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
-		ICella2 start = g.getCellaAt(0, 0);
-		ICella2 end = g.getCellaAt(0, 6);
-
-
-		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createDefault());
+		ICellaConDistanze start = g.getCellaAt(0, 0);
+		ICellaConDistanze end = g.getCellaAt(0, 6);
 
 		
 		// Crea un thread separato per l'esecuzione
@@ -665,12 +663,11 @@ public class TestCompitoTreImpl {
 		}
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
-		ICella2 start = g.getCellaAt(0, 0);
-		ICella2 end = g.getCellaAt(0,6);
+		ICellaConDistanze start = g.getCellaAt(0, 0);
+		ICellaConDistanze end = g.getCellaAt(0,6);
 
 		// Configura il timeout a 500ms
 		((CompitoTreImplementation)c).setTimeout(500);
-		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createDefault());
 		
 		long startTime = System.currentTimeMillis();
 		ICammino cammino = c.camminoMin(griglia, start, end);
@@ -700,14 +697,14 @@ public class TestCompitoTreImpl {
 		}
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
-		ICella2 start = g.getCellaAt(0, 0);
-		ICella2 end = g.getCellaAt(0,6);
+		ICellaConDistanze start = g.getCellaAt(0, 0);
+		ICellaConDistanze end = g.getCellaAt(0,6);
 
-		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createPerformanceModeNoCache());
-		
+		var c2 = (CompitoTreImplementation)c;
+		c2.setConfiguration(ConfigurationMode.PERFORMANCE_NO_CACHE);
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createPerformanceMode());
+		c2.setConfiguration(ConfigurationMode.PERFORMANCE);
 		ICammino camminoCache = c.camminoMin(griglia, start, end);
 
 		// Verifica che i cammini siano uguali
@@ -741,14 +738,14 @@ public class TestCompitoTreImpl {
 		}
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
-		ICella2 start = g.getCellaAt(0, 0);
-		ICella2 end = g.getCellaAt(10,5);
+		ICellaConDistanze start = g.getCellaAt(0, 0);
+		ICellaConDistanze end = g.getCellaAt(10,5);
 
-		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createPerformanceModeNoCache());
-		
+		var c2 = (CompitoTreImplementation)c;
+		c2.setConfiguration(ConfigurationMode.PERFORMANCE_NO_CACHE);
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		((CompitoTreImplementation)c).setConfiguration(CamminoConfiguration.createPerformanceMode());
+		c2.setConfiguration(ConfigurationMode.PERFORMANCE);
 		ICammino camminoCache = c.camminoMin(griglia, start, end);
 
 		// Verifica che i cammini siano uguali
@@ -789,8 +786,8 @@ public class TestCompitoTreImpl {
 
 
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0, 0);
-		ICella2 end = g.getCellaAt(10,5);
+		ICellaConDistanze start = g.getCellaAt(0, 0);
+		ICellaConDistanze end = g.getCellaAt(10,5);
 
 		ICammino cammino = c.camminoMin(griglia, start, end, CompitoDueImpl.V0);	//Differenza rispetto a testRicorsione_Spirale
 

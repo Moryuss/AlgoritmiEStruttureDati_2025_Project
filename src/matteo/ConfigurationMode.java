@@ -35,6 +35,7 @@ public enum ConfigurationMode {
     
     private final int flags;
     
+    
     // Constructor che accetta flag variabili
     ConfigurationMode(ConfigurationFlag... enabledFlags) {
         int tempFlags = 0;
@@ -43,6 +44,7 @@ public enum ConfigurationMode {
         }
         this.flags = tempFlags;
     }
+    
     
     // Verifica se un flag specifico è attivo
     public boolean hasFlag(ConfigurationFlag flag) {
@@ -155,4 +157,10 @@ public enum ConfigurationMode {
     public String toString() {
         return name() + " (flags: " + toBinaryString() + ", active: " + getActiveFlags() + ")";
     }
+    
+    
+    public CamminoConfiguration toCamminoConfiguration() {
+    	return new CamminoConfiguration(this);
+    }
+    
 }

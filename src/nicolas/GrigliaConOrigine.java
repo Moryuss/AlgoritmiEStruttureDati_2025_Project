@@ -6,51 +6,21 @@ import java.util.stream.Stream;
 import francesco.ICella2D;
 import francesco.IGriglia;
 import francesco.IObstacle;
+import francesco.implementazioni.Ostacolo;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
+import utils.Utils;
 
-public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<ICella2D> chiusura, ICella2[] frontiera, int tipoGriglia) implements IGrigliaConOrigine {
+public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<ICella2D> chiusura, ICellaConDistanze[] frontiera, int tipoGriglia) implements IGrigliaConOrigine {
 	
 	@Override
-	public boolean isNavigabile(int x, int y) {
-		return getCellaAt(x, y).isNot(OSTACOLO);
+	public ICellaConDistanze getCellaAt(int x, int y) {
+		return ICellaConDistanze.of(x, y, mat[y][x], dist[y][x]);
 	}
 	
 	@Override
-	public ICella2 getCellaAt(int x, int y) {
-		return new ICella2(){
-			int d = dist[y][x];
-			
-			@Override
-			public int stato() {
-				return mat[y][x];
-			}
-			@Override
-			public int x() {
-				return x;
-			}
-			@Override
-			public int y() {
-				return y;
-			}
-			@Override
-			public int distanzaTorre() {
-				return d&0xffff;
-			}
-			@Override
-			public int distanzaAlfiere() {
-				return d>>>16;
-			}
-			@Override
-			public double distanzaDaOrigine() {
-				if (d==Integer.MAX_VALUE) return Double.POSITIVE_INFINITY;
-				return (distanzaTorre()) + (distanzaAlfiere())*Utils.sqrt2;
-			}
-			@Override
-			public void setStato(int stato) {
-				mat[y][x] = stato;
-			}
-		};
+	public void setStato(int x, int y, int s) {
+		mat[y][x] = s;
 	}
 	
 	@Override
@@ -69,7 +39,7 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 	}
 	
 	@Override
-	public ICella2 getOrigine() {
+	public ICellaConDistanze getOrigine() {
 		return getCellaAt(Ox, Oy);
 	}
 	
@@ -79,22 +49,22 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 	}
 	
 	@Override
-	public Stream<ICella2> getFrontiera() {
+	public Stream<ICellaConDistanze> getFrontiera() {
 		return Stream.of(frontiera);
 	}
 	
 	@Override
-	public IGriglia<ICella2> addObstacle(IObstacle obstacle) {
+	public IGriglia<ICellaConDistanze> addObstacle(IObstacle obstacle, int tipoOstacolo) {
 		var mat = Utils.copy(this.mat);
 		for (var c : obstacle.list()) {
 			mat[c.y()][c.x()] = OSTACOLO.addTo(mat[c.y()][c.x()]);
 		}
-		return new GrigliaConOrigine(mat, dist, Ox, Oy, chiusura, frontiera, tipoGriglia);
+		return new GrigliaConOrigine(mat, dist, Ox, Oy, chiusura, frontiera, tipoGriglia|tipoOstacolo);
 	}
 	
 	@Override
 	public IObstacle convertiChiusuraInOstacolo() {
-		return IObstacle.of(chiusura);
+		return new Ostacolo(chiusura);
 	}
 	
 	@Override

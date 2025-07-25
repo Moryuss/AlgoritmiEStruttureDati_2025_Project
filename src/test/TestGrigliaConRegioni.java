@@ -5,8 +5,8 @@ import java.io.File;
 import org.junit.jupiter.api.Test;
 import nicolas.GrigliaConOrigineFactory;
 import nicolas.RegioneFactory;
-import nicolas.Utils;
 import processing.core.PApplet;
+import utils.Utils;
 
 public class TestGrigliaConRegioni {
 	

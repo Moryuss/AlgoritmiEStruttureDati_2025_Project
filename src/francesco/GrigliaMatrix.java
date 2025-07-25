@@ -10,14 +10,15 @@ public record GrigliaMatrix(ICella[][] mat, int tipo) implements IGriglia<ICella
 		this(mat, 0);
 	}
 	
-	@Override
-	public boolean isNavigabile(int x, int y) {
-		return StatoCella.OSTACOLO.isNot(mat[y][x]);
-	}
 	
 	@Override
 	public ICella getCellaAt(int x, int y) {
 		return mat[y][x];
+	}
+	
+	@Override
+	public void setStato(int x, int y, int s) {
+		mat[y][x] = new Cella(s);
 	}
 	
 	@Override
@@ -36,18 +37,17 @@ public record GrigliaMatrix(ICella[][] mat, int tipo) implements IGriglia<ICella
 	}
 	
 	@Override
-	public IGriglia<ICella> addObstacle(IObstacle obstacle) {
+	public IGriglia<ICella> addObstacle(IObstacle obstacle, int tipoOstacolo) {
 		ICella[][] mat = inizializzaMatrice(width(), height());
 		for(int i=0; i<height(); i++) {
 			for(int j=0; j<width(); j++) {
-				mat[i][j].setStato(this.mat[i][j].stato()); 
+				mat[i][j] = new Cella(this.mat[i][j].stato());
 			}
 		}
 		obstacle.list().forEach(c -> {
-//			mat[c.y()][c.x()].setStato(mat[c.y()][c.x()].stato() | c.stato());
-			mat[c.y()][c.x()].setStato(mat[c.y()][c.x()].stato() | StatoCella.OSTACOLO.value());
+			mat[c.y()][c.x()] = new Cella(mat[c.y()][c.x()].stato() | StatoCella.OSTACOLO.value());
 		});
-		return new GrigliaMatrix(mat, this.getTipo());
+		return new GrigliaMatrix(mat, this.getTipo()|tipoOstacolo);
 	}
 	
 	
@@ -55,7 +55,7 @@ public record GrigliaMatrix(ICella[][] mat, int tipo) implements IGriglia<ICella
 		ICella[][] mat = inizializzaMatrice(width, height);
 		IGriglia<ICella> griglia = new GrigliaMatrix(mat, 0);
 		for(IObstacle o : ostacoli) {
-			griglia = griglia.addObstacle(o);
+			griglia = griglia.addObstacle(o, 0);
 		}
 		return griglia;
 	}
@@ -70,13 +70,4 @@ public record GrigliaMatrix(ICella[][] mat, int tipo) implements IGriglia<ICella
 		return mat;
 	}
 	
-	public IGriglia<ICella> aggiungiTipo(int statoDaAggiungere) {
-		ICella[][] mat = inizializzaMatrice(width(), height());
-		for(int i=0; i<height(); i++) {
-			for(int j=0; j<width(); j++) {
-				mat[i][j].setStato(this.mat[i][j].stato()); 
-			}
-		}
-		return new GrigliaMatrix(mat, TipoOstacolo.sommaTipi(getTipo(), statoDaAggiungere));
-	}
 }

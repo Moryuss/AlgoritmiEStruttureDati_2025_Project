@@ -1,50 +1,20 @@
 package matteo;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import nicolas.Utils;
+import utils.Utils;
 
-public class Cammino implements ICammino{
-
-	private final double lunghezza;
-	private final int lunghezzaTorre;
-	private final int lunghezzaAlfiere;
-    private final List<ILandmark> landmarks;
-    
-    public Cammino(int lunghezzaTorre, int lunghezzaAlfiere, List<ILandmark> landMarks) {
-        this.landmarks = new ArrayList<>(landMarks);
-        this.lunghezzaTorre = lunghezzaTorre;
-        this.lunghezzaAlfiere = lunghezzaAlfiere;
-        this.lunghezza = this.calcolaLunghezzaComplessiva(lunghezzaTorre, lunghezzaAlfiere);
-    }
-
-    
-    @Override
-    public double lunghezza() {
-        return lunghezza;
-    }
-    
-    @Override
-    public List<ILandmark> landmarks() {
-        return landmarks;
-    }
-
-	@Override
-	public int lunghezzaTorre() {
-		return this.lunghezzaTorre;
-	}
-
-	@Override
-	public int lunghezzaAlfiere() {
-		return this.lunghezzaAlfiere;
+public record Cammino(int lunghezzaTorre, int lunghezzaAlfiere, List<ILandmark> landmarks, double lunghezza) implements ICammino {
+	
+	public Cammino(int lunghezzaTorre, int lunghezzaAlfiere, List<ILandmark> landmarks) {
+		this(lunghezzaTorre, lunghezzaAlfiere, List.copyOf(landmarks), calcolaLunghezzaComplessiva(lunghezzaTorre, lunghezzaAlfiere));
 	}
 	
-	private double calcolaLunghezzaComplessiva(int lunTorre, int lunAlfiere) {
-		if(lunTorre == Integer.MAX_VALUE||
-				lunAlfiere == Integer.MAX_VALUE) {
+	private static double calcolaLunghezzaComplessiva(int lunTorre, int lunAlfiere) {
+		if(lunTorre==Integer.MAX_VALUE||lunAlfiere==Integer.MAX_VALUE) {
 			return Double.POSITIVE_INFINITY;
 		}
-		return (lunghezzaTorre()) + (lunghezzaAlfiere())*Utils.sqrt2;
+		return lunTorre + Utils.sqrt2*lunAlfiere;
 	}
+	
 }

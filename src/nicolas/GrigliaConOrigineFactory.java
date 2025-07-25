@@ -8,6 +8,7 @@ import java.util.function.BiConsumer;
 import francesco.ICella2D;
 import francesco.IGriglia;
 import francesco.implementazioni.Cella2D;
+import utils.Utils;
 
 public final class GrigliaConOrigineFactory {
 	
@@ -72,7 +73,7 @@ public final class GrigliaConOrigineFactory {
 		res[Oy][Ox] = ORIGINE.value();
 		chiusura.add(new Cella2D(ORIGINE.value(), Ox, Oy));
 		
-		var frontiera = new ArrayDeque<ICella2>();
+		var frontiera = new ArrayDeque<ICellaConDistanze>();
 		
 		
 		for (int i = 0; i < res.length; i++) {
@@ -88,7 +89,7 @@ public final class GrigliaConOrigineFactory {
 						if (CHIUSURA.isNot(res[iii][jjj])
 							&& !OSTACOLO.is(res[iii][jjj])) {
 							res[i][j] |= FRONTIERA.value();
-							frontiera.addLast(ICella2.of(j, i, res[i][j], dist[i][j]&0xffff, dist[i][j]>>>16));
+							frontiera.addLast(ICellaConDistanze.of(j, i, res[i][j], dist[i][j]));
 							continue outer;
 						}
 					}
@@ -97,7 +98,7 @@ public final class GrigliaConOrigineFactory {
 			}
 		}
 		
-		return new GrigliaConOrigine(res, dist, Ox, Oy, chiusura, frontiera.toArray(ICella2[]::new), griglia.getTipo());
+		return new GrigliaConOrigine(res, dist, Ox, Oy, chiusura, frontiera.toArray(ICellaConDistanze[]::new), griglia.getTipo());
 		
 	}
 	

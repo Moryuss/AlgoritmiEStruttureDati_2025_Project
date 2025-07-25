@@ -2,13 +2,8 @@ package francesco.implementazioni;
 
 import java.io.File;
 import java.nio.file.Path;
-
-import francesco.GrigliaMatrix;
-import francesco.ICella;
-import francesco.ICompitoUno;
-import francesco.IGriglia;
-import francesco.TipoOstacolo;
-import francesco.ostacolibuilder.CentroCostruttore;
+import java.util.List;
+import francesco.*;
 import processing.core.PApplet;
 import processing.data.JSONObject;
 
@@ -34,33 +29,31 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 		Cella[][] mat = GrigliaMatrix.inizializzaMatrice(width, height);
 		
 		// Inizializzo una IGriglia senza ostacoli per semplicita'
-		IGriglia<ICella> griglia = new GrigliaMatrix(mat, 0);
+		IGriglia<?> griglia = new GrigliaMatrix(mat, 0);
 		
 		// Infine aggiunge gli ostacoli
 		int randomSeed = json.getInt("randomSeed");
-		griglia = (IGriglia<ICella>) generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
+		griglia = generaOstacoli(width, height, griglia, randomSeed, json.getJSONObject("maxOstacoli"));
 		
 		return griglia;
 	}
 
 
-	private IGriglia<? extends ICella> generaOstacoli(int width, int height, IGriglia<ICella> griglia, int randomSeed, JSONObject json) {
-		IGriglia<ICella> result = griglia;
+	private IGriglia<?> generaOstacoli(int width, int height, IGriglia<?> griglia, int randomSeed, JSONObject json) {
+		IGriglia<?> result = griglia;
 		int ostCounter = 0;
-		for(TipoOstacolo ost : TipoOstacolo.values()) {
+		for (TipoOstacolo ost : TipoOstacolo.values()) {
 			
-			if(json.hasKey(ost.toString())) {
+			if (json.hasKey(ost.toString())) {
 				int num = json.getInt(ost.toString());
-				if(num < 0) {
+				if (num < 0) {
 					System.err.println("Numero di ostacoli " + ost.toString() + " non valido: " + num);
 					continue;
 				}
-				if(num > 0){
-					// Modifica lo stato sulla base del tipo di ostacolo presente
-					result = result.aggiungiTipo(ost.value());
-				}
-				for(int i = 0; i < num; i++) {
-					result = (IGriglia<ICella>) CentroCostruttore.costruttoreCentrico(ost, width, height, result, randomSeed*(i+ostCounter));
+				for (int i=0; i<num; i++) {
+					List<ICella2D> celle = ost.generaCelle(width, height, result, randomSeed*(i+ostCounter));
+					Ostacolo ostacolo = new Ostacolo(celle);
+					result = result.addObstacle(ostacolo, ost.value());
 				}
 				randomSeed += num;
 			}

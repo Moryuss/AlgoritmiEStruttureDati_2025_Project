@@ -7,7 +7,7 @@ import francesco.ICella;
 import francesco.IGriglia;
 import francesco.implementazioni.LettoreGriglia;
 import nicolas.GrigliaConOrigineFactory;
-import nicolas.ICella2;
+import nicolas.ICellaConDistanze;
 import nicolas.IGrigliaConOrigine;
 import nicolas.StatoCella;
 
@@ -35,9 +35,9 @@ public class Main  {
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0); //impl nicolas
 		
 		
-		ICella2 start = g.getCellaAt(0, 0);
+		ICellaConDistanze start = g.getCellaAt(0, 0);
 //		ICella2 end =  g.getCellaAt(g.width()-1, g.height()-1); // esplode 
-		ICella2 end =  g.getCellaAt(11,3); 
+		ICellaConDistanze end =  g.getCellaAt(11,3); 
 	
 		if(StatoCella.OSTACOLO.is(end.stato())) {
 			System.out.println("Cella è ostacolo");

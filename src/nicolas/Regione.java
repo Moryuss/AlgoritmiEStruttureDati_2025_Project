@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import francesco.ICella2D;
+import francesco.IHave2DCoordinate;
 
 public class Regione {
 	protected List<ICella2D> celle = new LinkedList<>();
@@ -46,6 +47,14 @@ public class Regione {
 		if (y<ymin) ymin=y;
 		if (x>xmax) xmax=x;
 		if (y>ymax) ymax=y;
+	}
+	
+	
+	public boolean inRange(int x, int y) {
+		return x>=xmin && x<=xmax && y>=ymin && x<=ymax;
+	}
+	public boolean inRange(IHave2DCoordinate c) {
+		return inRange(c.x(), c.y());
 	}
 	
 	public List<ICella2D> celle() {return celle;}

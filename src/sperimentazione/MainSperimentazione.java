@@ -9,12 +9,12 @@ import matteo.ICammino;
 import matteo.ICompitoTre;
 import matteo.ILandmark;
 import nicolas.GrigliaConOrigineFactory;
-import nicolas.ICella2;
+import nicolas.ICellaConDistanze;
 import nicolas.ICompitoDue;
 import nicolas.IGrigliaConOrigine;
-import nicolas.Utils;
 import processing.core.PApplet;
 import processing.data.JSONArray;
+import utils.Utils;
 
 public class MainSperimentazione {
 
@@ -76,10 +76,10 @@ public class MainSperimentazione {
 							CoordinateCella origine = origini.get(i);
 							//TODO CAMBIARE CON "due" QUANDO CI SARA'
 							IGrigliaConOrigine gO = GrigliaConOrigineFactory.creaV0(griglia, origine.x(), origine.y()); 
-							ICella2 start = gO.getCellaAt(origine.x(), origine.y());
+							ICellaConDistanze start = gO.getCellaAt(origine.x(), origine.y());
 							
 							CoordinateCella destinazione = destinazioni.get(i);
-							ICella2 end = gO.getCellaAt(destinazione.x(), destinazione.y()); 
+							ICellaConDistanze end = gO.getCellaAt(destinazione.x(), destinazione.y()); 
 //							ICompitoTre solver = new CompitoTreImplementation();
 							ICammino cammino1 = tre.camminoMin(griglia, start, end);
 							

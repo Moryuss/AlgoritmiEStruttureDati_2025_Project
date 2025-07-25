@@ -1,9 +1,11 @@
 package matteo;
 
-import francesco.implementazioni.Cella2D;
+import francesco.ICella2D;
 
-public class Landmark extends Cella2D implements ILandmark{
-	public Landmark(int stato, int x, int y) {
-		super(stato, x, y);
+public record Landmark(int stato, int x, int y) implements ILandmark {
+	
+	public Landmark(ICella2D cella) {
+		this(cella.stato(), cella.x(), cella.y());
 	}
+	
 }
