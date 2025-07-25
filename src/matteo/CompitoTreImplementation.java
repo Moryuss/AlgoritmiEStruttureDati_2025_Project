@@ -16,7 +16,8 @@ import nicolas.*;
 public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor, IInterrompibile{
 
 	private final CamminoCache pathCache = new CamminoCache(); //cache per i cammini già calcolati
-	//    sprivate final GestoreInterruzioni gestoreInterruzioni = new GestoreInterruzioni();
+	private final GestioneInterruzioni gestoreInterruzioni = new GestioneInterruzioni();	
+	private CamminoConfiguration config = new CamminoConfiguration(); // Configurazione del cammino
 
 	IStatisticheEsecuzione stats;	
 	IProgressoMonitor monitor = new ProgressoMonitor();		//per monitorare l'evoluzione del cammino
@@ -24,14 +25,6 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 	private String report;
 	private int livelloRicorsione = 0;
-
-	private CamminoConfiguration config = new CamminoConfiguration(); // Configurazione del cammino
-
-	private boolean interrompiSuRichiesta = false;	// questo non va modificato da qui, ma da setTimeout(tempo)
-	private boolean interrompiSuTempo = false;	
-
-	private long tempoInizio;
-	private long timeoutMillis; 
 
 	private Deque<ILandmark> stackCammino = new ArrayDeque<ILandmark>();
 
@@ -78,14 +71,23 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 		stampaStatiOrigineDestinazione(O, D);
 		inizializzaCalcolo(griglia, O, D);
-
+		ICammino risultato = null;
 		try {
-			ICammino risultato = calcoloCamminoMin(griglia, O, D, stats, compitoDue);
-			generaReportFinale(risultato);
+			risultato = calcoloCamminoMin(griglia, O, D, stats, compitoDue);
+//			generaReportFinale(risultato);
 			stampaStatoDestinazioneFinale(risultato);
 			return risultato;
 		} catch (InterruptedException e) {
 			return gestisciInterruzione(e);
+		}finally {
+			// Genera sempre il report, anche in caso di interruzione
+			if(risultato!=null) generaReportFinale(risultato);
+			else if(this.getProgressMin().getCammino().lunghezza()<Integer.MAX_VALUE) {
+				generaReportFinale(this.getProgressMin().getCammino());
+			}
+			else {
+				generaReportFinale(new Cammino(Integer.MAX_VALUE, Integer.MAX_VALUE, new ArrayList<>()));
+			}
 		}
 	}
 	private void generaReportFinale(ICammino risultato) {
@@ -107,8 +109,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 	private ICammino gestisciInterruzione(InterruptedException e) {
 		if(config.isStopMessageEnabled()) System.out.println(e.getMessage());
+
 		stats.interrompiCalcolo();
-		if(this.getProgressMin().getCammino()!= null) {
+		if(this.getProgressMin().getCammino()!= null && 
+				this.getProgressMin().getCammino().lunghezza() < Integer.MAX_VALUE) {
 			if(config.isStopMessageEnabled()) System.out.println("Cammino trovato");
 			return this.getProgressMin().getCammino();
 		}
@@ -188,7 +192,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		IGriglia<ICella2> g2 = g.addObstacle(g.convertiChiusuraInOstacolo());
 
 		for (ICella2 F : frontieraList) {
-			this.checkInterruzione();
+			this.gestoreInterruzioni.checkInterruzione();
 
 			stampaFrontieraStato(F);
 
@@ -418,7 +422,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	}
 	private void preparaRicorsione(ICella2D O) throws InterruptedException {
 		livelloRicorsione++;
-		this.checkInterruzione();
+		this.gestoreInterruzioni.checkInterruzione();
 
 		ILandmark currentLandmark = new Landmark(
 				StatoCella.LANDMARK.addTo(O.stato()),
@@ -466,25 +470,23 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 	@Override
 	public void interrupt() {
-		this.interrompiSuRichiesta = true;
+		this.gestoreInterruzioni.interrupt();
 	}
 
 	@Override
 	public void setTimeout(long timeoutMillis) {
-		this.timeoutMillis = timeoutMillis;
-		this.tempoInizio = System.currentTimeMillis();
-		this.interrompiSuTempo = true;
+		gestoreInterruzioni.setTimeout(timeoutMillis);
 	}
 
-	private void checkInterruzione() throws InterruptedException {
-		if (interrompiSuRichiesta) {
-			throw new InterruptedException("Interrotto su richiesta");
-		}
-
-		if (interrompiSuTempo && (System.currentTimeMillis() - tempoInizio) > timeoutMillis) {
-			throw new InterruptedException("Timeout raggiunto");
-		}
-	}
+	//	private void checkInterruzione() throws InterruptedException {
+	//		if (interrompiSuRichiesta) {
+	//			throw new InterruptedException("Interrotto su richiesta");
+	//		}
+	//
+	//		if (interrompiSuTempo && (System.currentTimeMillis() - tempoInizio) > timeoutMillis) {
+	//			throw new InterruptedException("Timeout raggiunto");
+	//		}
+	//	}
 	private void bitPrint(int numero) {
 		String bit = String.format("%32s", Integer.toBinaryString(numero)).replace(' ', '0');
 		System.out.println(bit);
@@ -514,27 +516,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				percorsoCorrente));
 	}
 
-	//		private String generaChiaveCache(IGriglia<?> griglia, ICella2 origine, ICella2 destinazione) {
-	//			return origine.x() + "," + origine.y() + "->" + 
-	//					destinazione.x() + "," + destinazione.y() + "|" + 
-	//					calcolaHashOstacoli(griglia);
-	//		}
 
-	/**
-	 * Calcola un hash degli ostacoli presenti nella griglia
-	 */
-	//	private int calcolaHashOstacoli(IGriglia<?> griglia) {
-	//		List<Point> ostacoli = new ArrayList<>();
-	//		for (int x = 0; x < griglia.width(); x++) {
-	//			for (int y = 0; y < griglia.height(); y++) {
-	//				if (StatoCella.OSTACOLO.is(griglia.getCellaAt(x, y).stato())) {
-	//					ostacoli.add(new Point(x, y));
-	//				}
-	//			}
-	//		}
-	//		int hash = Objects.hash(ostacoli);
-	//		return hash;
-	//	}
 	/**
 	 * Pulisce la cache, utile per test / gestione memoria
 	 */
