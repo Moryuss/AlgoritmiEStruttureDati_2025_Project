@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import francesco.ICella2D;
 import francesco.IGriglia;
-import nicolas.ICella2;
 import nicolas.StatoCella;
 
 public class CamminoCache {
@@ -25,7 +25,7 @@ public class CamminoCache {
 		this.debugMode = debugMode;
 	}
 	// Metodo principale per ottenere un cammino dalla cache
-	public ICammino getCammino(IGriglia<?> griglia, ICella2 origine, ICella2 destinazione) {
+	public ICammino getCammino(IGriglia<?> griglia, ICella2D origine, ICella2D destinazione) {
 		if (!enabled) {
 			return null; // Cache disabilitata
 		}
@@ -43,7 +43,7 @@ public class CamminoCache {
 	}
 
 	// Metodo per salvare un cammino in cache
-	public void putCammino(IGriglia<?> griglia, ICella2 origine, ICella2 destinazione, ICammino cammino) {
+	public void putCammino(IGriglia<?> griglia, ICella2D origine, ICella2D destinazione, ICammino cammino) {
 		if (!enabled) {
 			return; // Cache disabilitata
 		}
@@ -91,7 +91,7 @@ public class CamminoCache {
 	}
 
 	// Genera una chiave unica per la cache basata su origine, destinazione e ostacoli
-	private String generateCacheKey(IGriglia<?> griglia, ICella2 origine, ICella2 destinazione) {
+	private String generateCacheKey(IGriglia<?> griglia, ICella2D origine, ICella2D destinazione) {
 		return origine.x() + "," + origine.y() + "->" + 
 				destinazione.x() + "," + destinazione.y() + "|" + 
 				calcolaHashOstacoli(griglia);

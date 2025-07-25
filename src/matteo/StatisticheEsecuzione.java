@@ -3,8 +3,7 @@ package matteo;
 import java.util.ArrayList;
 import java.util.List;
 
-import francesco.ICella;
-import nicolas.ICella2;
+import francesco.ICella2D;
 
 // Classe per raccogliere statistiche
 public class StatisticheEsecuzione implements IStatisticheEsecuzione{
@@ -13,8 +12,8 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	private int height;
 	private int tipoGriglia;
 
-	private ICella2 origine;
-	private ICella2 destinazione;
+	private ICella2D origine;
+	private ICella2D destinazione;
 
 	private int totaleCelleFrontiera = 0;
 	private int totaleIterazioniCondizione = 0;
@@ -37,12 +36,12 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	}
 
 	@Override
-	public void saveOrigine(ICella2 origine) {
+	public void saveOrigine(ICella2D origine) {
 		this.origine = origine;
 	}
 
 	@Override
-	public void saveDestinazione(ICella2 destinazione) {
+	public void saveDestinazione(ICella2D destinazione) {
 		this.destinazione = destinazione;
 	}
 

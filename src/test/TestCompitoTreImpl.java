@@ -397,8 +397,8 @@ public class TestCompitoTreImpl {
 	void testRicorsione_Cella_Raggiungibile_con_1_Frontiera() throws Exception {
 		startingSetup();
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2 start = g.getCellaAt(0,0);
-		ICella2 end = g.getCellaAt(11,3);
+		ICella2D start = g.getCellaAt(0,0);
+		ICella2D end = g.getCellaAt(11,3);
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 

@@ -1,6 +1,6 @@
 package matteo;
 
-import nicolas.ICella2;
+import francesco.ICella2D;
 
 public interface IStatisticheEsecuzione {
 
@@ -8,9 +8,9 @@ public interface IStatisticheEsecuzione {
 	    
 	    public void saveTipoGriglia(int tipo);
 	    
-	    public void saveOrigine(ICella2 origine);
+	    public void saveOrigine(ICella2D origine);
 	    
-	    public void saveDestinazione(ICella2 destinazione);
+	    public void saveDestinazione(ICella2D destinazione);
 	    
 	    public void incrementaCelleFrontiera();
 	    

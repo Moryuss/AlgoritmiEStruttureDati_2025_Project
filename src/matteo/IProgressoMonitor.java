@@ -1,18 +1,18 @@
 package matteo;
 
-import nicolas.ICella2;
+import francesco.ICella2D;
 
 public interface IProgressoMonitor {
 
 	public ICammino getCammino();
 	
-	public ICella2 getOrigine();
+	public ICella2D getOrigine();
 
-	public ICella2 getDestinazione();
+	public ICella2D getDestinazione();
 	
 	public void setCammino(ICammino cammino);
 
-	public void setOrigine(ICella2 origine);
+	public void setOrigine(ICella2D origine);
 	
-	public void setDestinazione(ICella2 destinazione);
+	public void setDestinazione(ICella2D destinazione);
 }

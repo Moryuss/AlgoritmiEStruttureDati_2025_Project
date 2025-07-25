@@ -25,17 +25,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	private int livelloRicorsione = 0;
 
 	private CamminoConfiguration config = new CamminoConfiguration(); // Configurazione del cammino
-//	public boolean debug = false;	//per debug, stampa informazioni utili
-//	public boolean monitorON = true; 	//NON mettere a false, è legato al funzionamento degli interrupt.
-//	public boolean stopMessage = false;
-//	public boolean stateCheck = false;	//stampa lo stato di celle considerate
 
 	private boolean interrompiSuRichiesta = false;	// questo non va modificato da qui, ma da setTimeout(tempo)
 	private boolean interrompiSuTempo = false;	
-
-//	public boolean sortedFrontiera = false;	//applica sort alla frontiera, considera prima quelle più vicine a destinazione
-//	public boolean condizioneRafforzata = false; // Imposta a false per usare la condizione originale
-//	public boolean cacheEnabled = false; // Flag per abilitare/disabilitare la cache
 
 	private long tempoInizio;
 	private long timeoutMillis; 
@@ -66,7 +58,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
         return config;
     }
 	@Override
-	public ICammino camminoMin(IGriglia<?> griglia, ICella2 O, ICella2 D) {
+	public ICammino camminoMin(IGriglia<?> griglia, ICella2D O, ICella2D D) {
 
 		if(config.isStateCheckEnabled()) {
 			System.out.println("Origine e destinazione stati");
@@ -108,7 +100,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		}
 	}
 
-	private void inizializzazione(IGriglia<?> griglia, ICella2 O, ICella2 D) {
+	private void inizializzazione(IGriglia<?> griglia, ICella2D O, ICella2D D) {
 		stats = new StatisticheEsecuzione();
 
 		// Inizializza la cache
@@ -130,7 +122,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stats.setFrontieraStored(config.isSortedFrontieraEnabled());
 	}
 
-	public ICammino camminoMinConStatistiche(IGriglia<?> griglia, ICella2 O, ICella2 D, IStatisticheEsecuzione stats) throws InterruptedException {
+	private ICammino camminoMinConStatistiche(IGriglia<?> griglia, ICella2D O, ICella2D D, IStatisticheEsecuzione stats) throws InterruptedException {
 
 		//stampa tutti gli elementi in cache se debug abilitato
 		pathCache.printCacheContents();
