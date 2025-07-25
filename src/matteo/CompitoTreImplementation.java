@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 
+import francesco.ICella2D;
 import francesco.IGriglia;
 import nicolas.*;
 

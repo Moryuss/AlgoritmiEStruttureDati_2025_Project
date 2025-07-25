@@ -19,8 +19,9 @@ import matteo.*;
 public class TestCompitoTreImpl {
 
 	private boolean debug = false;
-	private boolean riassunto = true;
+	private boolean riassunto = false;
 	private boolean monitorON = true;
+	private boolean debugMonitor = false;	//stampa il monitor nei metodi specific
 	private boolean bit = false;	//stampa lo stato in bit
 
 	IProgressoMonitor monitor = new ProgressoMonitor();
@@ -51,7 +52,7 @@ public class TestCompitoTreImpl {
 			System.out.println(c.getReport());
 		}
 
-		if (c instanceof CompitoTreImplementation && monitorON) {
+		if (c instanceof CompitoTreImplementation && monitorON && debugMonitor) {
 			monitor = ((CompitoTreImplementation) c).getProgress();
 			monitorMin = ((CompitoTreImplementation) c).getProgressMin();
 			System.out.println("\nOrigine: (" + monitor.getOrigine().x() + "," +monitor.getOrigine().y() + ")");
@@ -401,7 +402,7 @@ public class TestCompitoTreImpl {
 
 		ICammino cammino = c.camminoMin(griglia, start, end);
 
-		if (c instanceof CompitoTreImplementation && monitorON) {
+		if (c instanceof CompitoTreImplementation) {
 			monitor = ((CompitoTreImplementation) c).getProgress();
 			monitorMin = ((CompitoTreImplementation) c).getProgressMin();
 		}
@@ -589,7 +590,7 @@ public class TestCompitoTreImpl {
 			assertEquals(cammino.landmarks().get(i).y(), monitorMin.getCammino().landmarks().get(i).y());
 		}
 
-		if(monitorON) {
+		if(monitorON && debugMonitor) {
 			System.out.println("----------------------------------------------------");
 			System.out.println("MONITOR");
 			System.out.println("Origine: (" + monitor.getOrigine().x() + "," +monitor.getOrigine().y() + ")");
