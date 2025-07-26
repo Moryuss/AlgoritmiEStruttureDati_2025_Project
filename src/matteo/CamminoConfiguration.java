@@ -1,9 +1,11 @@
 package matteo;
 
+
 public class CamminoConfiguration {
     
 	private final ConfigurationMode mode;
     
+
 	
     public CamminoConfiguration() {
         this.mode = ConfigurationMode.DEFAULT;

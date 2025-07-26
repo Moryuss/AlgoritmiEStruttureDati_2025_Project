@@ -324,10 +324,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		if (config.isMonitorEnabled()) {
 			monitor.setCammino(new Cammino(Integer.MAX_VALUE,
 					Integer.MAX_VALUE, 
-					new ArrayList<>(stackCammino)));
-			
-			stackCammino.pop();
+					new ArrayList<>(stackCammino)));			
 		}
+		stackCammino.pop();
+
 		
 		if (config.isDebugEnabled()) System.out.println("caso base infinity");
 		
