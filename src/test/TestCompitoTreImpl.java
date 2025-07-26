@@ -33,7 +33,7 @@ public class TestCompitoTreImpl {
 	@BeforeEach
 	public void startingSetup() {
 		try {
-			c = new CompitoTreImplementation();	//QUI si può modificare per cambiare la modalità
+			c = new CompitoTreImplementation();	
 			griglia = Utils.loadSimple(new File("src/test/json/testCompitoTre.int.json"));
 			//System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
 			// Stampa la griglia per visualizzare ostacoli e celle navigabili

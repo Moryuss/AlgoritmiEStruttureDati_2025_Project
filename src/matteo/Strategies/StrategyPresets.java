@@ -6,6 +6,8 @@ import matteo.ConfigurationMode;
 
 /**
  * Classe di utilità che sfrutta direttamente i ConfigurationMode esistenti.
+ * Fornisce metodi statici per ottenere facilmente i bundle di strategie
+ * 
  */
 public class StrategyPresets {
     
