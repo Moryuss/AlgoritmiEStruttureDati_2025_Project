@@ -326,7 +326,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stackCammino.pop();
 
 
-		if (config.isDebugEnabled()) System.out.println("caso base infinity");
+		strategies.getDebugStrategy().println("caso base infinity");
 
 		ICammino risultato = new Cammino(Integer.MAX_VALUE,
 				Integer.MAX_VALUE,
@@ -338,7 +338,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		return risultato;
 	}
 	private ICammino gestisciCasoBase(ICella2D O, IGrigliaConOrigine g, ICella2D dest) {
-		if (config.isDebugEnabled()) System.out.println("caso base");
+		strategies.getDebugStrategy().println("caso base");
 
 		int distanzaTorre = g.getCellaAt(dest.x(), dest.y()).distanzaTorre();
 		int distanzaAlfiere = g.getCellaAt(dest.x(), dest.y()).distanzaAlfiere();
@@ -391,8 +391,6 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 						"Stato destinazione presa da D: " + bitPrint(D.stato()) + "\n" +
 						"Stato destinazione presa da griglia (dest): " + bitPrint(dest.stato())
 				);
-
-
 		return dest;
 	}
 	private IGrigliaConOrigine creaGriglia(IGriglia<?> griglia, ICella2D O, ICella2D D, ICompitoDue compitoDue) {
