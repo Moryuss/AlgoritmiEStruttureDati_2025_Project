@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import francesco.ICella2D;
@@ -13,7 +12,6 @@ import francesco.IHave2DCoordinate;
 import matteo.Strategies.StrategyBundle;
 import matteo.Strategies.StrategyFactory;
 import nicolas.*;
-import utils.Utils;
 
 public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor, IInterrompibile{
 
@@ -152,9 +150,13 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 	private void inizializzaCalcolo(IGriglia<?> griglia, ICella2D O, ICella2D D) {
 		inizializzaStatistiche();
+		inizializzaCompitoTreMode();
 		inizializzaCache();
 		inizializzaMonitors(O, D);
 		salvaInformazioniGriglia(griglia, O, D);
+	}
+	private void inizializzaCompitoTreMode() {
+		stats.setCompitoTreMode(config.getMode());
 	}
 	private void salvaInformazioniGriglia(IGriglia<?> griglia, ICella2D O, ICella2D D) {
 		stats.saveDimensioniGriglia(griglia.height(), griglia.width());

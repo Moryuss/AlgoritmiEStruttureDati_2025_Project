@@ -23,6 +23,8 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	private boolean calcoloInterrotto = false;
 	private boolean cacheAttiva = false;
 	private boolean frontieraSotred = false;
+	
+	private ConfigurationMode compitoTreMode = ConfigurationMode.DEFAULT;
 
 	@Override
 	public void saveDimensioniGriglia(int h, int w) {
@@ -77,7 +79,11 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	public void setFrontieraStored(boolean frontieraStored) {
 		this.frontieraSotred = frontieraStored;
 	}
-
+	@Override
+	public void setCompitoTreMode(ConfigurationMode mode) {
+		this.compitoTreMode = mode;
+	}
+	
 	@Override
 	public String generaRiassunto(ICammino risultato) {
 		long tempoTotaleNs = System.nanoTime() - tempoInizio;
@@ -88,6 +94,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		sb.append("Tipo griglia: ").append(this.tipoGriglia).append("\n");
 		sb.append("Origine: (").append(origine.x()).append(",").append(origine.y()).append(")").append("\n");
 		sb.append("Destinazione: (").append(destinazione.x()).append(",").append(destinazione.y()).append(")").append("\n");
+		sb.append("Modalità Compito Tre: ").append(compitoTreMode.toString()).append("\n");
 		sb.append("Tempo di esecuzione: ").append(tempoTotaleNs).append(" ns (").append(tempoTotaleMs).append(" ms)\n");
 		sb.append("Totale celle di frontiera considerate: ").append(totaleCelleFrontiera).append("\n");
 		sb.append("Totale iterazioni condizione (riga 16/17): ").append(totaleIterazioniCondizione).append("\n");
@@ -112,6 +119,8 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 
 		return sb.toString();
 	}
+
+	
 
 	
 

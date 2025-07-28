@@ -28,4 +28,6 @@ public interface IStatisticheEsecuzione {
 		
 		public void setFrontieraStored(boolean frontieraStored);
 
+		public void setCompitoTreMode(ConfigurationMode mode);
+
 }
