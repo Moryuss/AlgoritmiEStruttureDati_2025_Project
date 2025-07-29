@@ -100,6 +100,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		try {
 			risultato = calcoloCamminoMin(griglia, O, D, stats, compitoDue);
 			//			generaReportFinale(risultato);
+			stats.saveTime(); 	// Salva il tempo di esecuzione
 			stampaStatoDestinazioneFinale(risultato);
 			return risultato;
 		} catch (InterruptedException e) {
@@ -507,6 +508,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	 */
 	public int getCacheSize() {
 		return pathCache.size();
+	}
+	@Override
+	public IStatisticheEsecuzione getStatisticheEsecuzione() {
+		return this.stats;
 	}
 
 }

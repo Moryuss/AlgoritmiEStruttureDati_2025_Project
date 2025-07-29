@@ -157,8 +157,7 @@ public enum ConfigurationMode {
 		return activeFlags;
 	}
 
-	@Override
-	public String toString() {
+	public String getModeName() {
 		return name() + " (flags: " + toBinaryString() + ", active: " + getActiveFlags() + ")";
 	}
 

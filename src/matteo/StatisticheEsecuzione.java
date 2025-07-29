@@ -19,12 +19,16 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	private int totaleIterazioniCondizione = 0;
 	private int cacheHit = 0;
 	private List<String> prestazioni = new ArrayList<>();
-	private long tempoInizio;
+	
+	private Long tempoInizio;
+	private Long tempoTotaleNs;
+	
 	private boolean calcoloInterrotto = false;
 	private boolean cacheAttiva = false;
 	private boolean frontieraSotred = false;
 	
 	private ConfigurationMode compitoTreMode = ConfigurationMode.DEFAULT;
+	
 
 	@Override
 	public void saveDimensioniGriglia(int h, int w) {
@@ -86,16 +90,17 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	
 	@Override
 	public String generaRiassunto(ICammino risultato) {
-		long tempoTotaleNs = System.nanoTime() - tempoInizio;
-		double tempoTotaleMs = tempoTotaleNs / 1_000_000.0;
+		if(this.tempoTotaleNs==null) tempoTotaleNs = System.nanoTime() - tempoInizio;
+		String tempoFormattato = formatTempo(tempoTotaleNs);
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("=== RIASSUNTO ESECUZIONE CAMMINOMIN ===\n");
 		sb.append("Dimensioni griglia: Width = ").append(this.width).append(", Height = ").append(this.height).append("\n");
 		sb.append("Tipo griglia: ").append(this.tipoGriglia).append("\n");
 		sb.append("Origine: (").append(origine.x()).append(",").append(origine.y()).append(")").append("\n");
 		sb.append("Destinazione: (").append(destinazione.x()).append(",").append(destinazione.y()).append(")").append("\n");
-		sb.append("Modalità Compito Tre: ").append(compitoTreMode.toString()).append("\n");
-		sb.append("Tempo di esecuzione: ").append(tempoTotaleNs).append(" ns (").append(tempoTotaleMs).append(" ms)\n");
+		sb.append("Modalità Compito Tre: ").append(compitoTreMode.getModeName()).append("\n");
+		sb.append("Tempo di esecuzione: ").append(tempoFormattato).append("\n");
 		sb.append("Totale celle di frontiera considerate: ").append(totaleCelleFrontiera).append("\n");
 		sb.append("Totale iterazioni condizione (riga 16/17): ").append(totaleIterazioniCondizione).append("\n");
 		sb.append("Calcolo interrotto: ").append(calcoloInterrotto ? "SI" : "NO").append("\n");
@@ -120,7 +125,98 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		return sb.toString();
 	}
 
-	
+	@Override
+	public int getAltezzaGriglia() {
+		return this.height;
+	}
+
+	@Override
+	public int getLarghezzaGriglia() {
+		return this.width;
+	}
+
+	@Override
+	public int getTipoGriglia() {
+		return this.tipoGriglia;
+	}
+
+	@Override
+	public ICella2D getOrigine() {
+		return this.origine;
+	}
+
+	@Override
+	public ICella2D getDestinazione() {
+		return this.destinazione;
+	}
+
+	@Override
+	public int getQuantitaCelleFrontiera() {
+		return this.totaleCelleFrontiera;
+	}
+
+	@Override
+	public int getIterazioniCondizione() {
+		return this.totaleIterazioniCondizione;
+	}
+
+	@Override
+	public List<String> getPrestazioni() {
+		return new ArrayList<>(this.prestazioni);
+	}
+
+	@Override
+	public boolean isCalcoloInterrotto() {
+		return this.calcoloInterrotto;
+	}
+
+	@Override
+	public int getCacheHit() {
+		return this.cacheHit;
+	}
+
+	@Override
+	public boolean isCacheAttiva() {
+		return this.cacheAttiva;
+	}
+
+	@Override
+	public boolean isFrontieraStored() {
+		return this.frontieraSotred;
+	}
+
+	@Override
+	public ConfigurationMode getCompitoTreMode() {
+		return this.compitoTreMode;
+	}
+
+	@Override
+	public void saveTime() {
+		this.tempoTotaleNs = System.nanoTime() - tempoInizio;
+	}
+
+	private String formatTempo(long tempoNs) {
+	    StringBuilder tempoStr = new StringBuilder();
+	    
+	    // Sempre mostra i nanosecondi
+	    tempoStr.append(tempoNs).append(" ns");
+	    
+	    // Se >= 1 millisecondo, aggiungi anche i millisecondi
+	    if (tempoNs >= 1_000_000) {
+	        double tempoMs = tempoNs / 1_000_000.0;
+	        tempoStr.append(" (").append(String.format("%.3f", tempoMs)).append(" ms");
+	        
+	        // Se >= 1 secondo, aggiungi anche i secondi
+	        if (tempoNs >= 1_000_000_000) {
+	            double tempoS = tempoNs / 1_000_000_000.0;
+	            tempoStr.append(" = ").append(String.format("%.3f", tempoS)).append(" s");
+	        }
+	        
+	        tempoStr.append(")");
+	    }
+	    
+	    return tempoStr.toString();
+	}
 
 	
 

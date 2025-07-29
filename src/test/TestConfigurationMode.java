@@ -246,14 +246,14 @@ class TestConfigurationMode{
         }
 
         @Test
-        @DisplayName("toString should contain mode name and useful info")
-        void testToString() {
-            String defaultStr = ConfigurationMode.DEFAULT.toString();
+        @DisplayName("getNomeMode should contain mode name and useful info")
+        void testNomeMode() {
+            String defaultStr = ConfigurationMode.DEFAULT.getModeName();
             assertTrue(defaultStr.contains("DEFAULT"));
             assertTrue(defaultStr.contains("0000010"));
             assertTrue(defaultStr.contains("MONITOR_ENABLED"));
             
-        	String debugStr = ConfigurationMode.DEBUG.toString();
+        	String debugStr = ConfigurationMode.DEBUG.getModeName();
         				assertTrue(debugStr.contains("DEBUG"));
 			assertTrue(debugStr.contains("0001111"));
 			assertTrue(debugStr.contains("DEBUG"));
@@ -261,7 +261,7 @@ class TestConfigurationMode{
 			assertTrue(debugStr.contains("STOP_MESSAGE"));
 			assertTrue(debugStr.contains("STATE_CHECK"));
 
-			String performanceStr = ConfigurationMode.PERFORMANCE.toString();
+			String performanceStr = ConfigurationMode.PERFORMANCE.getModeName();
 			assertTrue(performanceStr.contains("PERFORMANCE"));
 			assertTrue(performanceStr.contains("1110010"));
 			assertTrue(performanceStr.contains("MONITOR_ENABLED"));
