@@ -23,24 +23,27 @@ public class StrategyPresets {
         return factory.createStrategies(ConfigurationMode.PERFORMANCE);
     }
     
+    public static StrategyBundle performanceCache() {
+        return factory.createStrategies(ConfigurationMode.PERFORMANCE_CACHE);
+    }
     public static StrategyBundle performanceNoCache() {
         return factory.createStrategies(ConfigurationMode.PERFORMANCE_NO_CACHE);
     }
+   
     
-    public static StrategyBundle performanceNoCondizione() {
-        return factory.createStrategies(ConfigurationMode.PERFORMANCE_NO_CONDIZIONE);
-    }
-    
-    public static StrategyBundle performanceNoCondizioneNoCache() {
-        return factory.createStrategies(ConfigurationMode.PERFORMANCE_NO_CONDIZIONE_NO_CACHE);
+    public static StrategyBundle performanceSortedFrontiera() {
+        return factory.createStrategies(ConfigurationMode.PERFORMANCE_SORTED_FRONTIERA);
     }
     
     public static StrategyBundle performanceNoSortedFrontiera() {
         return factory.createStrategies(ConfigurationMode.PERFORMANCE_NO_SORTED_FRONTIERA);
     }
     
-    public static StrategyBundle performanceNoSortedFrontieraNoCache() {
-        return factory.createStrategies(ConfigurationMode.PERFORMANCE_NO_SORTED_FRONTIERA_NO_CACHE);
+    public static StrategyBundle performanceCondizioneRafforzata() {
+        return factory.createStrategies(ConfigurationMode.PERFORMANCE_CONDIZIONE_RAFFORZATA);
+    }
+    public static StrategyBundle performanceNoCondizioneRafforzata() {
+        return factory.createStrategies(ConfigurationMode.PERFORMANCE_NO_CONDIZIONE_RAFFORZATA);
     }
     
     public static StrategyBundle defaultMode() {

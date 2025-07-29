@@ -204,7 +204,7 @@ class TestConfigurationMode{
             assertTrue(modified.hasFlag(ConfigurationFlag.MONITOR_ENABLED));
             assertTrue(modified.hasFlag(ConfigurationFlag.SORTED_FRONTIERA));
             assertEquals(modified.getActiveFlags(), 
-            		ConfigurationMode.PERFORMANCE_NO_CONDIZIONE_NO_CACHE.getActiveFlags());
+            		ConfigurationMode.PERFORMANCE_SORTED_FRONTIERA.getActiveFlags());
         }
     }
 
@@ -352,10 +352,10 @@ class TestConfigurationMode{
             ConfigurationMode[] performanceModes = {
                 ConfigurationMode.PERFORMANCE,
                 ConfigurationMode.PERFORMANCE_NO_CACHE,
-                ConfigurationMode.PERFORMANCE_NO_CONDIZIONE,
-                ConfigurationMode.PERFORMANCE_NO_CONDIZIONE_NO_CACHE,
+                ConfigurationMode.PERFORMANCE_NO_CONDIZIONE_RAFFORZATA,
+                ConfigurationMode.PERFORMANCE_SORTED_FRONTIERA,
                 ConfigurationMode.PERFORMANCE_NO_SORTED_FRONTIERA,
-                ConfigurationMode.PERFORMANCE_NO_SORTED_FRONTIERA_NO_CACHE
+                ConfigurationMode.PERFORMANCE_CONDIZIONE_RAFFORZATA
             };
             
             for (ConfigurationMode mode : performanceModes) {
