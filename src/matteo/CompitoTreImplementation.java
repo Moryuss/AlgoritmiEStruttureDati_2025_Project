@@ -99,13 +99,12 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		ICammino risultato = null;
 		try {
 			risultato = calcoloCamminoMin(griglia, O, D, stats, compitoDue);
-			//			generaReportFinale(risultato);
-			stats.saveTime(); 	// Salva il tempo di esecuzione
 			stampaStatoDestinazioneFinale(risultato);
 			return risultato;
 		} catch (InterruptedException e) {
 			return gestisciInterruzione(e);
 		}finally {
+			finalizzaCalcoloTempo(); // Salva il tempo di esecuzione
 			// Genera sempre il report, anche in caso di interruzione
 			if (risultato!=null) generaReportFinale(risultato);
 			else if (this.getProgressMin().getCammino().lunghezza()<Integer.MAX_VALUE) {
@@ -116,6 +115,11 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			}
 		}
 	}
+	
+	private void finalizzaCalcoloTempo() {
+		stats.saveTime(); 
+	}
+	
 	private void generaReportFinale(ICammino risultato) {
 		report = stats.generaRiassunto(risultato);
 	}
