@@ -4,7 +4,16 @@ import java.util.List;
 import francesco.implementazioni.Cella;
 import nicolas.StatoCella;
 
-public record GrigliaMatrix(ICella[][] mat, int tipo) implements IGriglia<ICella> {
+public class GrigliaMatrix implements IGriglia<ICella> {
+	
+	public static final int CUSTOM_TYPE = 999;
+	private ICella[][] mat;
+	private int tipo;
+	
+	public GrigliaMatrix(ICella[][] mat, int tipo){
+		this.mat = mat;
+		this.tipo = tipo;
+	}
 	
 	public GrigliaMatrix(ICella[][] mat) {
 		this(mat, 0);
@@ -37,6 +46,19 @@ public record GrigliaMatrix(ICella[][] mat, int tipo) implements IGriglia<ICella
 	}
 	
 	@Override
+	public void setStatoGriglia(int nuovoTipo) {
+		tipo = nuovoTipo;
+	}
+	
+	public ICella[][] mat(){
+		return this.mat;
+	}
+	
+	public int tipo() {
+		return this.tipo;
+	}
+	
+	@Override
 	public IGriglia<ICella> addObstacle(IObstacle obstacle, int tipoOstacolo) {
 		ICella[][] mat = inizializzaMatrice(width(), height());
 		for(int i=0; i<height(); i++) {
@@ -53,7 +75,7 @@ public record GrigliaMatrix(ICella[][] mat, int tipo) implements IGriglia<ICella
 	
 	public static IGriglia<ICella> from(int width, int height, List<IObstacle> ostacoli) {
 		ICella[][] mat = inizializzaMatrice(width, height);
-		IGriglia<ICella> griglia = new GrigliaMatrix(mat, 0);
+		IGriglia<ICella> griglia = new GrigliaMatrix(mat, CUSTOM_TYPE);
 		for(IObstacle o : ostacoli) {
 			griglia = griglia.addObstacle(o, 0);
 		}

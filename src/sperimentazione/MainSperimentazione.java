@@ -5,7 +5,6 @@ import francesco.IHave2DCoordinate;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -32,10 +31,13 @@ public class MainSperimentazione {
     private static final String LINEA_SPEZZATA_PATH = "src/sperimentazione/lineaspezzata";
     private static final String VARIAZIONE_OSTACOLI_PATH = "src/sperimentazione/varostacoli";
     private static final String VARIAZIONE_DIMENSIONI_PATH = "src/sperimentazione/vardimensioni";
+    private static final String TIPO_GRIGLIA_PATH = "src/sperimentazione/tipoGriglia";
 
-    private static final List<String> CARTELLE = List.of(LINEA_SPEZZATA_PATH,
-            VARIAZIONE_OSTACOLI_PATH,
-            VARIAZIONE_DIMENSIONI_PATH);
+    private static final List<String> CARTELLE = List.of(
+            //    		LINEA_SPEZZATA_PATH
+            //            , VARIAZIONE_OSTACOLI_PATH
+            //            , VARIAZIONE_DIMENSIONI_PATH
+            TIPO_GRIGLIA_PATH);
 
     private static final List<ConfigurationMode> TRES = List.of(ConfigurationMode.DEFAULT,
             ConfigurationMode.PERFORMANCE_NO_CACHE,
@@ -67,15 +69,15 @@ public class MainSperimentazione {
         // ================================================================
         // COMMENTI: niente
         // ================================================================
-    	
         for (String cartella : CARTELLE) {
             System.out.println("Cartella: " + cartella + "\n");
-            // HashMap con chiave il nome del tempo e come valore una HashMap con combinazione e tempo
+            // HashMap con chiave il nome del tempo e come valore una TreeMap con combinazione e tempo
             HashMap<String, TreeMap<Long, String>> tempi = new HashMap<String, TreeMap<Long, String>>();
             List<String> nomi = new ArrayList<>();
             List<CoordinateCella> origini = new ArrayList<>();
             List<CoordinateCella> destinazioni = new ArrayList<>();
-            List<JSONArray> files = getGriglie(cartella, nomi, origini, destinazioni);
+            List<Integer> stati = new ArrayList<>();
+            List<JSONArray> files = getGriglie(cartella, nomi, stati, origini, destinazioni);
             if (files == null || files.isEmpty()) {
                 System.err.println("Cartella non trovata o vuota: " + cartella);
                 continue;
@@ -88,71 +90,83 @@ public class MainSperimentazione {
                     String compiti = tre.name() + "_" + due.toString();
                     compitiUsati = compiti;
 
-//					List<String> nomi = new ArrayList<>();
-//					List<CoordinateCella> origini = new ArrayList<>();
-//					List<CoordinateCella> destinazioni = new ArrayList<>();
-//					// nomi, origini e destinazioni vengono riempiti in loco
-//					List<JSONArray> files = getGriglie(cartella, nomi, origini, destinazioni);
-//					if (files == null || files.isEmpty()) {
-//						System.err.println("Cartella non trovata o vuota: " + cartella);
-//						continue;
-//					}
-                    ScritturaFile.pulisciFile(pathTxt + "_" + compitiUsati + ".txt");
-                    // Potrei anche farlo eseguire più volte e poi lasciare una media dei tempi...
-                    // Mi basta un ciclo for interno
                     for (int i = 0; i < files.size(); i++) {
-                    	String nomeGriglia = nomi.get(i);
-                    	String path = pathTxt + "_" + nomeGriglia + "_" + compitiUsati;
-                    	List<IStatisticheEsecuzione> statistiche = new ArrayList<>();
+                        String nomeGriglia = nomi.get(i);
+                        String path = pathTxt + "_" + nomeGriglia + "_" + compitiUsati;
+                        ScritturaFile.pulisciFile(path + ".txt");
+                        List<IStatisticheEsecuzione> statistiche = new ArrayList<>();
                         try {
-                        	scriviEStampaConPath("Nuova Griglia: " + nomeGriglia, path);
-                        	for(int j = 0; j < GRIGLIA_TRY; j++) {
-                        		scriviEStampaConPath("Analisi n. " + (j+1), path);
-	
-	                            // Carica la griglia dal JSONArray
-	                            IGriglia<?> griglia = Utils.loadSimple(files.get(i));
-	
-	                            CoordinateCella origine = origini.get(i);
-	                            IGrigliaConOrigine gO = due.calcola(griglia, origine);
-	                            ICellaConDistanze start = gO.getCellaAt(origine.x(), origine.y());
-	
-	                            CoordinateCella destinazione = destinazioni.get(i);
-	                            ICellaConDistanze end = gO.getCellaAt(destinazione.x(), destinazione.y());
-	
-	                            // Trova il cammino minimo con CompitoTre
-	                            ICammino cammino1 = implementazioneTre.camminoMin(griglia, start, end, due);
-	
-	                            String report = implementazioneTre.getReport();
-	                            IStatisticheEsecuzione statisticheEsecuzione = implementazioneTre.getStatisticheEsecuzione();
-								long tempo = statisticheEsecuzione.getTempoEsecuzione();
-	                            aggiungiTempo(tempo, compiti, nomeGriglia, tempi);
-	                            statistiche.add(statisticheEsecuzione);
-	
-	                            // Report ottenuto dal cammino
-	                            scriviEStampaConPath(report, path);
-	                            scriviEStampaConPath("==============================", path);
-	                            System.out.println("Inizio veririfica correttezza...");
-	                            // Utilizzo  di un secondo solver ed un secondo cammino per verificare la correttezza
-	                            // Questa verifica non deve inficiare sul tempo d'esecuzione del primo cammino
-	                            ICammino cammino2 = implementazioneTre.camminoMin(griglia, end, start, due);
-	                            boolean corretto = isLunghezzaUguale(cammino1, cammino2);
-	                            scriviEStampaConPath("e' corretto?: " + corretto, path);
-	
-	                            System.out.println("Inizio verifica opposizione...");
-	                            boolean opposto = isOpposto(cammino1.landmarks(), cammino2.landmarks());
-	                            scriviEStampa("e' opposto?: " + opposto);
-	
-	                            // Questi sono generati per poi scrivere sul file txt in caso servano osservazioni
-	                            scriviEStampaConPath("# COMMENTI: niente", path);
-	                            scriviEStampaConPath("==============================", path);
-	                            scriviEStampaConPath("\n\n", path);
-                        	}
+                            scriviEStampaConPath("Nuova Griglia: " + nomeGriglia, path);
+                            for (int j = 0; j < GRIGLIA_TRY; j++) {
+                                scriviEStampaConPath("Analisi n. " + (j + 1), path);
+
+                                IGriglia<?> griglia;
+
+                                // Carica la griglia dal JSONArray
+                                if (stati.isEmpty()) {
+                                    griglia = Utils.loadSimple(files.get(i));
+                                } else {
+                                    griglia = Utils.loadSimpleConStato(files.get(i), stati.get(i));
+                                }
+
+                                CoordinateCella origine = origini.get(i);
+                                IGrigliaConOrigine gO = due.calcola(griglia, origine);
+                                ICellaConDistanze start = gO.getCellaAt(origine.x(), origine.y());
+
+                                CoordinateCella destinazione = destinazioni.get(i);
+                                ICellaConDistanze end = gO.getCellaAt(destinazione.x(), destinazione.y());
+
+                                // Trova il cammino minimo con CompitoTre
+                                ICammino cammino1 = implementazioneTre.camminoMin(griglia, start, end, due);
+
+                                // Verifica se il cammino è valido
+                                if (cammino1 == null || cammino1.landmarks().isEmpty() || Double.isInfinite(cammino1.lunghezza())) {
+                                    scriviEStampaConPath("ERRORE: Nessun cammino valido trovato dalla destinazione all'origine", path);
+                                    continue;
+                                }
+
+                                String report = implementazioneTre.getReport();
+                                IStatisticheEsecuzione statisticheEsecuzione = implementazioneTre.getStatisticheEsecuzione();
+                                long tempo = statisticheEsecuzione.getTempoEsecuzione();
+                                aggiungiTempo(tempo, compiti, nomeGriglia, tempi);
+                                statistiche.add(statisticheEsecuzione);
+
+                                // Report ottenuto dal cammino
+                                scriviEStampaConPath(report, path);
+                                scriviEStampaConPath("==============================", path);
+                                System.out.println("Inizio veririfica correttezza...");
+                                // Utilizzo  di un secondo solver ed un secondo cammino per verificare la correttezza
+                                // Questa verifica non deve inficiare sul tempo d'esecuzione del primo cammino
+                                ICammino cammino2 = implementazioneTre.camminoMin(griglia, end, start, due);
+
+                                // Verifica se anche il secondo cammino è valido
+                                if (cammino2 == null || cammino2.landmarks().isEmpty() || Double.isInfinite(cammino2.lunghezza())) {
+                                    scriviEStampaConPath("ERRORE: Nessun cammino valido trovato dalla destinazione all'origine", path);
+                                    continue;
+                                }
+
+                                boolean corretto = isLunghezzaUguale(cammino1, cammino2);
+                                scriviEStampaConPath("e' corretto?: " + corretto, path);
+
+                                System.out.println("Inizio verifica opposizione...");
+                                boolean opposto = isOpposto(cammino1.landmarks(), cammino2.landmarks());
+                                scriviEStampaConPath("e' opposto?: " + opposto, path);
+
+                                // Questi sono generati per poi scrivere sul file txt in caso servano osservazioni
+                                scriviEStampaConPath("# COMMENTI: niente", path);
+                                scriviEStampaConPath("==============================", path);
+                                scriviEStampaConPath("\n\n", path);
+                            }
                         } catch (Exception e) {
                             System.err.println("Errore nella sperimentazione sulla griglia numero " + i + ": " + e.getMessage());
                             e.printStackTrace();
                         }
                         // Qui vengono calcolate e scritte le media per griglia
-                        scriviMediaEsecuzioni(statistiche, GRIGLIA_TRY, path);
+                        if (!statistiche.isEmpty()) {
+                            scriviMediaEsecuzioni(statistiche, GRIGLIA_TRY, path);
+                        } else {
+                            scriviEStampaConPath("Nessuna esecuzione riuscita per questa griglia", path);
+                        }
                     }
                 }
             }
@@ -226,7 +240,8 @@ public class MainSperimentazione {
      * coordinate delle celle di origine e destinazione rispettivamente per ogni
      * griglia trovata.
      */
-    private static List<JSONArray> getGriglie(String pathIniziale, List<String> nomi, List<CoordinateCella> origini, List<CoordinateCella> destinazioni) {
+    private static List<JSONArray> getGriglie(String pathIniziale, List<String> nomi,
+            List<Integer> stati, List<CoordinateCella> origini, List<CoordinateCella> destinazioni) {
         String pathname = pathIniziale + "/paths.json";
         File puntoCentrale = new File(pathname);
         var config = PApplet.loadJSONObject(puntoCentrale);
@@ -268,6 +283,10 @@ public class MainSperimentazione {
         int[] originiY = config.getJSONArray("oy").toIntArray();
         int[] destinazioniX = config.getJSONArray("dx").toIntArray();
         int[] destinazioniY = config.getJSONArray("dy").toIntArray();
+        int[] statiArray = null;
+        if (config.hasKey("stati")) {
+            statiArray = config.getJSONArray("stati").toIntArray();
+        }
 
         pathTxt = pathIniziale + "/" + config.getString("txt");
 
@@ -287,6 +306,10 @@ public class MainSperimentazione {
             int destinazioneY = destinazioniY[i];
 
             nomi.add(name);
+
+            if (statiArray != null && statiArray.length > i) {
+                stati.add(statiArray[i]);
+            }
 
             origini.add(new CoordinateCella(origineX, origineY));
             destinazioni.add(new CoordinateCella(destinazioneX, destinazioneY));
@@ -313,9 +336,9 @@ public class MainSperimentazione {
         System.out.println(msg);
         ScritturaFile.writeToFile(pathTxt, msg);
     }
-    
+
     private static void scriviEStampaConPath(String msg, String path) {
-    	System.out.println(msg);
+        System.out.println(msg);
         ScritturaFile.writeToFile(path + ".txt", msg);
     }
 
@@ -331,12 +354,12 @@ public class MainSperimentazione {
     private static void aggiungiTempo(long tempo, String combinazione, String griglia, HashMap<String, TreeMap<Long, String>> tempi) {
         if (tempi.containsKey(griglia)) {
             // cerco l'HashMap già esistente
-        	TreeMap<Long, String> map = tempi.get(griglia);
+            TreeMap<Long, String> map = tempi.get(griglia);
             // Se la map ottenuta è vuota, allora aggiungo il valore
             map.put(tempo, combinazione);
         } // la chiave non esisteva, creo una nuova map ed usa la chiave
         else {
-        	TreeMap<Long, String> map = new TreeMap<>();
+            TreeMap<Long, String> map = new TreeMap<>();
             map.put(tempo, combinazione);
             tempi.put(griglia, map);
         }
@@ -344,78 +367,80 @@ public class MainSperimentazione {
 
     private static void scriviInformazioniGenerali(HashMap<String, TreeMap<Long, String>> tempi) {
         // Viene anzitutto pulito il file
-        ScritturaFile.pulisciFile(pathTxt);
+        ScritturaFile.pulisciFile(pathTxt + ".txt");
         StringBuilder sb = new StringBuilder();
         // Le chiavi sono i nomi delle griglie
         for (String griglia : tempi.keySet()) {
             // Viene ottenuta la HashMap che associa i tempi alle combinazioni di implementazioni dei compiti
             TreeMap<Long, String> map = tempi.get(griglia);
             // Ora si forma una String unica per trovare 
-			sb.append("=============== NUOVA GRIGLIA ===============\n");
-			sb.append("Statistiche per la griglia: " + griglia + "\n");
-			// Min
-			long valoreMinimo = map.firstKey();
-			sb.append("Valore minimo: " + valoreMinimo + ", combinazione: " + map.get(valoreMinimo) + "\n");
-			// Max
-			long valoreMassimo = map.lastKey();
-			sb.append("Valore massimo: " + valoreMassimo + ", combinazione: " + map.get(valoreMassimo) + "\n");
-			// Media
-			long valoreMedio = 0;
-			for (Long tempo : map.keySet()) {
-				valoreMedio += tempo;
-			}
-			valoreMedio /= map.size();
-			sb.append("Valore medio: " + valoreMedio + "\n");
-			// Deviazione standard
-			long deviazioneStandard = 0;
-			for (Long tempo : map.keySet()) {
-				deviazioneStandard += Math.pow(tempo - valoreMedio, 2);
-			}
-			deviazioneStandard = (long) Math.sqrt(deviazioneStandard / map.size());
-			sb.append("Deviazione standard: " + deviazioneStandard + "\n");
+            sb.append("=============== NUOVA GRIGLIA ===============\n");
+            sb.append("Statistiche per la griglia: " + griglia + "\n");
+            // Min
+            long valoreMinimo = map.firstKey();
+            sb.append("Valore minimo: " + valoreMinimo + ", combinazione: " + map.get(valoreMinimo) + "\n");
+            // Max
+            long valoreMassimo = map.lastKey();
+            sb.append("Valore massimo: " + valoreMassimo + ", combinazione: " + map.get(valoreMassimo) + "\n");
+            // Media
+            long valoreMedio = 0;
+            for (Long tempo : map.keySet()) {
+                valoreMedio += tempo;
+            }
+            valoreMedio /= map.size();
+            sb.append("Valore medio: " + valoreMedio + "\n");
+            // Deviazione standard
+            long deviazioneStandard = 0;
+            for (Long tempo : map.keySet()) {
+                deviazioneStandard += Math.pow(tempo - valoreMedio, 2);
+            }
+            deviazioneStandard = (long) Math.sqrt(deviazioneStandard / map.size());
+            sb.append("Deviazione standard: " + deviazioneStandard + "\n");
         }
         scriviEStampaGenerico(sb.toString());
     }
-    
+
     /**
      * Scrive le statistiche medie delle esecuzioni in un file di testo
+     *
      * @param statistiche
      * @param tentativi
      * @param path
      */
     private static void scriviMediaEsecuzioni(List<IStatisticheEsecuzione> statistiche, int tentativi, String path) {
-    	StringBuilder sb = new StringBuilder();
-    	sb.append("=============== MEDIA ESECUZIONI ===============\n");
-    	// Si presuppone che tutte le statistiche stiano usando la stessa implementazione
-    	sb.append("Cache usata? " + statistiche.get(0).isCacheAttiva() + "\n");
-    	sb.append("Sorted Frontiera? " + statistiche.get(0).isFrontieraStored() + "\n");
-    	int mediaCache = 0;
-    	int mediaCelle = 0;
-    	int mediaIterazioni = 0;
-    	long mediaTempo = 0;
-    	for (IStatisticheEsecuzione s : statistiche) {
-			mediaCache += s.getCacheHit();
-			mediaCelle += s.getQuantitaCelleFrontiera();
-			mediaIterazioni += s.getIterazioniCondizione();
-			mediaTempo += s.getTempoEsecuzione();
-		}
-    	mediaCache /= tentativi;
-    	sb.append("Media Cache hit: ");
-		sb.append(mediaCache + "\n");
+        StringBuilder sb = new StringBuilder();
+        sb.append("=============== MEDIA ESECUZIONI ===============\n");
+        // Si presuppone che tutte le statistiche stiano usando la stessa implementazione
+        sb.append("Cache usata? " + statistiche.get(0).isCacheAttiva() + "\n");
+        sb.append("Sorted Frontiera? " + statistiche.get(0).isFrontieraStored() + "\n");
+        int mediaCache = 0;
+        int mediaCelle = 0;
+        int mediaIterazioni = 0;
+        long mediaTempo = 0;
+        for (IStatisticheEsecuzione s : statistiche) {
+            mediaCache += s.getCacheHit();
+            mediaCelle += s.getQuantitaCelleFrontiera();
+            mediaIterazioni += s.getIterazioniCondizione();
+            mediaTempo += s.getTempoEsecuzione();
+        }
+        mediaCache /= tentativi;
+        sb.append("Media Cache hit: ");
+        sb.append(mediaCache + "\n");
 
-		mediaCelle /= tentativi;
-		sb.append("Media Celle di Frontiera: ");
-		sb.append(mediaCelle + "\n");
-		
-		mediaIterazioni /= tentativi;
-		sb.append("Media Iterazioni Condizione: ");
-		sb.append(mediaIterazioni + "\n");
-		
-		mediaTempo /= tentativi;
-		sb.append("Media Tempo Esecuzione: ");
-		sb.append("Media dei Tempi d'Esecuzione: " + Utils.formatTempo(mediaTempo) + "\n");
-		
-		ScritturaFile.writeToFile(path, sb.toString());
+        mediaCelle /= tentativi;
+        sb.append("Media Celle di Frontiera: ");
+        sb.append(mediaCelle + "\n");
+
+        mediaIterazioni /= tentativi;
+        sb.append("Media Iterazioni Condizione: ");
+        sb.append(mediaIterazioni + "\n");
+
+        mediaTempo /= tentativi;
+        sb.append("Media Tempo Esecuzione: ");
+        sb.append("Media dei Tempi d'Esecuzione: " + Utils.formatTempo(mediaTempo) + "\n");
+
+//		ScritturaFile.writeToFile(path, sb.toString());
+        scriviEStampaConPath(sb.toString(), path);
     }
 }
 

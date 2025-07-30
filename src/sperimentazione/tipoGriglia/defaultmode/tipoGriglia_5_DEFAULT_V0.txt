@@ -1,0 +1,269 @@
+Nuova Griglia: 5
+Analisi n. 1
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 214400 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 2
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 103900 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 3
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 145500 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 4
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 150000 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 5
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 113800 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 6
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 231600 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 7
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 125100 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 8
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 153100 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 9
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 119200 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 10
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 5
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: DEFAULT (flags: 0000010, active: [MONITOR_ENABLED])
+Tempo di esecuzione: 155800 ns
+Totale celle di frontiera considerate: 0
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 2
+Sequenza landmarks: (0,0)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+=============== MEDIA ESECUZIONI ===============
+Cache usata? false
+Sorted Frontiera? false
+Media Cache hit: 0
+Media Celle di Frontiera: 0
+Media Iterazioni Condizione: 0
+Media Tempo Esecuzione: Media dei Tempi d'Esecuzione: 151240 ns
+

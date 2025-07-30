@@ -1,0 +1,269 @@
+Nuova Griglia: 45
+Analisi n. 1
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 8755900 ns (8,756 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 2
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 5768100 ns (5,768 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 3
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 6898900 ns (6,899 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 4
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 6353700 ns (6,354 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 5
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 6144100 ns (6,144 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 6
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 6537200 ns (6,537 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 7
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 7352000 ns (7,352 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 8
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 5684000 ns (5,684 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 9
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 9690000 ns (9,690 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Analisi n. 10
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 45
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_SORTED_FRONTIERA (flags: 0010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA])
+Tempo di esecuzione: 6199300 ns (6,199 ms)
+Totale celle di frontiera considerate: 114
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 36.87005768508881
+Numero landmarks: 3
+Sequenza landmarks: (0,0)(28,18)(29,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+=============== MEDIA ESECUZIONI ===============
+Cache usata? false
+Sorted Frontiera? true
+Media Cache hit: 0
+Media Celle di Frontiera: 114
+Media Iterazioni Condizione: 0
+Media Tempo Esecuzione: Media dei Tempi d'Esecuzione: 6938320 ns (6,938 ms)
+

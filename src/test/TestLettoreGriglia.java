@@ -54,6 +54,8 @@ class TestLettoreGriglia {
 		
 		json = json.getJSONObject("maxOstacoli");
 		assertEquals(json.getInt(TipoOstacolo.SEMPLICE.toString()), count);
+		assertEquals(1, TipoOstacolo.SEMPLICE.value());
+		assertEquals(TipoOstacolo.SEMPLICE.value(), griglia.getTipo());
 	}
 
 	@Test

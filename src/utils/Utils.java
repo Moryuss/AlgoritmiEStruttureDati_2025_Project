@@ -176,6 +176,12 @@ public final class Utils {
 		return GrigliaMatrix.from(width, height, List.of(()->list));
 	}
 	
+	public static IGriglia<ICella> loadSimpleConStato(JSONArray json, int stato){
+		IGriglia<ICella> griglia = loadSimple(json);
+		griglia.setStatoGriglia(stato);
+		return griglia;
+	}
+	
 	
 	public static IGriglia<ICella> loadIntJSON(File file, IntFunction<ICella> deserializer) {
 		return loadIntJSON(PApplet.loadJSONArray(file), deserializer);

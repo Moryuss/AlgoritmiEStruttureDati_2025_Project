@@ -1,0 +1,28 @@
+Nuova Griglia: 108
+Analisi n. 1
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 30, Height = 20
+Tipo griglia: 108
+Origine: (0,0)
+Destinazione: (29,19)
+Modalità Compito Tre: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA (flags: 1010010, active: [MONITOR_ENABLED, SORTED_FRONTIERA, CACHE_ENABLED])
+Tempo di esecuzione: 223502317200 ns (223502,317 ms = 223,502 s)
+Totale celle di frontiera considerate: 2892444
+Totale iterazioni condizione (riga 16/17): 0
+Calcolo interrotto: NO
+Cache attiva: SI
+Cache hit: 422040
+Frontiera sorted: SI
+Lunghezza cammino trovato: 66.18376618407356
+Numero landmarks: 10
+Sequenza landmarks: (0,0)(6,19)(14,17)(8,12)(9,10)(13,13)(15,11)(17,12)(23,16)(29,19)
+
+==============================
+=============== MEDIA ESECUZIONI ===============
+Cache usata? true
+Sorted Frontiera? true
+Media Cache hit: 42204
+Media Celle di Frontiera: 289244
+Media Iterazioni Condizione: 0
+Media Tempo Esecuzione: Media dei Tempi d'Esecuzione: 22350231720 ns (22350,232 ms = 22,350 s)
+

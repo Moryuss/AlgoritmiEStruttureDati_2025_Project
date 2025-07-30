@@ -23,6 +23,7 @@ public interface IGriglia<C extends ICella> {
 	int height();
 	
 	int getTipo();
+	default void setStatoGriglia(int stato) {}
 	
 	void setStato(int x, int y, int s);
 	
