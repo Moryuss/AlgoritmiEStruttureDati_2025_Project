@@ -107,7 +107,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			finalizzaCalcoloTempo(); // Salva il tempo di esecuzione
 			// Genera sempre il report, anche in caso di interruzione
 			if (risultato!=null) generaReportFinale(risultato);
-			else if (this.getProgressMin().getCammino().lunghezza()<Integer.MAX_VALUE) {
+			else if 	(this.getProgressMin()!= null &
+					this.getProgressMin().getCammino()!= null &
+					this.getProgressMin().getCammino().lunghezza()<Integer.MAX_VALUE) {
 				generaReportFinale(this.getProgressMin().getCammino());
 			}
 			else {
@@ -124,10 +126,13 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		report = stats.generaRiassunto(risultato);
 	}
 	private void stampaStatoDestinazioneFinale(ICammino risultato) {
-		strategies.getDebugStrategy().println("stato destinazione: " +
-				bitPrint(risultato.landmarks().getLast().stato()));
-
+	    if (risultato != null && risultato.landmarks() != null && !risultato.landmarks().isEmpty()) {
+	        strategies.getDebugStrategy().println("stato ultimo landmark: " + bitPrint(risultato.landmarks().getLast().stato()));
+	    } else {
+	        strategies.getDebugStrategy().println("Cammino nullo o senza landmark.");
+	    }
 	}
+
 	private void stampaStatiOrigineDestinazione(ICella2D O, ICella2D D) {
 		strategies.getDebugStrategy().println("Origine e destinazione stati" +
 				"\nOrigine: " + bitPrint(O.stato()) +

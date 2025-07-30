@@ -489,6 +489,48 @@ public class TestCompitoTreImpl {
 	}
 
 	@Test
+	void test_Infinito() throws Exception {
+
+		
+		try {
+
+			griglia = Utils.loadSimple(new File("src/test/json/passaggio_bloccato.int.json"));
+			//System.out.println("Griglia caricata con successo! Dimensioni: " + griglia.width() + "x" + griglia.height());
+			// Stampa la griglia per visualizzare ostacoli e celle navigabili
+			//griglia.print();
+
+		} catch (Exception e) {
+			System.err.println("Errore durante il caricamento della griglia: " + e.getMessage());
+			e.printStackTrace();
+			return; // Esci se la griglia non può essere caricata
+		}
+
+
+		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
+		ICellaConDistanze start = g.getCellaAt(1,1);
+		ICellaConDistanze end = g.getCellaAt(39,19);
+
+		ICammino cammino = c.camminoMin(griglia, start, end);
+
+		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		assertNotNull(cammino);
+
+		assertEquals(Double.POSITIVE_INFINITY, cammino.lunghezza(), 0.001);
+
+		assertEquals(0, cammino.landmarks().size());
+		
+		if(debug) {
+			System.out.println("PERCORSO MINIMO TROVATO INFINITO");
+			System.out.println("lunghezza totale: " + cammino.lunghezza());
+			System.out.println("Celle Torre: " + cammino.lunghezzaTorre());
+			System.out.println("Celle Alfiere: " + cammino.lunghezzaAlfiere());
+
+			System.out.println(cammino.lunghezza());
+			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
+			System.out.println("#############################");
+		}
+	}
+	@Test
 	void testRicorsione_ZigZag() throws Exception {
 
 		try {
