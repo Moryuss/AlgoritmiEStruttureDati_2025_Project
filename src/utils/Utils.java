@@ -216,5 +216,30 @@ public final class Utils {
 		return new GrigliaMatrix(mat);
 	}
 	
+	// CONVERSIONE TEMPI
+	
+	public static String formatTempo(long tempoNs) {
+	    StringBuilder tempoStr = new StringBuilder();
+	    
+	    // Sempre mostra i nanosecondi
+	    tempoStr.append(tempoNs).append(" ns");
+	    
+	    // Se >= 1 millisecondo, aggiungi anche i millisecondi
+	    if (tempoNs >= 1_000_000) {
+	        double tempoMs = tempoNs / 1_000_000.0;
+	        tempoStr.append(" (").append(String.format("%.3f", tempoMs)).append(" ms");
+	        
+	        // Se >= 1 secondo, aggiungi anche i secondi
+	        if (tempoNs >= 1_000_000_000) {
+	            double tempoS = tempoNs / 1_000_000_000.0;
+	            tempoStr.append(" = ").append(String.format("%.3f", tempoS)).append(" s");
+	        }
+	        
+	        tempoStr.append(")");
+	    }
+	    
+	    return tempoStr.toString();
+	}
+	
 	
 }

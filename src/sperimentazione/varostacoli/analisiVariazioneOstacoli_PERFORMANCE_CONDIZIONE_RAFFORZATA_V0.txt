@@ -1,0 +1,26 @@
+Nuova Griglia: BarreSemplici
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 20, Height = 20
+Tipo griglia: 0
+Origine: (0,0)
+Destinazione: (12,6)
+Modalità Compito Tre: PERFORMANCE_CONDIZIONE_RAFFORZATA
+Tempo di esecuzione: 7356091800 ns (7356.0918 ms)
+Totale celle di frontiera considerate: 392473
+Totale iterazioni condizione (riga 16/17): 160792
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: NO
+Lunghezza cammino trovato: 74.87005768508881
+Numero landmarks: 9
+Sequenza landmarks: (0,0)(2,13)(10,11)(11,0)(19,5)(16,19)(12,10)(13,7)(12,6)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+

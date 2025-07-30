@@ -1,0 +1,78 @@
+Nuova Griglia: Griglia Piccola
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 10, Height = 20
+Tipo griglia: 0
+Origine: (0,0)
+Destinazione: (9,19)
+Modalità Compito Tre: PERFORMANCE_NO_CACHE
+Tempo di esecuzione: 69272000 ns (69.272 ms)
+Totale celle di frontiera considerate: 30
+Totale iterazioni condizione (riga 16/17): 3
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 98.72792206135786
+Numero landmarks: 9
+Sequenza landmarks: (0,0)(1,19)(2,1)(3,0)(4,18)(5,19)(6,1)(7,0)(9,19)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Nuova Griglia: Griglia Media
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 20, Height = 20
+Tipo griglia: 0
+Origine: (0,0)
+Destinazione: (19,0)
+Modalità Compito Tre: PERFORMANCE_NO_CACHE
+Tempo di esecuzione: 98387000 ns (98.387 ms)
+Totale celle di frontiera considerate: 936
+Totale iterazioni condizione (riga 16/17): 85
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 197.8700576850888
+Numero landmarks: 19
+Sequenza landmarks: (0,0)(2,19)(3,1)(4,0)(5,18)(6,19)(7,1)(8,0)(9,18)(10,19)(11,1)(12,0)(13,18)(14,19)(15,1)(16,0)(17,18)(18,19)(19,0)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
+Nuova Griglia: Griglia Grande
+=== RIASSUNTO ESECUZIONE CAMMINOMIN ===
+Dimensioni griglia: Width = 40, Height = 20
+Tipo griglia: 0
+Origine: (0,0)
+Destinazione: (39,0)
+Modalità Compito Tre: PERFORMANCE_NO_CACHE
+Tempo di esecuzione: 46064482600 ns (46064.4826 ms)
+Totale celle di frontiera considerate: 961192
+Totale iterazioni condizione (riga 16/17): 87381
+Calcolo interrotto: NO
+Cache attiva: NO
+Cache hit: 0
+Frontiera sorted: SI
+Lunghezza cammino trovato: 396.1543289325507
+Numero landmarks: 39
+Sequenza landmarks: (0,0)(2,19)(3,1)(4,0)(5,18)(6,19)(7,1)(8,0)(9,18)(10,19)(11,1)(12,0)(13,18)(14,19)(15,1)(16,0)(17,18)(18,19)(19,1)(20,0)(21,18)(22,19)(23,1)(24,0)(25,18)(26,19)(27,1)(28,0)(29,18)(30,19)(31,1)(32,0)(33,18)(34,19)(35,1)(36,0)(37,18)(38,19)(39,0)
+
+==============================
+e' corretto?: true
+e' opposto?: false
+# COMMENTI: niente
+==============================
+
+
+
