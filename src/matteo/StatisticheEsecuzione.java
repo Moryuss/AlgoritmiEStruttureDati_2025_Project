@@ -218,6 +218,14 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	    return tempoStr.toString();
 	}
 
+	@Override
+	public long getTempoEsecuzione() {
+		if(this.tempoTotaleNs==null) {
+			this.tempoTotaleNs = System.nanoTime() - tempoInizio;
+		}
+		return this.tempoTotaleNs;
+	}
+
 	
 
 }

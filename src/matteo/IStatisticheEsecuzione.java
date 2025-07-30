@@ -43,5 +43,7 @@ public interface IStatisticheEsecuzione {
 	public ConfigurationMode getCompitoTreMode();
 
 	public void saveTime();
+	
+	public long getTempoEsecuzione();
 
 }
