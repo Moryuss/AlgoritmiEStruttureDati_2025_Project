@@ -1,0 +1,7 @@
+	=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: BarreSemplici
+Valore minimo: 47957400, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore massimo: 6788549380, combinazione: PERFORMANCE_SORTED_FRONTIERA_V0
+Valore medio: 2482806830
+Deviazione standard: 1073741824
+

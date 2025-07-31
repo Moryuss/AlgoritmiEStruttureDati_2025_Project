@@ -41,13 +41,14 @@ public class MainSperimentazione {
 	private static final String SCACCHIERA_PATH = "src/sperimentazione/scacchiera";
 
 	private static final List<String> CARTELLE = List.of(
-            //    		LINEA_SPEZZATA_PATH
-            //            , VARIAZIONE_OSTACOLI_PATH
-            //            , VARIAZIONE_DIMENSIONI_PATH
+                		LINEA_SPEZZATA_PATH
+                        , VARIAZIONE_OSTACOLI_PATH
+                        , VARIAZIONE_DIMENSIONI_PATH
 //            , TIPO_GRIGLIA_PATH
-            SPIRALE_PATH
-            , DOPPIO_DENTE_DI_SEGA_PATH
-            , SCACCHIERA_PATH);
+//            SPIRALE_PATH
+//            , DOPPIO_DENTE_DI_SEGA_PATH
+//            , SCACCHIERA_PATH
+            );
 
     private static final List<ConfigurationMode> TRES = List.of(ConfigurationMode.DEFAULT,
             ConfigurationMode.PERFORMANCE_NO_CACHE,
@@ -98,7 +99,6 @@ public class MainSperimentazione {
                 for (ICompitoDue due : DUES) {
                     String compiti = tre.name() + "_" + due.toString();
                     compitiUsati = compiti;
-                    boolean interrupted = false;
                     for (int i = 0; i < files.size(); i++) {
                         String nomeGriglia = nomi.get(i);
                         String path = pathTxt + "_" + nomeGriglia + "_" + compitiUsati;
@@ -127,9 +127,9 @@ public class MainSperimentazione {
                                 ICellaConDistanze end = gO.getCellaAt(destinazione.x(), destinazione.y());
 
                                 // Trova il cammino minimo con CompitoTre
-                                CompitoTreImplementation implementazioneTreCast = (CompitoTreImplementation) implementazioneTre;
-                                implementazioneTreCast.setTimeout(TEMPO_SCADENZA_ESECUZIONE);
-                                ICammino cammino1 = implementazioneTreCast.camminoMin(griglia, start, end, due);
+//                                CompitoTreImplementation implementazioneTreCast = (CompitoTreImplementation) implementazioneTre;
+                                implementazioneTre.setTimeout(TEMPO_SCADENZA_ESECUZIONE);
+                                ICammino cammino1 = implementazioneTre.camminoMin(griglia, start, end, due);
                                 
                                 // Verifica se il cammino è valido
                                 if (cammino1 == null) {
@@ -137,8 +137,8 @@ public class MainSperimentazione {
                                     continue;
                                 }
 
-                                String report = implementazioneTreCast.getReport();
-                                IStatisticheEsecuzione statisticheEsecuzione = implementazioneTreCast.getStatisticheEsecuzione();
+                                String report = implementazioneTre.getReport();
+                                IStatisticheEsecuzione statisticheEsecuzione = implementazioneTre.getStatisticheEsecuzione();
                                 statistiche.add(statisticheEsecuzione);
 
                                 // Report ottenuto dal cammino
@@ -158,7 +158,7 @@ public class MainSperimentazione {
                                 System.out.println("Inizio veririfica correttezza...");
                                 // Utilizzo  di un secondo solver ed un secondo cammino per verificare la correttezza
                                 // Questa verifica non deve inficiare sul tempo d'esecuzione del primo cammino
-                                ICammino cammino2 = implementazioneTreCast.camminoMin(griglia, end, start, due);
+                                ICammino cammino2 = implementazioneTre.camminoMin(griglia, end, start, due);
 
                                 // Verifica se anche il secondo cammino è valido
                                 if (cammino2 == null || cammino2.landmarks().isEmpty() || Double.isInfinite(cammino2.lunghezza())) {
