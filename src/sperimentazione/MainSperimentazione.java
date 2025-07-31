@@ -23,6 +23,11 @@ import processing.data.JSONArray;
 import utils.Utils;
 
 public class MainSperimentazione {
+	private static final String MSG_UNREACHABLE_DESTINATIONù = "Destinazione Irraggiungibile.";
+	private static final String MSG_TIMEOUT = "La Griglia %s e' stata interrotta per tempo limite (%d)";
+//	private static final int TEMPO_SCADENZA_ESECUZIONE = 1800000; // 30 Minuti
+	private static final int TEMPO_SCADENZA_ESECUZIONE = 900000; // 15 Minuti
+//	private static final int TEMPO_SCADENZA_ESECUZIONE = 60000; // 1 Minuto
 	// Per il controllo su cammini uguali
 	private static final double MAX_DIFF = 1e-10;
 	// Numero di volte che una Griglia viene usata per il calcolo del Cammino Minimo
@@ -76,7 +81,7 @@ public class MainSperimentazione {
         // ================================================================
         for (String cartella : CARTELLE) {
             System.out.println("Cartella: " + cartella + "\n");
-            // HashMap con chiave il nome del tempo e come valore una TreeMap con combinazione e tempo
+            // HashMap con chiave il nome della griglia e come valore una TreeMap con combinazione e tempo
             HashMap<String, TreeMap<Long, String>> tempi = new HashMap<String, TreeMap<Long, String>>();
             List<String> nomi = new ArrayList<>();
             List<CoordinateCella> origini = new ArrayList<>();
@@ -87,14 +92,13 @@ public class MainSperimentazione {
                 System.err.println("Cartella non trovata o vuota: " + cartella);
                 continue;
             }
-
             // Struttura che tiene combinazione, tempo e tipo griglia
             for (ConfigurationMode tre : TRES) {
-                ICompitoTre implementazioneTre = new CompitoTreImplementation(tre);
+                
                 for (ICompitoDue due : DUES) {
                     String compiti = tre.name() + "_" + due.toString();
                     compitiUsati = compiti;
-
+                    boolean interrupted = false;
                     for (int i = 0; i < files.size(); i++) {
                         String nomeGriglia = nomi.get(i);
                         String path = pathTxt + "_" + nomeGriglia + "_" + compitiUsati;
@@ -103,6 +107,7 @@ public class MainSperimentazione {
                         try {
                             scriviEStampaConPath("Nuova Griglia: " + nomeGriglia, path);
                             for (int j = 0; j < GRIGLIA_TRY; j++) {
+                            	ICompitoTre implementazioneTre = new CompitoTreImplementation(tre);
                                 scriviEStampaConPath("Analisi n. " + (j + 1), path);
 
                                 IGriglia<?> griglia;
@@ -122,28 +127,38 @@ public class MainSperimentazione {
                                 ICellaConDistanze end = gO.getCellaAt(destinazione.x(), destinazione.y());
 
                                 // Trova il cammino minimo con CompitoTre
-                                ICammino cammino1 = implementazioneTre.camminoMin(griglia, start, end, due);
+                                CompitoTreImplementation implementazioneTreCast = (CompitoTreImplementation) implementazioneTre;
+                                implementazioneTreCast.setTimeout(TEMPO_SCADENZA_ESECUZIONE);
+                                ICammino cammino1 = implementazioneTreCast.camminoMin(griglia, start, end, due);
                                 
                                 // Verifica se il cammino è valido
-                                if (cammino1 == null || cammino1.landmarks().isEmpty() || Double.isInfinite(cammino1.lunghezza())) {
+                                if (cammino1 == null) {
                                     scriviEStampaConPath("ERRORE: Nessun cammino valido trovato dalla destinazione all'origine", path);
                                     continue;
                                 }
 
-                                String report = implementazioneTre.getReport();
-                                IStatisticheEsecuzione statisticheEsecuzione = implementazioneTre.getStatisticheEsecuzione();
-//                                long tempo = statisticheEsecuzione.getTempoEsecuzione();
-                                // Questo aggiunge il tempo singolo, non medio
-//                                aggiungiTempo(tempo, compiti, nomeGriglia, tempi);
+                                String report = implementazioneTreCast.getReport();
+                                IStatisticheEsecuzione statisticheEsecuzione = implementazioneTreCast.getStatisticheEsecuzione();
                                 statistiche.add(statisticheEsecuzione);
 
                                 // Report ottenuto dal cammino
                                 scriviEStampaConPath(report, path);
+                                if(statisticheEsecuzione.isCalcoloInterrotto()) {
+                                	scriviEStampaConPath(String.format(MSG_TIMEOUT, nomeGriglia, TEMPO_SCADENZA_ESECUZIONE), path);
+                                	System.out.println("Timeout.");
+                                	break;
+                                }
+                                
+                                if(cammino1.landmarks().isEmpty() || Double.isInfinite(cammino1.lunghezza())) {
+                                	scriviEStampaConPath(MSG_UNREACHABLE_DESTINATIONù, path);
+                                	System.out.println("Timeout.");
+                                	break;
+                                }
                                 scriviEStampaConPath("==============================", path);
                                 System.out.println("Inizio veririfica correttezza...");
                                 // Utilizzo  di un secondo solver ed un secondo cammino per verificare la correttezza
                                 // Questa verifica non deve inficiare sul tempo d'esecuzione del primo cammino
-                                ICammino cammino2 = implementazioneTre.camminoMin(griglia, end, start, due);
+                                ICammino cammino2 = implementazioneTreCast.camminoMin(griglia, end, start, due);
 
                                 // Verifica se anche il secondo cammino è valido
                                 if (cammino2 == null || cammino2.landmarks().isEmpty() || Double.isInfinite(cammino2.lunghezza())) {
@@ -384,7 +399,7 @@ public class MainSperimentazione {
             // Viene ottenuta la HashMap che associa i tempi alle combinazioni di implementazioni dei compiti
             TreeMap<Long, String> map = tempi.get(griglia);
             // Ora si forma una String unica per trovare 
-            sb.append("=============== NUOVA GRIGLIA ===============\n");
+            sb.append("\t=============== NUOVA GRIGLIA ===============\n");
             sb.append("Statistiche per la griglia: " + griglia + "\n");
             // Min
             long valoreMinimo = map.firstKey();

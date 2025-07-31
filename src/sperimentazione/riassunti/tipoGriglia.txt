@@ -1,0 +1,409 @@
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 44
+Valore minimo: 7400, combinazione: PERFORMANCE_V0
+Valore massimo: 175500, combinazione: DEFAULT_V0
+Valore medio: 49780
+Deviazione standard: 40501
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 45
+Valore minimo: 7900, combinazione: PERFORMANCE_V0
+Valore massimo: 21973500, combinazione: DEFAULT_V0
+Valore medio: 3981427
+Deviazione standard: 5540989
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 46
+Valore minimo: 7500, combinazione: PERFORMANCE_V0
+Valore massimo: 117500, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 45402
+Deviazione standard: 27782
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 47
+Valore minimo: 8100, combinazione: PERFORMANCE_V0
+Valore massimo: 335558000, combinazione: DEFAULT_V0
+Valore medio: 88823978
+Deviazione standard: 111750354
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 48
+Valore minimo: 6500, combinazione: PERFORMANCE_V0
+Valore massimo: 228400, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 48234
+Deviazione standard: 40135
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 49
+Valore minimo: 5600, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 287000, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 42794
+Deviazione standard: 41566
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 151
+Valore minimo: 14675300, combinazione: PERFORMANCE_CACHE_V0
+Valore massimo: 19262800, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 16969050
+Deviazione standard: 2293750
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 116
+Valore minimo: 178685300100, combinazione: PERFORMANCE_CACHE_V0
+Valore massimo: 195807221900, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 187246261000
+Deviazione standard: 2147483648
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 50
+Valore minimo: 5200, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 142800, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 38457
+Deviazione standard: 27507
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 51
+Valore minimo: 6500, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 23296900, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 4868688
+Deviazione standard: 5994173
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 52
+Valore minimo: 9000, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 795487786400, combinazione: DEFAULT_V0
+Valore medio: 104920849758
+Deviazione standard: 346098327
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 53
+Valore minimo: 9300, combinazione: PERFORMANCE_CACHE_V0
+Valore massimo: 7413200, combinazione: PERFORMANCE_CACHE_V0
+Valore medio: 1800053
+Deviazione standard: 2073628
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 10
+Valore minimo: 7800, combinazione: PERFORMANCE_V0
+Valore massimo: 286400, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 66150
+Deviazione standard: 54150
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 54
+Valore minimo: 7500, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 426300, combinazione: DEFAULT_V0
+Valore medio: 49844
+Deviazione standard: 53187
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 11
+Valore minimo: 7200, combinazione: PERFORMANCE_V0
+Valore massimo: 359800, combinazione: DEFAULT_V0
+Valore medio: 68797
+Deviazione standard: 67835
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 55
+Valore minimo: 7900, combinazione: PERFORMANCE_V0
+Valore massimo: 127800, combinazione: PERFORMANCE_V0
+Valore medio: 37537
+Deviazione standard: 25386
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 12
+Valore minimo: 6300, combinazione: PERFORMANCE_V0
+Valore massimo: 334900, combinazione: DEFAULT_V0
+Valore medio: 64153
+Deviazione standard: 60387
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 56
+Valore minimo: 6900, combinazione: PERFORMANCE_V0
+Valore massimo: 139200, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 42022
+Deviazione standard: 26864
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 13
+Valore minimo: 6500, combinazione: PERFORMANCE_V0
+Valore massimo: 282500, combinazione: DEFAULT_V0
+Valore medio: 74023
+Deviazione standard: 62511
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 57
+Valore minimo: 7200, combinazione: PERFORMANCE_V0
+Valore massimo: 21388500, combinazione: PERFORMANCE_CACHE_V0
+Valore medio: 3278500
+Deviazione standard: 4151120
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 14
+Valore minimo: 7000, combinazione: PERFORMANCE_V0
+Valore massimo: 3480200, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 115930
+Deviazione standard: 389772
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 58
+Valore minimo: 7700, combinazione: PERFORMANCE_V0
+Valore massimo: 137100, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 49508
+Deviazione standard: 35757
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 15
+Valore minimo: 6900, combinazione: PERFORMANCE_V0
+Valore massimo: 231100, combinazione: DEFAULT_V0
+Valore medio: 58257
+Deviazione standard: 50608
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 59
+Valore minimo: 6900, combinazione: PERFORMANCE_V0
+Valore massimo: 149600, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 41830
+Deviazione standard: 29560
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 16
+Valore minimo: 6300, combinazione: PERFORMANCE_V0
+Valore massimo: 213000, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 59093
+Deviazione standard: 53253
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 17
+Valore minimo: 7100, combinazione: PERFORMANCE_V0
+Valore massimo: 194300, combinazione: DEFAULT_V0
+Valore medio: 53865
+Deviazione standard: 47209
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 18
+Valore minimo: 7200, combinazione: PERFORMANCE_V0
+Valore massimo: 332900, combinazione: DEFAULT_V0
+Valore medio: 60540
+Deviazione standard: 61055
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 19
+Valore minimo: 6900, combinazione: PERFORMANCE_V0
+Valore massimo: 251700, combinazione: DEFAULT_V0
+Valore medio: 52713
+Deviazione standard: 48896
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 0
+Valore minimo: 6100, combinazione: PERFORMANCE_V0
+Valore massimo: 9424300, combinazione: DEFAULT_V0
+Valore medio: 456022
+Deviazione standard: 1527365
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 1
+Valore minimo: 6700, combinazione: PERFORMANCE_V0
+Valore massimo: 4325200, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 201797
+Deviazione standard: 527132
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 2
+Valore minimo: 6900, combinazione: PERFORMANCE_V0
+Valore massimo: 828100, combinazione: DEFAULT_V0
+Valore medio: 114738
+Deviazione standard: 144312
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 3
+Valore minimo: 6800, combinazione: PERFORMANCE_V0
+Valore massimo: 4854300, combinazione: DEFAULT_V0
+Valore medio: 157456
+Deviazione standard: 545526
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 4
+Valore minimo: 6400, combinazione: PERFORMANCE_V0
+Valore massimo: 344900, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 75750
+Deviazione standard: 78078
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 5
+Valore minimo: 6700, combinazione: PERFORMANCE_V0
+Valore massimo: 238600, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 66949
+Deviazione standard: 51939
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 6
+Valore minimo: 6500, combinazione: PERFORMANCE_V0
+Valore massimo: 281500, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 66046
+Deviazione standard: 51573
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 7
+Valore minimo: 7300, combinazione: PERFORMANCE_V0
+Valore massimo: 311300, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 64562
+Deviazione standard: 53347
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 8
+Valore minimo: 6500, combinazione: PERFORMANCE_V0
+Valore massimo: 321500, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 72307
+Deviazione standard: 61462
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 9
+Valore minimo: 6600, combinazione: PERFORMANCE_V0
+Valore massimo: 349400, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 66296
+Deviazione standard: 56196
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 60
+Valore minimo: 7500, combinazione: PERFORMANCE_V0
+Valore massimo: 138100, combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 48604
+Deviazione standard: 34856
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 61
+Valore minimo: 6900, combinazione: PERFORMANCE_V0
+Valore massimo: 147800, combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 50114
+Deviazione standard: 38805
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 62
+Valore minimo: 7300, combinazione: PERFORMANCE_V0
+Valore massimo: 234900, combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 53647
+Deviazione standard: 42968
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 63
+Valore minimo: 7700, combinazione: PERFORMANCE_V0
+Valore massimo: 9195105500, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 3016550409
+Deviazione standard: 346098327
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 20
+Valore minimo: 6500, combinazione: PERFORMANCE_V0
+Valore massimo: 189468100, combinazione: DEFAULT_V0
+Valore medio: 23126585
+Deviazione standard: 39513018
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 21
+Valore minimo: 6200, combinazione: PERFORMANCE_V0
+Valore massimo: 213000, combinazione: DEFAULT_V0
+Valore medio: 56105
+Deviazione standard: 46815
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 22
+Valore minimo: 7300, combinazione: PERFORMANCE_V0
+Valore massimo: 168200, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 63370
+Deviazione standard: 44699
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 23
+Valore minimo: 7100, combinazione: PERFORMANCE_V0
+Valore massimo: 217400, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 59817
+Deviazione standard: 41814
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 24
+Valore minimo: 6800, combinazione: PERFORMANCE_V0
+Valore massimo: 143900, combinazione: DEFAULT_V0
+Valore medio: 54173
+Deviazione standard: 38314
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 25
+Valore minimo: 6900, combinazione: PERFORMANCE_V0
+Valore massimo: 226800, combinazione: DEFAULT_V0
+Valore medio: 59294
+Deviazione standard: 49493
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 26
+Valore minimo: 7900, combinazione: PERFORMANCE_V0
+Valore massimo: 224500, combinazione: PERFORMANCE_CACHE_V0
+Valore medio: 60987
+Deviazione standard: 46944
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 27
+Valore minimo: 7600, combinazione: PERFORMANCE_V0
+Valore massimo: 210800, combinazione: DEFAULT_V0
+Valore medio: 56815
+Deviazione standard: 44730
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 28
+Valore minimo: 7200, combinazione: PERFORMANCE_V0
+Valore massimo: 214000, combinazione: DEFAULT_V0
+Valore medio: 48612
+Deviazione standard: 37679
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 29
+Valore minimo: 7000, combinazione: PERFORMANCE_V0
+Valore massimo: 209300, combinazione: PERFORMANCE_SORTED_FRONTIERA_V0
+Valore medio: 58177
+Deviazione standard: 45498
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 30
+Valore minimo: 7100, combinazione: PERFORMANCE_V0
+Valore massimo: 301000, combinazione: DEFAULT_V0
+Valore medio: 51611
+Deviazione standard: 45754
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 31
+Valore minimo: 8500, combinazione: PERFORMANCE_V0
+Valore massimo: 209700, combinazione: DEFAULT_V0
+Valore medio: 51361
+Deviazione standard: 39179
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 32
+Valore minimo: 6900, combinazione: PERFORMANCE_V0
+Valore massimo: 205000, combinazione: DEFAULT_V0
+Valore medio: 60040
+Deviazione standard: 43549
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 33
+Valore minimo: 7400, combinazione: PERFORMANCE_V0
+Valore massimo: 213000, combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 56723
+Deviazione standard: 43232
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 34
+Valore minimo: 8300, combinazione: PERFORMANCE_V0
+Valore massimo: 37646700, combinazione: PERFORMANCE_CACHE_V0
+Valore medio: 8022906
+Deviazione standard: 10506966
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 35
+Valore minimo: 7600, combinazione: PERFORMANCE_V0
+Valore massimo: 162000, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 48930
+Deviazione standard: 35760
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 36
+Valore minimo: 9300, combinazione: PERFORMANCE_V0
+Valore massimo: 171300, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 45688
+Deviazione standard: 30904
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 37
+Valore minimo: 9100, combinazione: PERFORMANCE_CACHE_V0
+Valore massimo: 191800, combinazione: PERFORMANCE_CACHE_V0
+Valore medio: 54666
+Deviazione standard: 40903
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 38
+Valore minimo: 10300, combinazione: PERFORMANCE_CACHE_V0
+Valore massimo: 158800, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 50736
+Deviazione standard: 32276
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 39
+Valore minimo: 7100, combinazione: PERFORMANCE_V0
+Valore massimo: 72635600, combinazione: PERFORMANCE_CACHE_V0
+Valore medio: 14517512
+Deviazione standard: 19383024
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 180
+Valore minimo: 357229630700, combinazione: PERFORMANCE_CACHE_V0
+Valore massimo: 367671535300, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 362450583000
+Deviazione standard: 2147483648
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 108
+Valore minimo: 209490731500, combinazione: PERFORMANCE_CACHE_V0
+Valore massimo: 223502317200, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 216496524350
+Deviazione standard: 2147483648
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 40
+Valore minimo: 7000, combinazione: PERFORMANCE_V0
+Valore massimo: 2000800, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 335944
+Deviazione standard: 433435
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 41
+Valore minimo: 7100, combinazione: PERFORMANCE_V0
+Valore massimo: 197400, combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+Valore medio: 52546
+Deviazione standard: 42298
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 42
+Valore minimo: 8100, combinazione: PERFORMANCE_V0
+Valore massimo: 197500, combinazione: DEFAULT_V0
+Valore medio: 50512
+Deviazione standard: 42025
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: 43
+Valore minimo: 7600, combinazione: PERFORMANCE_V0
+Valore massimo: 43269500, combinazione: DEFAULT_V0
+Valore medio: 9003462
+Deviazione standard: 11983690
+

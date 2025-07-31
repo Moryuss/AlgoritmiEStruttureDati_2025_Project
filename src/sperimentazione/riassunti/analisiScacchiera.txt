@@ -1,0 +1,19 @@
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: Griglia Grande
+Valore minimo: 16075160, combinazione: DEFAULT_V0
+Valore massimo: 50746790, combinazione: PERFORMANCE_V0
+Valore medio: 30987466
+Deviazione standard: 14426847
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: Griglia Piccola
+Valore minimo: 936300, combinazione: DEFAULT_V0
+Valore massimo: 1515420, combinazione: PERFORMANCE_V0
+Valore medio: 1195238
+Deviazione standard: 195227
+=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: Griglia Media
+Valore minimo: 1666400, combinazione: PERFORMANCE_SORTED_FRONTIERA_V0
+Valore massimo: 4534680, combinazione: PERFORMANCE_V0
+Valore medio: 2886900
+Deviazione standard: 1031629
+
