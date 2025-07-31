@@ -13,7 +13,7 @@ import matteo.Strategies.StrategyBundle;
 import matteo.Strategies.StrategyFactory;
 import nicolas.*;
 
-public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor, IInterrompibile{
+public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor{
 
 	private final CamminoCache pathCache = new CamminoCache(); //cache per i cammini già calcolati
 	private final GestioneInterruzioni gestoreInterruzioni = new GestioneInterruzioni();	
@@ -102,19 +102,22 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			stampaStatoDestinazioneFinale(risultato);
 			return risultato;
 		} catch (InterruptedException e) {
-			return gestisciInterruzione(e);
+			return gestisciInterruzione_GeneraCammino(e);
 		}finally {
 			finalizzaCalcoloTempo(); // Salva il tempo di esecuzione
 			// Genera sempre il report, anche in caso di interruzione
-			if (risultato!=null) generaReportFinale(risultato);
-			else if 	(this.getProgressMin()!= null &
-					this.getProgressMin().getCammino()!= null &
-					this.getProgressMin().getCammino().lunghezza()<Integer.MAX_VALUE) {
-				generaReportFinale(this.getProgressMin().getCammino());
-			}
-			else {
-				generaReportFinale(new Cammino(Integer.MAX_VALUE, Integer.MAX_VALUE, new ArrayList<>()));
-			}
+			generaReportAlways(risultato);
+		}
+	}
+	private void generaReportAlways(ICammino risultato) {
+		if (risultato!=null) generaReportFinale(risultato);
+		else if 	(this.getProgressMin()!= null &
+				this.getProgressMin().getCammino()!= null &
+				this.getProgressMin().getCammino().lunghezza() < Double.POSITIVE_INFINITY) {
+			generaReportFinale(this.getProgressMin().getCammino());
+		}
+		else {
+			generaReportFinale(new Cammino(Integer.MAX_VALUE, Integer.MAX_VALUE, new ArrayList<>()));
 		}
 	}
 	
@@ -139,12 +142,12 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 				"\nDestinazione: " + bitPrint(D.stato()));
 	}
 
-	private ICammino gestisciInterruzione(InterruptedException e) {
+	private ICammino gestisciInterruzione_GeneraCammino(InterruptedException e) {
 		strategies.getDebugStrategy().println(e.getMessage());
 
 		stats.interrompiCalcolo();
 		if (this.getProgressMin().getCammino()!=null && 
-				this.getProgressMin().getCammino().lunghezza() < Integer.MAX_VALUE) {
+				this.getProgressMin().getCammino().lunghezza() < Double.POSITIVE_INFINITY) {
 			strategies.getDebugStrategy().println("Cammino trovato");
 			return this.getProgressMin().getCammino();
 		}

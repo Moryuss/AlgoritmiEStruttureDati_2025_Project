@@ -5,7 +5,7 @@ import francesco.IGriglia;
 import nicolas.CompitoDueImpl;
 import nicolas.ICompitoDue;
 
-public interface ICompitoTre extends IHasReport{
+public interface ICompitoTre extends IHasReport, IInterrompibile{
 	
 	ICammino camminoMin(IGriglia<?> griglia, ICella2D O, ICella2D D, ICompitoDue compitoDue);
 	
