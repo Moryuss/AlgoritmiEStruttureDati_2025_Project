@@ -23,21 +23,26 @@ import processing.data.JSONArray;
 import utils.Utils;
 
 public class MainSperimentazione {
+	// Per il controllo su cammini uguali
+	private static final double MAX_DIFF = 1e-10;
+	// Numero di volte che una Griglia viene usata per il calcolo del Cammino Minimo
+	private static final int GRIGLIA_TRY = 10;
+	private static final String LINEA_SPEZZATA_PATH = "src/sperimentazione/lineaspezzata";
+	private static final String VARIAZIONE_OSTACOLI_PATH = "src/sperimentazione/varostacoli";
+	private static final String VARIAZIONE_DIMENSIONI_PATH = "src/sperimentazione/vardimensioni";
+	private static final String TIPO_GRIGLIA_PATH = "src/sperimentazione/tipoGriglia";
+	private static final String SPIRALE_PATH = "src/sperimentazione/spirale";
+	private static final String DOPPIO_DENTE_DI_SEGA_PATH = "src/sperimentazione/doppiodentedisega";
+	private static final String SCACCHIERA_PATH = "src/sperimentazione/scacchiera";
 
-    // Per il controllo su cammini uguali
-    private static final double MAX_DIFF = 1e-10;
-    // Numero di volte che una Griglia viene usata per il calcolo del Cammino Minimo
-    private static final int GRIGLIA_TRY = 10;
-    private static final String LINEA_SPEZZATA_PATH = "src/sperimentazione/lineaspezzata";
-    private static final String VARIAZIONE_OSTACOLI_PATH = "src/sperimentazione/varostacoli";
-    private static final String VARIAZIONE_DIMENSIONI_PATH = "src/sperimentazione/vardimensioni";
-    private static final String TIPO_GRIGLIA_PATH = "src/sperimentazione/tipoGriglia";
-
-    private static final List<String> CARTELLE = List.of(
+	private static final List<String> CARTELLE = List.of(
             //    		LINEA_SPEZZATA_PATH
             //            , VARIAZIONE_OSTACOLI_PATH
             //            , VARIAZIONE_DIMENSIONI_PATH
-            TIPO_GRIGLIA_PATH);
+//            , TIPO_GRIGLIA_PATH
+            SPIRALE_PATH
+            , DOPPIO_DENTE_DI_SEGA_PATH
+            , SCACCHIERA_PATH);
 
     private static final List<ConfigurationMode> TRES = List.of(ConfigurationMode.DEFAULT,
             ConfigurationMode.PERFORMANCE_NO_CACHE,
@@ -118,7 +123,7 @@ public class MainSperimentazione {
 
                                 // Trova il cammino minimo con CompitoTre
                                 ICammino cammino1 = implementazioneTre.camminoMin(griglia, start, end, due);
-
+                                
                                 // Verifica se il cammino è valido
                                 if (cammino1 == null || cammino1.landmarks().isEmpty() || Double.isInfinite(cammino1.lunghezza())) {
                                     scriviEStampaConPath("ERRORE: Nessun cammino valido trovato dalla destinazione all'origine", path);
@@ -127,8 +132,9 @@ public class MainSperimentazione {
 
                                 String report = implementazioneTre.getReport();
                                 IStatisticheEsecuzione statisticheEsecuzione = implementazioneTre.getStatisticheEsecuzione();
-                                long tempo = statisticheEsecuzione.getTempoEsecuzione();
-                                aggiungiTempo(tempo, compiti, nomeGriglia, tempi);
+//                                long tempo = statisticheEsecuzione.getTempoEsecuzione();
+                                // Questo aggiunge il tempo singolo, non medio
+//                                aggiungiTempo(tempo, compiti, nomeGriglia, tempi);
                                 statistiche.add(statisticheEsecuzione);
 
                                 // Report ottenuto dal cammino
@@ -163,7 +169,9 @@ public class MainSperimentazione {
                         }
                         // Qui vengono calcolate e scritte le media per griglia
                         if (!statistiche.isEmpty()) {
-                            scriviMediaEsecuzioni(statistiche, GRIGLIA_TRY, path);
+                            long tempo = scriviMediaEsecuzioni(statistiche, GRIGLIA_TRY, path);
+                            // Aggiunta del tempo MEDIO 
+                            aggiungiTempo(tempo, compiti, nomeGriglia, tempi);
                         } else {
                             scriviEStampaConPath("Nessuna esecuzione riuscita per questa griglia", path);
                         }
@@ -327,14 +335,16 @@ public class MainSperimentazione {
         return files;
     }
 
+    @Deprecated
     private static void scriviEStampa(String msg) {
         System.out.println(msg);
         ScritturaFile.writeToFile(pathTxt + "_" + compitiUsati + ".txt", msg);
     }
 
     private static void scriviEStampaGenerico(String msg) {
-        System.out.println(msg);
-        ScritturaFile.writeToFile(pathTxt, msg);
+//        System.out.println(msg);
+//        ScritturaFile.writeToFile(pathTxt, msg);
+    	scriviEStampaConPath(msg, pathTxt);
     }
 
     private static void scriviEStampaConPath(String msg, String path) {
@@ -407,7 +417,7 @@ public class MainSperimentazione {
      * @param tentativi
      * @param path
      */
-    private static void scriviMediaEsecuzioni(List<IStatisticheEsecuzione> statistiche, int tentativi, String path) {
+    private static long scriviMediaEsecuzioni(List<IStatisticheEsecuzione> statistiche, int tentativi, String path) {
         StringBuilder sb = new StringBuilder();
         sb.append("=============== MEDIA ESECUZIONI ===============\n");
         // Si presuppone che tutte le statistiche stiano usando la stessa implementazione
@@ -441,6 +451,9 @@ public class MainSperimentazione {
 
 //		ScritturaFile.writeToFile(path, sb.toString());
         scriviEStampaConPath(sb.toString(), path);
+        
+        // Questo return è per poi salvare il tempo medio che è ciòc he veramente interessa
+        return mediaTempo;
     }
 }
 
