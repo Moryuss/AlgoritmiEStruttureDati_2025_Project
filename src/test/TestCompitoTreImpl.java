@@ -854,4 +854,52 @@ public class TestCompitoTreImpl {
 			System.out.println("#############################");
 		}
 	}
+	
+	@Test
+	public void test_performanceConSvuotaFrontiera() throws Exception {
+
+		try {
+			griglia = Utils.loadSimple(new File("src/test/json/zigZag_ostacoli.int.json"));
+
+		} catch (Exception e) {
+			fail("Errore durante il caricamento della griglia: " + e.getMessage());
+		}
+
+		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
+		ICellaConDistanze start = g.getCellaAt(0, 0);
+		ICellaConDistanze end = g.getCellaAt(0,6);
+		
+		if(c instanceof CompitoTreImplementation){
+			((CompitoTreImplementation) c).setConfiguration(ConfigurationMode.PERFORMANCE_SVUOTA_FRONTIERA);
+			//uso di svuotaFrontiera
+		}
+		else {
+			fail("Compito non implementa CompitoTreImplementation");
+		}
+		
+
+		ICammino cammino = c.camminoMin(griglia, start, end, CompitoDueImpl.V0);	//Differenza rispetto a testRicorsione_Spirale
+
+		assertTrue(StatoCella.OSTACOLO.isNot(end.stato()));
+		assertNotNull(cammino);
+
+		assertEquals(86.56854249492376, cammino.lunghezza(), 0.001);
+
+		assertEquals(start.x(), cammino.landmarks().get(0).x());
+		assertEquals(start.y(), cammino.landmarks().get(0).y());
+		assertEquals(end.x(), cammino.landmarks().get(cammino.landmarks().size()-1).x());
+		assertEquals(end.y(), cammino.landmarks().get(cammino.landmarks().size()-1).y());
+
+		if(debug) {
+			System.out.println("PERCORSO MINIMO TROVATO: ZIGZAG");
+			System.out.println("lunghezza totale: " + cammino.lunghezza());
+			System.out.println("Celle Torre: " + cammino.lunghezzaTorre());
+			System.out.println("Celle Alfiere: " + cammino.lunghezzaAlfiere());
+
+			System.out.println(cammino.lunghezza());
+			cammino.landmarks().forEach(x->System.out.println("("+ x.x() +","+ x.y()+")"+"==>"));
+			System.out.println("#############################");
+		}
+	
+	}
 }

@@ -1,4 +1,4 @@
-package matteo.Strategies;
+package matteo.Strategies.Debug;
 
 public class DebugAbilitato implements DebugStrategy {
 

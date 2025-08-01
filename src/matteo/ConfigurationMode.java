@@ -34,7 +34,17 @@ public enum ConfigurationMode {
 
 	PERFORMANCE_NO_CONDIZIONE_RAFFORZATA(ConfigurationFlag.MONITOR_ENABLED,
 			ConfigurationFlag.SORTED_FRONTIERA,
-			ConfigurationFlag.CACHE_ENABLED);
+			ConfigurationFlag.CACHE_ENABLED),
+	
+	PERFORMANCE_SVUOTA_FRONTIERA(ConfigurationFlag.MONITOR_ENABLED,
+			ConfigurationFlag.SVUOTA_FRONTIERA),
+	
+	
+	PERFORMANCE_FULL(ConfigurationFlag.MONITOR_ENABLED,
+			ConfigurationFlag.SORTED_FRONTIERA,
+			ConfigurationFlag.CONDIZIONE_RAFFORZATA,
+			ConfigurationFlag.CACHE_ENABLED,
+			ConfigurationFlag.SVUOTA_FRONTIERA);
 
 
 	private final int flags;
@@ -139,6 +149,9 @@ public enum ConfigurationMode {
 
 	public boolean isCacheEnabled() { 
 		return hasFlag(ConfigurationFlag.CACHE_ENABLED); 
+	}
+	public boolean isSvuotaFrontieraEnabled() { 
+		return hasFlag(ConfigurationFlag.SVUOTA_FRONTIERA); 
 	}
 
 	// Restituisce una rappresentazione binaria dei flag (per debug)

@@ -37,6 +37,7 @@ public class CamminoConfiguration {
     public boolean isSortedFrontieraEnabled() { return mode.isSortedFrontieraEnabled(); }
     public boolean isCondizioneRafforzataEnabled() { return mode.isCondizioneRafforzataEnabled(); }
     public boolean isCacheEnabled() { return mode.isCacheEnabled(); }
+    public boolean isSvuotaFrontieraEnabled() { return mode.isSvuotaFrontieraEnabled(); }
     
     public ConfigurationMode getMode() { return mode; }
     

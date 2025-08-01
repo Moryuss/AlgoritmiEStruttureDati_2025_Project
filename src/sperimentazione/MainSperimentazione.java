@@ -437,7 +437,7 @@ public class MainSperimentazione {
         sb.append("=============== MEDIA ESECUZIONI ===============\n");
         // Si presuppone che tutte le statistiche stiano usando la stessa implementazione
         sb.append("Cache usata? " + statistiche.get(0).isCacheAttiva() + "\n");
-        sb.append("Sorted Frontiera? " + statistiche.get(0).isFrontieraStored() + "\n");
+        sb.append("Sorted Frontiera? " + statistiche.get(0).isFrontieraSorted() + "\n");
         int mediaCache = 0;
         int mediaCelle = 0;
         int mediaIterazioni = 0;

@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+
+
 import francesco.ICella2D;
 import francesco.IGriglia;
 import francesco.IHave2DCoordinate;
@@ -120,20 +122,20 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			generaReportFinale(new Cammino(Integer.MAX_VALUE, Integer.MAX_VALUE, new ArrayList<>()));
 		}
 	}
-	
+
 	private void finalizzaCalcoloTempo() {
 		stats.saveTime(); 
 	}
-	
+
 	private void generaReportFinale(ICammino risultato) {
 		report = stats.generaRiassunto(risultato);
 	}
 	private void stampaStatoDestinazioneFinale(ICammino risultato) {
-	    if (risultato != null && risultato.landmarks() != null && !risultato.landmarks().isEmpty()) {
-	        strategies.getDebugStrategy().println("stato ultimo landmark: " + bitPrint(risultato.landmarks().getLast().stato()));
-	    } else {
-	        strategies.getDebugStrategy().println("Cammino nullo o senza landmark.");
-	    }
+		if (risultato != null && risultato.landmarks() != null && !risultato.landmarks().isEmpty()) {
+			strategies.getDebugStrategy().println("stato ultimo landmark: " + bitPrint(risultato.landmarks().getLast().stato()));
+		} else {
+			strategies.getDebugStrategy().println("Cammino nullo o senza landmark.");
+		}
 	}
 
 	private void stampaStatiOrigineDestinazione(ICella2D O, ICella2D D) {
@@ -166,8 +168,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		inizializzaCompitoTreMode();
 		inizializzaCache();
 		inizializzaMonitors(O, D);
+		inizializzazioneSvuotaFrontiera();
 		salvaInformazioniGriglia(griglia, O, D);
 	}
+
 	private void inizializzaCompitoTreMode() {
 		stats.setCompitoTreMode(config.getMode());
 	}
@@ -177,7 +181,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stats.saveOrigine(O);
 		stats.saveDestinazione(D);
 
-		stats.setFrontieraStored(config.isSortedFrontieraEnabled());
+		stats.setFrontieraSorted(config.isSortedFrontieraEnabled());
 	}
 	private void inizializzaStatistiche() {
 		stats = new StatisticheEsecuzione();
@@ -194,7 +198,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		pathCache.setDebugMode(config.isDebugEnabled());
 		stats.setCache(pathCache.isEnabled());
 	}
-
+	private void inizializzazioneSvuotaFrontiera() {
+		stats.setSvuotaFrontiera(config.isSvuotaFrontieraEnabled());		
+	}
 
 	private ICammino calcoloCamminoMin(IGriglia<?> griglia, ICella2D O, ICella2D D, 
 			IStatisticheEsecuzione stats,
@@ -219,6 +225,13 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		}
 
 		List<ICellaConDistanze> frontieraList = strategies.getFrontieraStrategy().getFrontiera(g, dest);
+
+
+		frontieraList = strategies.getSvuotaFrontieraStrategy()
+				.isFrontieraDaSvuotare(O, frontieraList,
+						monitorMin,stackCammino,
+						stats);
+		
 
 		if (frontieraList.isEmpty()) {
 			return gestisciCasoFrontieraVuota(griglia, O, dest);
@@ -295,6 +308,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 		return risultatoFinale;
 	}
+
 	private boolean isCellaFrontieraNonOstacolo(ICellaConDistanze F) {
 		return StatoCella.OSTACOLO.isNot(F.stato());
 	}

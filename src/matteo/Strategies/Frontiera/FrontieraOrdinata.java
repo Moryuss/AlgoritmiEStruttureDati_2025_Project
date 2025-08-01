@@ -1,4 +1,4 @@
-package matteo.Strategies;
+package matteo.Strategies.Frontiera;
 
 import java.util.Comparator;
 import java.util.List;

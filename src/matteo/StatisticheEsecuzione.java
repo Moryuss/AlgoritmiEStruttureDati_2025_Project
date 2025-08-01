@@ -18,6 +18,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	private int totaleCelleFrontiera = 0;
 	private int totaleIterazioniCondizione = 0;
 	private int cacheHit = 0;
+	private int totaleSvuotaFrontiera = 0;
 	private List<String> prestazioni = new ArrayList<>();
 	
 	private Long tempoInizio;
@@ -26,6 +27,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	private boolean calcoloInterrotto = false;
 	private boolean cacheAttiva = false;
 	private boolean frontieraSotred = false;
+	private boolean svuotaFrontiera = false;
 	
 	private ConfigurationMode compitoTreMode = ConfigurationMode.DEFAULT;
 	
@@ -80,9 +82,14 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		this.cacheAttiva = cacheStatus;
 	}
 	@Override
-	public void setFrontieraStored(boolean frontieraStored) {
+	public void setFrontieraSorted(boolean frontieraStored) {
 		this.frontieraSotred = frontieraStored;
 	}
+	@Override
+	public boolean isFrontieraSorted() {
+		return this.frontieraSotred;
+	}
+	
 	@Override
 	public void setCompitoTreMode(ConfigurationMode mode) {
 		this.compitoTreMode = mode;
@@ -107,6 +114,8 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		sb.append("Cache attiva: ").append(cacheAttiva ? "SI" : "NO").append("\n");
 		sb.append("Cache hit: ").append(cacheHit).append("\n");
 		sb.append("Frontiera sorted: ").append(frontieraSotred ? "SI" : "NO").append("\n");
+		sb.append("Svuota frontiera attiva: ").append(svuotaFrontiera ? "SI" : "NO").append("\n");
+		sb.append("Totale svuota frontiera: ").append(totaleSvuotaFrontiera).append("\n");
 		if (risultato != null) {
 			sb.append("Lunghezza cammino trovato: ").append(risultato.lunghezza()).append("\n");
 			sb.append("Numero landmarks: ").append(risultato.landmarks().size()).append("\n");
@@ -181,8 +190,19 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	}
 
 	@Override
-	public boolean isFrontieraStored() {
-		return this.frontieraSotred;
+	public boolean isSvuotaFrontieraAttiva() {
+		return this.svuotaFrontiera;
+	}
+
+	@Override
+	public void setSvuotaFrontiera(boolean svuotaFrontiera) {
+		this.svuotaFrontiera = svuotaFrontiera;
+		
+	}
+
+	@Override
+	public void incrementaSvuotaFrontiera() {
+		this.totaleSvuotaFrontiera++;
 	}
 
 	@Override
@@ -225,6 +245,10 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		}
 		return this.tempoTotaleNs;
 	}
+
+	
+
+	
 
 	
 

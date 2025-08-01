@@ -136,9 +136,9 @@ class TestStatisticheEsecuzione {
         stats.setCache(true);
         assertTrue(stats.isCacheAttiva());
         
-        assertFalse(stats.isFrontieraStored());
-        stats.setFrontieraStored(true);
-        assertTrue(stats.isFrontieraStored());
+        assertFalse(stats.isFrontieraSorted());
+        stats.setFrontieraSorted(true);
+        assertTrue(stats.isFrontieraSorted());
         
         // Test configurazione mode
         assertEquals(ConfigurationMode.DEFAULT, stats.getCompitoTreMode());

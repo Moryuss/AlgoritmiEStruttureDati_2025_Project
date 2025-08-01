@@ -36,8 +36,12 @@ public interface IStatisticheEsecuzione {
 	public void setCache(boolean cahceStatus);
 	public boolean isCacheAttiva();
 	
-	public void setFrontieraStored(boolean frontieraStored);
-	public boolean isFrontieraStored();
+	public void setFrontieraSorted(boolean frontieraStored);
+	public boolean isFrontieraSorted();
+	
+	public boolean isSvuotaFrontieraAttiva();
+	public void setSvuotaFrontiera(boolean svuotaFrontiera);
+	public void incrementaSvuotaFrontiera();
 	
 	public void setCompitoTreMode(ConfigurationMode mode);
 	public ConfigurationMode getCompitoTreMode();

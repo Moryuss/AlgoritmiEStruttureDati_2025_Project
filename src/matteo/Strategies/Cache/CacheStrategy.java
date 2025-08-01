@@ -1,4 +1,4 @@
-package matteo.Strategies;
+package matteo.Strategies.Cache;
 
 import francesco.ICella2D;
 import francesco.IGriglia;

@@ -1,4 +1,4 @@
-package matteo.Strategies;
+package matteo.Strategies.Condizione;
 
 import francesco.ICella2D;
 import utils.Utils;
