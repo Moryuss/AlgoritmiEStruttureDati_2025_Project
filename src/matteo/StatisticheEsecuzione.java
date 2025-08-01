@@ -29,7 +29,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	private boolean frontieraSotred = false;
 	private boolean svuotaFrontiera = false;
 	
-	private ConfigurationMode compitoTreMode = ConfigurationMode.DEFAULT;
+	private CamminoConfiguration compitoTreMode = ConfigurationMode.DEFAULT.toCamminoConfiguration();
 	
 
 	@Override
@@ -91,7 +91,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	}
 	
 	@Override
-	public void setCompitoTreMode(ConfigurationMode mode) {
+	public void setCompitoTreMode(CamminoConfiguration mode) {
 		this.compitoTreMode = mode;
 	}
 	
@@ -106,7 +106,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		sb.append("Tipo griglia: ").append(this.tipoGriglia).append("\n");
 		sb.append("Origine: (").append(origine.x()).append(",").append(origine.y()).append(")").append("\n");
 		sb.append("Destinazione: (").append(destinazione.x()).append(",").append(destinazione.y()).append(")").append("\n");
-		sb.append("Modalità Compito Tre: ").append(compitoTreMode.getModeName()).append("\n");
+		sb.append("Modalità Compito Tre: ").append(compitoTreMode.toString()).append("\n");
 		sb.append("Tempo di esecuzione: ").append(tempoFormattato).append("\n");
 		sb.append("Totale celle di frontiera considerate: ").append(totaleCelleFrontiera).append("\n");
 		sb.append("Totale iterazioni condizione (riga 16/17): ").append(totaleIterazioniCondizione).append("\n");
@@ -206,7 +206,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	}
 
 	@Override
-	public ConfigurationMode getCompitoTreMode() {
+	public CamminoConfiguration getCompitoTreMode() {
 		return this.compitoTreMode;
 	}
 
@@ -246,6 +246,12 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		return this.tempoTotaleNs;
 	}
 
+	@Override
+	public int getQuantitaSvuotaFrontiera() {
+		return this.totaleSvuotaFrontiera;
+	}
+
+	
 	
 
 	

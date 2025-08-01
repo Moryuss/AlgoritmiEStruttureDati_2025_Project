@@ -42,9 +42,10 @@ public interface IStatisticheEsecuzione {
 	public boolean isSvuotaFrontieraAttiva();
 	public void setSvuotaFrontiera(boolean svuotaFrontiera);
 	public void incrementaSvuotaFrontiera();
+	public int getQuantitaSvuotaFrontiera();
 	
-	public void setCompitoTreMode(ConfigurationMode mode);
-	public ConfigurationMode getCompitoTreMode();
+	public void setCompitoTreMode(CamminoConfiguration mode);
+	public CamminoConfiguration getCompitoTreMode();
 
 	public void saveTime();
 	

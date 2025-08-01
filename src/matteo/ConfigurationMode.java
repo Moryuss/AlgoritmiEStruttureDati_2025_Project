@@ -85,42 +85,7 @@ public enum ConfigurationMode {
 		return false;
 	}
 
-	// Restituisce una nuova modalità con flag aggiuntivi
-	public ConfigurationMode withFlags(ConfigurationFlag... additionalFlags) {
-		int newFlags = this.flags;
-		for (ConfigurationFlag flag : additionalFlags) {
-			newFlags |= flag.getValue();
-		}
-		return fromFlags(newFlags);
-	}
-
-	// Restituisce una nuova modalità senza i flag specificati
-	public ConfigurationMode withoutFlags(ConfigurationFlag... flagsToRemove) {
-		int newFlags = this.flags;
-		for (ConfigurationFlag flag : flagsToRemove) {
-			newFlags &= ~flag.getValue();
-		}
-		return fromFlags(newFlags);
-	}
-
-	// Crea una modalità custom da un valore di flag
-	/**
-	 * Crea una modalità custom da un valore di flag. <br>
-	 * Questo metodo cerca se esiste già una modalità con questi flag e la restituisce. <br>
-	 * Se non esiste, restituisce la modalità DEFAULT. <br>
-	 * @param flagValue
-	 * @return
-	 */
-	private static ConfigurationMode fromFlags(int flagValue) {
-		// Cerca se esiste già una modalità con questi flag
-		for (ConfigurationMode mode : values()) {
-			if (mode.flags == flagValue) {
-				return mode;
-			}
-		}
-		// Se non esiste, restituiamo la modalità o DEFAULT
-		return DEFAULT;
-	}
+	
 
 	// Getters per compatibilità con il codice esistente
 	public boolean isDebugEnabled() { 
@@ -177,6 +142,10 @@ public enum ConfigurationMode {
 
 	public CamminoConfiguration toCamminoConfiguration() {
 		return new CamminoConfiguration(this);
+	}
+	
+	public int getFlagsValue() {
+	    return flags; 
 	}
 
 }

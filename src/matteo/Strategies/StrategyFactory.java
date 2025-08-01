@@ -32,9 +32,9 @@ public class StrategyFactory {
 	}
 
 	/**
-	 * Crea tutte le strategy da un ConfigurationMode
+	 * Crea tutte le strategy da un CamminoCOnfiguration
 	 */
-	public StrategyBundle createStrategies(ConfigurationMode mode) {
+	public StrategyBundle createStrategies(CamminoConfiguration mode) {
 		return new StrategyBundle(
 				mode.isDebugEnabled() ? new DebugAbilitato() : new DebugDisabilitato(),
 				mode.isCacheEnabled() ? new CacheAttiva(cache) : new CacheNull(),
@@ -43,12 +43,7 @@ public class StrategyFactory {
 				mode.isSvuotaFrontieraEnabled() ? new SvuotaFrontieraAbilitato() : new SvuotaFrontieraDisabilitato());
 	}
 
-	/**
-	 * Overload per CamminoConfiguration (che contiene il mode)
-	 */
-	public StrategyBundle createStrategies(CamminoConfiguration configuration) {
-		return createStrategies(configuration.getMode());
-	}
+
 
 
 

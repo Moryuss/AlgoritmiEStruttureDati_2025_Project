@@ -90,7 +90,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	 */
 	private void initializeStrategies() {
 		StrategyFactory factory = new StrategyFactory(pathCache);
-		this.strategies = factory.createStrategies(config.getMode());
+		this.strategies = factory.createStrategies(config);		
 	}
 
 	@Override
@@ -168,20 +168,19 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		inizializzaCompitoTreMode();
 		inizializzaCache();
 		inizializzaMonitors(O, D);
-		inizializzazioneSvuotaFrontiera();
+		inizializzazioneFrontiera();
 		salvaInformazioniGriglia(griglia, O, D);
 	}
 
 	private void inizializzaCompitoTreMode() {
-		stats.setCompitoTreMode(config.getMode());
+		stats.setCompitoTreMode(config);
 	}
 	private void salvaInformazioniGriglia(IGriglia<?> griglia, ICella2D O, ICella2D D) {
 		stats.saveDimensioniGriglia(griglia.height(), griglia.width());
 		stats.saveTipoGriglia(griglia.getTipo());
 		stats.saveOrigine(O);
 		stats.saveDestinazione(D);
-
-		stats.setFrontieraSorted(config.isSortedFrontieraEnabled());
+		
 	}
 	private void inizializzaStatistiche() {
 		stats = new StatisticheEsecuzione();
@@ -198,8 +197,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		pathCache.setDebugMode(config.isDebugEnabled());
 		stats.setCache(pathCache.isEnabled());
 	}
-	private void inizializzazioneSvuotaFrontiera() {
+	private void inizializzazioneFrontiera() {
 		stats.setSvuotaFrontiera(config.isSvuotaFrontieraEnabled());		
+		stats.setFrontieraSorted(config.isSortedFrontieraEnabled());
 	}
 
 	private ICammino calcoloCamminoMin(IGriglia<?> griglia, ICella2D O, ICella2D D, 
@@ -294,7 +294,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		stackCammino.pop();
 
 
-		if (config.isDebugEnabled()) System.out.println("end");
+		strategies.getDebugStrategy().println("end");
 
 		ICammino risultatoFinale = new Cammino(lunghezzaTorreMin, 
 				lunghezzaAlfiereMin, 

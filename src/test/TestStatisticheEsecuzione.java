@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 import francesco.ICella2D;
+import matteo.CamminoConfiguration;
 import matteo.ConfigurationMode;
 import matteo.ICammino;
 import matteo.ILandmark;
@@ -115,10 +116,12 @@ class TestStatisticheEsecuzione {
         stats.incrementaCelleFrontiera();
         stats.incrementaIterazioniCondizione();
         stats.incrementaCacheHit();
+        stats.incrementaSvuotaFrontiera();
         assertEquals(2, stats.getQuantitaCelleFrontiera());
         assertEquals(1, stats.getIterazioniCondizione());
         assertEquals(1, stats.getCacheHit());
-        
+		assertEquals(1, stats.getQuantitaSvuotaFrontiera());
+		
         // Test prestazioni
         stats.aggiungiPrestazione("Test prestazione 1");
         stats.aggiungiPrestazione("Test prestazione 2");
@@ -140,21 +143,21 @@ class TestStatisticheEsecuzione {
         stats.setFrontieraSorted(true);
         assertTrue(stats.isFrontieraSorted());
         
+        assertFalse(stats.isSvuotaFrontieraAttiva());
+        stats.setSvuotaFrontiera(true);
+        assertTrue(stats.isSvuotaFrontieraAttiva());
+        
         // Test configurazione mode
-        assertEquals(ConfigurationMode.DEFAULT, stats.getCompitoTreMode());
-        stats.setCompitoTreMode(ConfigurationMode.PERFORMANCE); 
-        assertEquals(ConfigurationMode.PERFORMANCE, stats.getCompitoTreMode());
+        assertEquals(ConfigurationMode.DEFAULT.toCamminoConfiguration(), stats.getCompitoTreMode());
+        stats.setCompitoTreMode(ConfigurationMode.PERFORMANCE.toCamminoConfiguration()); 
+        assertEquals(ConfigurationMode.PERFORMANCE.toCamminoConfiguration(),
+        		stats.getCompitoTreMode());
         
         // Test tempo esecuzione
-        long tempoInizio = System.nanoTime();
-        try {
-            Thread.sleep(1); // Piccola pausa per avere un tempo misurabile
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        
+        //Tempo è inziato quando è stato creato l'oggetto StatisticheEsecuzione
+        stats.saveTime();
         long tempoEsecuzione = stats.getTempoEsecuzione();
-        assertTrue(tempoEsecuzione > 0, "Il tempo di esecuzione dovrebbe essere positivo");
+        assertTrue(tempoEsecuzione > 1, "Il tempo di esecuzione dovrebbe essere positivo");
         
         // Test generazione riassunto
         String riassunto = stats.generaRiassunto(mockRisultato);
