@@ -197,7 +197,7 @@ public class MainSperimentazione {
                 }
             }
             // Qui vengono calcolate numerose informazioni legate ai tempi
-            scriviInformazioniGenerali(tempi, pathTxt + "." + due.toString());
+            scriviInformazioniGenerali(tempi);
         }
     }
 
@@ -391,7 +391,7 @@ public class MainSperimentazione {
         }
     }
 
-    private static void scriviInformazioniGenerali(HashMap<String, TreeMap<Long, String>> tempi, String path) {
+    private static void scriviInformazioniGenerali(HashMap<String, TreeMap<Long, String>> tempi) {
         // Viene anzitutto pulito il file
         ScritturaFile.pulisciFile(pathTxt + ".txt");
         StringBuilder sb = new StringBuilder();
@@ -423,8 +423,7 @@ public class MainSperimentazione {
             deviazioneStandard = (long) Math.sqrt(deviazioneStandard / map.size());
             sb.append("Deviazione standard: " + deviazioneStandard + "\n");
         }
-//        scriviEStampaGenerico(sb.toString());
-        scriviEStampaConPath(sb.toString(), path);
+        scriviEStampaGenerico(sb.toString());
     }
 
     /**
