@@ -1,13 +1,14 @@
 package sperimentazione;
 
+import francesco.GrigliaMatrix;
 import francesco.IGriglia;
 import francesco.IHave2DCoordinate;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import matteo.CompitoTreImplementation;
 import matteo.ConfigurationMode;
 import matteo.ICammino;
@@ -25,9 +26,9 @@ import utils.Utils;
 public class MainSperimentazione {
 	private static final String MSG_UNREACHABLE_DESTINATIONù = "Destinazione Irraggiungibile.";
 	private static final String MSG_TIMEOUT = "La Griglia %s e' stata interrotta per tempo limite (%d)";
-//	private static final int TEMPO_SCADENZA_ESECUZIONE = 1800000; // 30 Minuti
-	private static final int TEMPO_SCADENZA_ESECUZIONE = 900000; // 15 Minuti
-//	private static final int TEMPO_SCADENZA_ESECUZIONE = 60000; // 1 Minuto
+//	private static final long TEMPO_SCADENZA_ESECUZIONE = TimeUnit.MINUTES.toMillis(30);
+	private static final long TEMPO_SCADENZA_ESECUZIONE = TimeUnit.MINUTES.toMillis(15);
+//	private static final long TEMPO_SCADENZA_ESECUZIONE = TimeUnit.MINUTES.toMillis(1);
 	// Per il controllo su cammini uguali
 	private static final double MAX_DIFF = 1e-10;
 	// Numero di volte che una Griglia viene usata per il calcolo del Cammino Minimo
@@ -114,13 +115,11 @@ public class MainSperimentazione {
                             	ICompitoTre implementazioneTre = new CompitoTreImplementation(tre);
                                 scriviEStampaConPath("Analisi n. " + (j + 1), path);
 
-                                IGriglia<?> griglia;
+                                IGriglia<?> griglia = Utils.loadSimple(files.get(i));
 
                                 // Carica la griglia dal JSONArray
-                                if (stati.isEmpty()) {
-                                    griglia = Utils.loadSimple(files.get(i));
-                                } else {
-                                    griglia = Utils.loadSimpleConStato(files.get(i), stati.get(i));
+                                if (!stati.isEmpty()) {
+                                	griglia = GrigliaMatrix.from(griglia,stati.get(i));
                                 }
 
                                 CoordinateCella origine = origini.get(i);
@@ -131,7 +130,7 @@ public class MainSperimentazione {
                                 ICellaConDistanze end = gO.getCellaAt(destinazione.x(), destinazione.y());
 
                                 // Trova il cammino minimo con CompitoTre
-                                implementazioneTre.setTimeout(TEMPO_SCADENZA_ESECUZIONE);
+                                implementazioneTre.setTimeout(TEMPO_SCADENZA_ESECUZIONE, TimeUnit.MILLISECONDS);
                                 ICammino cammino1 = implementazioneTre.camminoMin(griglia, start, end, due);
                                 
                                 // Verifica se il cammino è valido
@@ -352,13 +351,7 @@ public class MainSperimentazione {
 
         return files;
     }
-
-    @Deprecated
-    private static void scriviEStampa(String msg) {
-        System.out.println(msg);
-        ScritturaFile.writeToFile(pathTxt + "_" + compitiUsati + ".txt", msg);
-    }
-
+    
     private static void scriviEStampaGenerico(String msg) {
     	scriviEStampaConPath(msg, pathTxt);
     }

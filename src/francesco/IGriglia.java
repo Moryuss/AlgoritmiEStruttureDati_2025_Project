@@ -19,20 +19,18 @@ public interface IGriglia<C extends ICella> {
 	}
 	
 	int width();
-	
 	int height();
-	
 	int getTipo();
-	default void setStatoGriglia(int stato) {}
 	
-	void setStato(int x, int y, int s);
+	
+	default int xmin() {return 0;}
+	default int ymin() {return 0;}
+	default int xmax() {return xmin()+width()-1;}
+	default int ymax() {return ymin()+height()-1;}
+	
 	
 	IGriglia<C> addObstacle(IObstacle obstacle, int tipoOstacolo);
 	
-	
-	default void addStato(int x, int y, int s) {
-		setStato(x, y, getCellaAt(x, y).stato()|s);
-	}
 	
 	
 	default boolean isNavigabile(int x, int y) {
@@ -41,9 +39,9 @@ public interface IGriglia<C extends ICella> {
 	
 	
 	default void forEach(BiConsumer<Integer,Integer> action) {
-		for (int i=0, h=height(), w=width(); i<h; i++) {
+		for (int i=0, h=height(), w=width(), xmin=xmin(), ymin=ymin(); i<h; i++) {
 			for (int j=0; j<w; j++) {
-				action.accept(j, i);
+				action.accept(j+xmin, i+ymin);
 			}
 		}
 	}
@@ -66,9 +64,10 @@ public interface IGriglia<C extends ICella> {
 	default <T,A,R> R collect(Function<? super C,? extends T> mapper,
 			Collector<? super T,?,? extends A> rowCollector,
 			Collector<? super A,?,? extends R> collector) {
+		int xmin=xmin(), ymin=ymin();
 		return IntStream.range(0, height())
 		.mapToObj(i -> IntStream.range(0, width())
-			.mapToObj(j -> mapper.apply(getCellaAt(j, i)))
+			.mapToObj(j -> mapper.apply(getCellaAt(j+xmin, i+ymin)))
 			.collect(rowCollector)
 		).collect(collector);
 	}
@@ -77,6 +76,10 @@ public interface IGriglia<C extends ICella> {
 		return collect(serializer, 
 			Utils.collectToJSONArray(JSONArray::append), 
 			Utils.collectToJSONArray(JSONArray::append));
+	}
+	
+	default IGrigliaMutabile<?> toGrigliaMutabile() {
+		return GrigliaMatrix.from(this);
 	}
 	
 }

@@ -18,10 +18,6 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 		return ICellaConDistanze.of(x, y, mat[y][x], dist[y][x]);
 	}
 	
-	@Override
-	public void setStato(int x, int y, int s) {
-		mat[y][x] = s;
-	}
 	
 	@Override
 	public int width() {
@@ -39,13 +35,8 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 	}
 	
 	@Override
-	public ICellaConDistanze getOrigine() {
+	public ICella2D getOrigine() {
 		return getCellaAt(Ox, Oy);
-	}
-	
-	@Override
-	public double distanzaLiberaDa(int xd, int yd) {
-		return getCellaAt(xd, yd).distanzaDaOrigine();
 	}
 	
 	@Override

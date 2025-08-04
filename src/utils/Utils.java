@@ -3,10 +3,12 @@ package utils;
 import static nicolas.StatoCella.*;
 import static java.lang.Math.*;
 import java.io.File;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -15,11 +17,7 @@ import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collector;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
-import francesco.GrigliaMatrix;
-import francesco.ICella;
-import francesco.ICella2D;
-import francesco.IGriglia;
-import francesco.IHave2DCoordinate;
+import francesco.*;
 import francesco.implementazioni.Cella;
 import francesco.implementazioni.Cella2D;
 import processing.core.PApplet;
@@ -32,8 +30,6 @@ public final class Utils {
 
 	
 	public static final double sqrt2 = Math.sqrt(2);
-	
-	
 	
 	
 	
@@ -155,11 +151,11 @@ public final class Utils {
 	
 	
 	
-	public static IGriglia<ICella> loadSimple(File file) {
+	public static IGriglia<?> loadSimple(File file) {
 		return loadSimple(PApplet.loadJSONArray(file));
 	}
 	
-	public static IGriglia<ICella> loadSimple(JSONArray jsona) {
+	public static IGriglia<?> loadSimple(JSONArray jsona) {
 		int height = jsona.size();
 		int width = jsona.getJSONArray(0).size();
 		var list = new ArrayList<ICella2D>();
@@ -176,18 +172,12 @@ public final class Utils {
 		return GrigliaMatrix.from(width, height, List.of(()->list));
 	}
 	
-	public static IGriglia<ICella> loadSimpleConStato(JSONArray json, int stato){
-		IGriglia<ICella> griglia = loadSimple(json);
-		griglia.setStatoGriglia(stato);
-		return griglia;
-	}
 	
-	
-	public static IGriglia<ICella> loadIntJSON(File file, IntFunction<ICella> deserializer) {
+	public static IGrigliaMutabile<ICella> loadIntJSON(File file, IntFunction<ICella> deserializer) {
 		return loadIntJSON(PApplet.loadJSONArray(file), deserializer);
 	}
 	
-	public static IGriglia<ICella> loadIntJSON(JSONArray jsona, IntFunction<ICella> deserializer) {
+	public static IGrigliaMutabile<ICella> loadIntJSON(JSONArray jsona, IntFunction<ICella> deserializer) {
 		int height = jsona.size();
 		int width = jsona.getJSONArray(0).size();
 		ICella[][] mat = new Cella[height][width];
@@ -199,15 +189,15 @@ public final class Utils {
 			}
 		}
 		
-		return new GrigliaMatrix(mat);
+		return new GrigliaMatrix(mat, 0);
 	}
 	
 	
-	public static IGriglia<ICella> loadJSON(File file, Function<JSONObject,ICella> deserializer) {
+	public static IGrigliaMutabile<ICella> loadJSON(File file, Function<JSONObject,ICella> deserializer) {
 		return loadJSON(PApplet.loadJSONArray(file), deserializer);
 	}
 	
-	public static IGriglia<ICella> loadJSON(JSONArray jsona, Function<JSONObject, ICella> deserializer) {
+	public static IGrigliaMutabile<ICella> loadJSON(JSONArray jsona, Function<JSONObject, ICella> deserializer) {
 		int height = jsona.size();
 		int width = jsona.getJSONArray(0).size();
 		ICella[][] mat = new Cella[height][width];
@@ -219,32 +209,56 @@ public final class Utils {
 			}
 		}
 		
-		return new GrigliaMatrix(mat);
+		return new GrigliaMatrix(mat, 0);
 	}
 	
 	// CONVERSIONE TEMPI
 	
 	public static String formatTempo(long tempoNs) {
-	    StringBuilder tempoStr = new StringBuilder();
-	    
-	    // Sempre mostra i nanosecondi
-	    tempoStr.append(tempoNs).append(" ns");
-	    
-	    // Se >= 1 millisecondo, aggiungi anche i millisecondi
-	    if (tempoNs >= 1_000_000) {
-	        double tempoMs = tempoNs / 1_000_000.0;
-	        tempoStr.append(" (").append(String.format("%.3f", tempoMs)).append(" ms");
-	        
-	        // Se >= 1 secondo, aggiungi anche i secondi
-	        if (tempoNs >= 1_000_000_000) {
-	            double tempoS = tempoNs / 1_000_000_000.0;
-	            tempoStr.append(" = ").append(String.format("%.3f", tempoS)).append(" s");
-	        }
-	        
-	        tempoStr.append(")");
-	    }
-	    
-	    return tempoStr.toString();
+		StringBuilder tempoStr = new StringBuilder();
+		
+		// Sempre mostra i nanosecondi
+		tempoStr.append(tempoNs).append(" ns");
+		
+		if (tempoNs >= TimeUnit.MILLISECONDS.toNanos(1)) {
+			double tempoNs2 = (double)tempoNs;
+			
+			{
+				double tempoMs = tempoNs2 / TimeUnit.MILLISECONDS.toNanos(1);
+				tempoStr.append(" (").append(String.format("%.3f", tempoMs)).append(" ms");
+			}
+			
+			if (tempoNs >= TimeUnit.SECONDS.toNanos(1)) {
+				double tempoS = tempoNs2 / TimeUnit.SECONDS.toNanos(1);
+				tempoStr.append(" = ").append(String.format("%.3f", tempoS)).append(" s");
+			}
+			
+			if (tempoNs >= TimeUnit.MINUTES.toNanos(1)) {
+				double tempoS = tempoNs2 / TimeUnit.MINUTES.toNanos(1);
+				tempoStr.append(" = ").append(String.format("%.3f", tempoS)).append(" m");
+			}
+			
+			tempoStr.append(")");
+		}
+		
+		return tempoStr.toString();
+	}
+	
+	public static String tempoToString(long tempoNs) {
+		var sb = new StringBuilder();
+		Duration duration = Duration.ofNanos(tempoNs);
+		
+		int millis = duration.toMillisPart();
+		long nanos = tempoNs % TimeUnit.MILLISECONDS.toNanos(1);
+		sb.append("%dms %dns".formatted(millis, nanos));
+		
+		int seconds = duration.toSecondsPart();
+		if (seconds>0) sb.insert(0, "%ds ".formatted(seconds));
+		
+		long minutes = duration.toMinutes();
+		if (minutes>0) sb.insert(0, "%dm ".formatted(minutes));
+		
+		return sb.toString();
 	}
 	
 	

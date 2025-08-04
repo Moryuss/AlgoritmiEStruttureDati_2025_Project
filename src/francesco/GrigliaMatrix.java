@@ -4,62 +4,31 @@ import java.util.List;
 import francesco.implementazioni.Cella;
 import nicolas.StatoCella;
 
-public class GrigliaMatrix implements IGriglia<ICella> {
+public record GrigliaMatrix(ICella[][] mat, int tipo, int xmin, int ymin) implements IGrigliaMutabile<ICella> {
 	
 	public static final int CUSTOM_TYPE = 999;
-	private ICella[][] mat;
-	private int tipo;
+	
 	
 	public GrigliaMatrix(ICella[][] mat, int tipo){
-		this.mat = mat;
-		this.tipo = tipo;
-	}
-	
-	public GrigliaMatrix(ICella[][] mat) {
-		this(mat, 0);
+		this(mat, tipo, 0, 0);
 	}
 	
 	
 	@Override
-	public ICella getCellaAt(int x, int y) {
-		return mat[y][x];
-	}
+	public ICella getCellaAt(int x, int y) {return mat[y-ymin][x-xmin];}
+	@Override
+	public void setStato(int x, int y, int s) {mat[y-ymin][x-xmin] = new Cella(s);}
+	@Override
+	public int width() {return mat[0].length;}
+	@Override
+	public int height() {return mat.length;}
+	@Override
+	public int getTipo() {return tipo;}
+	
+	
 	
 	@Override
-	public void setStato(int x, int y, int s) {
-		mat[y][x] = new Cella(s);
-	}
-	
-	@Override
-	public int width() {
-		return mat[0].length;
-	}
-	
-	@Override
-	public int height() {
-		return mat.length;
-	}
-	
-	@Override
-	public int getTipo() {
-		return tipo();
-	}
-	
-	@Override
-	public void setStatoGriglia(int nuovoTipo) {
-		tipo = nuovoTipo;
-	}
-	
-	public ICella[][] mat(){
-		return this.mat;
-	}
-	
-	public int tipo() {
-		return this.tipo;
-	}
-	
-	@Override
-	public IGriglia<ICella> addObstacle(IObstacle obstacle, int tipoOstacolo) {
+	public IGrigliaMutabile<ICella> addObstacle(IObstacle obstacle, int tipoOstacolo) {
 		ICella[][] mat = inizializzaMatrice(width(), height());
 		for(int i=0; i<height(); i++) {
 			for(int j=0; j<width(); j++) {
@@ -67,15 +36,15 @@ public class GrigliaMatrix implements IGriglia<ICella> {
 			}
 		}
 		obstacle.list().forEach(c -> {
-			mat[c.y()][c.x()] = new Cella(mat[c.y()][c.x()].stato() | StatoCella.OSTACOLO.value());
+			mat[c.y()-ymin][c.x()-xmin] = new Cella(mat[c.y()-ymin][c.x()-xmin].stato() | StatoCella.OSTACOLO.value());
 		});
 		return new GrigliaMatrix(mat, this.getTipo()|tipoOstacolo);
 	}
 	
 	
-	public static IGriglia<ICella> from(int width, int height, List<IObstacle> ostacoli) {
+	public static IGriglia<?> from(int width, int height, List<IObstacle> ostacoli) {
 		ICella[][] mat = inizializzaMatrice(width, height);
-		IGriglia<ICella> griglia = new GrigliaMatrix(mat, CUSTOM_TYPE);
+		IGriglia<?> griglia = new GrigliaMatrix(mat, CUSTOM_TYPE);
 		for(IObstacle o : ostacoli) {
 			griglia = griglia.addObstacle(o, 0);
 		}
@@ -83,13 +52,29 @@ public class GrigliaMatrix implements IGriglia<ICella> {
 	}
 	
 	public static Cella[][] inizializzaMatrice(int width, int height) {
-		Cella[][] mat = new Cella[height][width];
+		var mat = new Cella[height][width];
 		for(int i=0; i<height; i++) {
 			for(int j=0; j<width; j++) {
 				mat[i][j] = new Cella(0); 
 			}
 		}
 		return mat;
+	}
+	
+	
+	public static IGrigliaMutabile<?> from(IGriglia<?> griglia) {
+		return from(griglia, 0);
+	}
+	
+	public static IGrigliaMutabile<?> from(IGriglia<?> griglia, int tipo) {
+		int width=griglia.width(), height=griglia.height();
+		ICella[][] mat = new ICella[height][width];
+		for(int i=0; i<height; i++) {
+			for(int j=0; j<width; j++) {
+				mat[i][j] = new Cella(griglia.getCellaAt(j, i).stato());
+			}
+		}
+		return new GrigliaMatrix(mat, griglia.getTipo()|tipo);
 	}
 	
 }

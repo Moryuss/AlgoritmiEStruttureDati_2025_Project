@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import francesco.ICella2D;
+import utils.Utils;
 
 // Classe per raccogliere statistiche
 public class StatisticheEsecuzione implements IStatisticheEsecuzione{
@@ -98,7 +99,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	@Override
 	public String generaRiassunto(ICammino risultato) {
 		if(this.tempoTotaleNs==null) tempoTotaleNs = System.nanoTime() - tempoInizio;
-		String tempoFormattato = formatTempo(tempoTotaleNs);
+		String tempoFormattato = Utils.formatTempo(tempoTotaleNs);
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("=== RIASSUNTO ESECUZIONE CAMMINOMIN ===\n");
@@ -126,10 +127,10 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 			sb.append("\n");
 		}
 
-		//        sb.append("Prestazioni registrate:\n");
-		//        for (String prestazione : prestazioni) {
-		//            sb.append("  - ").append(prestazione).append("\n");
-		//        }
+		//		sb.append("Prestazioni registrate:\n");
+		//		for (String prestazione : prestazioni) {
+		//			sb.append("  - ").append(prestazione).append("\n");
+		//		}
 
 		return sb.toString();
 	}
@@ -215,29 +216,6 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		this.tempoTotaleNs = System.nanoTime() - tempoInizio;
 	}
 
-	private String formatTempo(long tempoNs) {
-	    StringBuilder tempoStr = new StringBuilder();
-	    
-	    // Sempre mostra i nanosecondi
-	    tempoStr.append(tempoNs).append(" ns");
-	    
-	    // Se >= 1 millisecondo, aggiungi anche i millisecondi
-	    if (tempoNs >= 1_000_000) {
-	        double tempoMs = tempoNs / 1_000_000.0;
-	        tempoStr.append(" (").append(String.format("%.3f", tempoMs)).append(" ms");
-	        
-	        // Se >= 1 secondo, aggiungi anche i secondi
-	        if (tempoNs >= 1_000_000_000) {
-	            double tempoS = tempoNs / 1_000_000_000.0;
-	            tempoStr.append(" = ").append(String.format("%.3f", tempoS)).append(" s");
-	        }
-	        
-	        tempoStr.append(")");
-	    }
-	    
-	    return tempoStr.toString();
-	}
-
 	@Override
 	public long getTempoEsecuzione() {
 		if(this.tempoTotaleNs==null) {
@@ -250,12 +228,5 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	public int getQuantitaSvuotaFrontiera() {
 		return this.totaleSvuotaFrontiera;
 	}
-
 	
-	
-
-	
-
-	
-
 }

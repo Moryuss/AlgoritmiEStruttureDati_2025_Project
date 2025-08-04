@@ -7,8 +7,56 @@ import francesco.ICella;
 import francesco.IGriglia;
 import francesco.implementazioni.Cella;
 import francesco.implementazioni.Cella2D;
+import utils.BiHashmap;
 
 public class RegioneFactory {
+	
+	public static Regione regioneContenente2(IGriglia<?> griglia, int x, int y, BiFunction<Integer,Integer,ICellaConDistanze> func) {
+		var indexer = new BiHashmap<Integer,Integer>();
+		griglia.forEach((j,i) -> {
+			var stato = griglia.getCellaAt(j, i).stato();
+			indexer.put(i, j, StatoCella.OSTACOLO.is(stato) ? stato : -1);
+		});
+		
+		var regione = new Regione(func.apply(x, y));
+		bucketPaint(griglia, indexer, 1, regione, x, y, func);
+		return regione;
+	}
+	
+	
+	
+	private static void bucketPaint(IGriglia<?> griglia, BiHashmap<Integer,Integer> indexer, int regioneIndex, Regione regione, int x, int y, BiFunction<Integer,Integer,ICellaConDistanze> func) {
+		if (indexer.getOrDefault(y, x,-1)>=0) return;
+		var c = griglia.getCellaAt(x, y);
+		if (StatoCella.DESTINAZIONE.removeTo(c.stato())!=0) {
+			var c2 = func.apply(x, y);
+			if (c2.is(StatoCella.FRONTIERA) && !regione.frontiera.contains(c2)) {
+				regione.frontiera.add(c2);
+			}
+			return;
+		}
+		
+		indexer.put(y, x, regioneIndex);
+		regione.addCella(new Cella2D(c.stato(), x, y));
+		
+		if (y>griglia.ymin()) {
+			if (x>griglia.xmin()) bucketPaint(griglia, indexer, regioneIndex, regione, x-1, y-1, func);
+			bucketPaint(griglia, indexer, regioneIndex, regione, x, y-1, func);
+			if (x<griglia.xmax()) bucketPaint(griglia, indexer, regioneIndex, regione, x+1, y-1, func);
+		}
+		{
+			if (x>griglia.xmin()) bucketPaint(griglia, indexer, regioneIndex, regione, x-1, y, func);
+			bucketPaint(griglia, indexer, regioneIndex, regione, x, y, func);
+			if (x<griglia.xmax()) bucketPaint(griglia, indexer, regioneIndex, regione, x+1, y, func);
+		}
+		if (y<griglia.ymax()) {
+			if (x>griglia.xmin()) bucketPaint(griglia, indexer, regioneIndex, regione, x-1, y+1, func);
+			bucketPaint(griglia, indexer, regioneIndex, regione, x, y+1, func);
+			if (x<griglia.xmax()) bucketPaint(griglia, indexer, regioneIndex, regione, x+1, y+1, func);
+		}
+	}
+	
+	
 	
 	public static Regione regioneContenente(IGriglia<?> griglia, int x, int y, BiFunction<Integer,Integer,ICellaConDistanze> func) {
 		int[] array = new int[griglia.width()*griglia.height()];
@@ -101,7 +149,21 @@ public class RegioneFactory {
 			}
 		}
 		
-		return new GrigliaMatrix(mat, height);
+		return new GrigliaMatrix(mat, griglia.getTipo(), xmin, ymin);
+	}
+	
+	public static IGriglia<?> creaSottoGriglia2(IGriglia<?> griglia, Regione regione) {
+		int width=regione.maxWidth(), height=regione.maxHeight();
+		int xmin=regione.xmin, ymin=regione.ymin;
+		var map = new BiHashmap<Integer,Integer>();
+		
+		for (int i=0; i<height; i++) {
+			for (int j=0; j<width; j++) {
+				map.put(i+ymin, j+xmin, griglia.getCellaAt(j+xmin, i+ymin).stato());
+			}
+		}
+		
+		return new GrigliaBiHashmap(map, width, height, xmin, ymin, griglia.getTipo());
 	}
 	
 }

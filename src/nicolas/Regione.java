@@ -3,6 +3,7 @@ package nicolas;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 import francesco.ICella2D;
 import francesco.IHave2DCoordinate;
 
@@ -65,5 +66,10 @@ public class Regione {
 	public int ymax() {return ymax;}
 	public int maxWidth() {return xmax-xmin+1;}
 	public int maxHeight() {return ymax-ymin+1;}
+	
+	public Stream<ICellaConDistanze> frontiera(IHave2DCoordinate O) {
+		return frontiera.stream()
+		.map(c -> ICellaConDistanze.of(c.x(), c.y(), c.stato(), GrigliaConOrigineFactory.calcDist(c, O)));
+	}
 	
 }

@@ -1,6 +1,5 @@
 package matteo;
 
-
 public class CamminoConfiguration {
 
 	private final int flags;
@@ -153,6 +152,10 @@ public class CamminoConfiguration {
 
     public int getFlagsValue() {
         return flags;
+    }
+    
+    public CamminoConfiguration toggle(ConfigurationFlag flag) {
+    	return new CamminoConfiguration(flags^flag.getValue());
     }
     
     // Restituisce una rappresentazione binaria dei flag (per debug)

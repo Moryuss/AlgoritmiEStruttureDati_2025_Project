@@ -1,6 +1,8 @@
 package matteo;
 
-public class GestioneInterruzioni {
+import java.util.concurrent.TimeUnit;
+
+public class GestioneInterruzioni implements IInterrompibile {
     private boolean interrompiSuRichiesta = false;
     private boolean interrompiSuTempo = false;
     private long tempoInizio;
@@ -10,10 +12,11 @@ public class GestioneInterruzioni {
         this.interrompiSuRichiesta = true;
     }
     
-    public void setTimeout(long timeoutMillis) {
-        this.timeoutMillis = timeoutMillis;
-        this.tempoInizio = System.currentTimeMillis();
-        this.interrompiSuTempo = true;
+    @Override
+    public void setTimeout(long duration, TimeUnit unit) {
+    	timeoutMillis = unit.toMillis(duration);
+    	this.tempoInizio = System.currentTimeMillis();
+    	this.interrompiSuTempo = true;
     }
     
     public void checkInterruzione() throws InterruptedException {
@@ -27,7 +30,7 @@ public class GestioneInterruzioni {
     }
     
     public void reset() {
-        interrompiSuRichiesta = false;
-        interrompiSuTempo = false;
+        interrompiSuRichiesta = interrompiSuTempo = false;
     }
+    
 }

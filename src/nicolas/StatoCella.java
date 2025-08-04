@@ -2,7 +2,7 @@ package nicolas;
 
 import java.util.Optional;
 import francesco.ICella;
-import francesco.IGriglia;
+import francesco.IGrigliaMutabile;
 
 public enum StatoCella {
 	CONTESTO		(0b00000001, 0b00000001), // celle raggiungibili con cammini liberi di tipo 1
@@ -45,14 +45,14 @@ public enum StatoCella {
 	}
 	
 	
-	public void addTo(IGriglia<?> griglia, int x, int y) {
+	public void addTo(IGrigliaMutabile<?> griglia, int x, int y) {
 		griglia.setStato(x, y, addTo(griglia.getCellaAt(x, y).stato()));
 		
 	}
-	public void toggleTo(IGriglia<?> griglia, int x, int y) {
+	public void toggleTo(IGrigliaMutabile<?> griglia, int x, int y) {
 		griglia.setStato(x, y, toggleTo(griglia.getCellaAt(x, y).stato()));
 	}
-	public void removeTo(IGriglia<?> griglia, int x, int y) {
+	public void removeTo(IGrigliaMutabile<?> griglia, int x, int y) {
 		griglia.setStato(x, y, removeTo(griglia.getCellaAt(x, y).stato()));
 	}
 	

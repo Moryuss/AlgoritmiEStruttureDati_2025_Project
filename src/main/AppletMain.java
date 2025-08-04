@@ -5,12 +5,10 @@ import java.io.File;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import francesco.IGriglia;
+import francesco.*;
+import francesco.implementazioni.Cella2D;
 import francesco.implementazioni.LettoreGriglia;
-import matteo.CompitoTreImplementation;
-import matteo.ConfigurationMode;
-import matteo.ICammino;
-import matteo.IProgressoMonitor;
+import matteo.*;
 import nicolas.*;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -29,7 +27,9 @@ public class AppletMain extends PApplet {
 	
 	int w,h,s;
 	int[] palette, colors;
-	IGriglia<?> griglia;
+	IGrigliaMutabile<?> griglia;
+	CompitoDueImpl compitoDue = CompitoDueImpl.V0;
+	CamminoConfiguration camminoConfiguration = ConfigurationMode.DEFAULT.toCamminoConfiguration();
 	
 	int COLORE_OSTACOLO,COLORE_DESTINAZIONE,COLORE_LANDMARK,COLORE_FRONTIERA,
 		COLORE_COMPLEMENTO,COLORE_ORIGINE,COLORE_REGINA,COLORE_CONTESTO,COLORE_BASE;
@@ -78,7 +78,7 @@ public class AppletMain extends PApplet {
 		}
 		
 		if (griglia==null) {
-			griglia = new LettoreGriglia().crea(file.toPath());
+			griglia = new LettoreGriglia().crea(file.toPath()).toGrigliaMutabile();
 		}
 		
 		w = griglia.width();
@@ -93,7 +93,7 @@ public class AppletMain extends PApplet {
 	}
 	
 	
-	private static IGriglia<?> loadGriglia(JSONObject config) {
+	private static IGrigliaMutabile<?> loadGriglia(JSONObject config) {
 		var load = config.getJSONObject("load");
 		if (!load.hasKey("path")) {
 			System.err.println("config.load non ha l'attributo \"path\"");
@@ -112,7 +112,7 @@ public class AppletMain extends PApplet {
 			return null;
 		}
 		
-		return Utils.loadSimple(toLoad);
+		return Utils.loadSimple(toLoad).toGrigliaMutabile();
 	}
 	
 	
@@ -226,7 +226,7 @@ public class AppletMain extends PApplet {
 	}
 	
 	private int getColor(int index) {
-		return colors[index%colors.length];
+		return colors[index+5%colors.length];
 	}
 	
 	
@@ -247,10 +247,13 @@ public class AppletMain extends PApplet {
 		popMatrix();
 	}
 	
-	ICellaConDistanze O,D;
+	ICella2D O,D;
 	IProgressoMonitor monitor,monitorMin;
+	IGrigliaConOrigine grigliaConOrigine;
 	CompitoTreImplementation compitoTreImpl;
+	String report = "";
 	GrigliaConRegioni<ICellaConDistanze> grigliaNazione;
+	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -265,8 +268,9 @@ public class AppletMain extends PApplet {
 			D = null;
 			monitor = monitorMin = null;
 			var g = GrigliaConOrigineFactory.creaV0(griglia, x, y);
+			grigliaConOrigine = g;
 			O = g.getCellaAt(x, y);
-			griglia = g;
+			griglia = g.toGrigliaMutabile();
 			break;
 		
 		case RIGHT:
@@ -278,30 +282,25 @@ public class AppletMain extends PApplet {
 				}
 			});
 			maskGriglia((DESTINAZIONE.mask()-1) | OSTACOLO.mask());
-			griglia = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y());
-			O = (ICellaConDistanze) griglia.getCellaAt(O.x(), O.y());
+			griglia = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y()).toGrigliaMutabile();
 			
-			D = (ICellaConDistanze)griglia.getCellaAt(x, y);
+			D = new Cella2D(griglia.getCellaAt(x, y).stato(), x, y);
 			griglia.setStato(x, y, DESTINAZIONE.value());
 			
 			try {
-				compitoTreImpl = new CompitoTreImplementation();
-				compitoTreImpl.setConfiguration(ConfigurationMode.PERFORMANCE);
+				compitoTreImpl = new CompitoTreImplementation(camminoConfiguration);
 				monitor = compitoTreImpl.getProgress();
 				monitorMin = compitoTreImpl.getProgressMin();
 				new Thread(()->{
 					System.out.println("inizio camminoMin");
-					var cammino = compitoTreImpl.camminoMin(griglia, O, D, CompitoDueImpl.V0);
-					System.out.println("(%d)".formatted(cammino.landmarks().size()));
+					var cammino = compitoTreImpl.camminoMin(griglia, O, D, compitoDue);
 					cammino.landmarks().forEach(lm -> {
 						LANDMARK.addTo(griglia, lm.x(), lm.y());
-						System.out.println("(%d,%d)".formatted(lm.x(), lm.y()));
 					});
-					System.out.print("finito: ");
-					System.out.printf("%d+%d√2=%f\n",cammino.lunghezzaTorre(),
+					System.out.printf("finito: %d+%d√2=%f\n",cammino.lunghezzaTorre(),
 							cammino.lunghezzaAlfiere(), cammino.lunghezza());
 					monitor=null;
-					System.out.println(compitoTreImpl.getReport());
+					report = compitoTreImpl.getReport();
 				}).start();
 				
 			} catch(Exception ex) {
@@ -334,7 +333,6 @@ public class AppletMain extends PApplet {
 	
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		//if (e.isControlDown()==false) return;
 		
 		int x = e.getX() * w / width;
 		int y = e.getY() * h / height;
@@ -357,6 +355,12 @@ public class AppletMain extends PApplet {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.getKeyCode()) {
+		case TAB:
+			handleOtherWindow();
+			break;
+		case 'R':
+			System.out.println(report);
+			break;
 		case 'P':			
 			if (e.isShiftDown()) {
 			
@@ -394,8 +398,8 @@ public class AppletMain extends PApplet {
 			println("(%d,%d)".formatted(x, y));
 			break;
 		case 'U':
-			if (griglia instanceof IGrigliaConOrigine gco) {
-				grigliaNazione = RegioneFactory.from(gco);
+			if (grigliaConOrigine != null) {
+				grigliaNazione = RegioneFactory.from(grigliaConOrigine);
 				System.out.println(grigliaNazione.regioni().length);
 				var str = grigliaNazione.collect(c2d->grigliaNazione.getRegioneIndexContenente(c2d)
 						.map("%2d"::formatted)
@@ -407,9 +411,7 @@ public class AppletMain extends PApplet {
 			}
 			break;
 		case 'F':
-			if (griglia instanceof IGrigliaConOrigine gco) {
-				gco.getFrontiera().forEach(System.out::println);
-			}
+			grigliaConOrigine.getFrontiera().forEach(System.out::println);
 			break;
 		}
 	}
@@ -469,6 +471,69 @@ public class AppletMain extends PApplet {
 		}
 		
 		endShape();
+	}
+	
+	PApplet otherWindow;
+	
+	private void handleOtherWindow() {
+		if (otherWindow!=null) {
+			otherWindow.exit();
+			otherWindow = null;
+			return;
+		}
+		
+		PApplet parent = this;
+		
+		otherWindow = new PApplet() {
+			@Override
+			public void settings() {
+				size(400, ConfigurationFlag.LENGTH*30);
+				pixelDensity(2);
+			}
+			@Override
+			public void setup() {
+				windowTitle("Settings");
+			}
+			@Override
+			public void draw() {
+				background(240);
+				fill(0);
+				textSize(20);
+				textAlign(LEFT, CENTER);
+				for (int i=0; i<ConfigurationFlag.LENGTH; i++) {
+					var f = ConfigurationFlag.fromIndex(i);
+					var bool = camminoConfiguration.hasFlag(f);
+					text("%s: %s".formatted(f.name(), bool), 10, 20+i*24);
+				}
+				
+				text("CompitoDue: %s".formatted(compitoDue.name()), 260, 20);
+				
+			}
+			public void keyPressed(KeyEvent e) {
+				parent.keyPressed(e);
+			}
+			public void mouseClicked(MouseEvent e) {
+				if (e.getX()>250) {
+					if (e.getY()>10 && e.getY()<30) {
+						compitoDue = compitoDue.next();
+					}
+					return;
+				}
+				int y = (e.getY()-20)/22;
+				if (y<0 || y>=ConfigurationFlag.LENGTH) return;
+				var flag = ConfigurationFlag.fromIndex(y);
+				camminoConfiguration = camminoConfiguration.toggle(flag);
+			}
+			@Override
+			public void exitActual() {
+				((processing.awt.PSurfaceAWT.SmoothCanvas)
+				((processing.awt.PSurfaceAWT)getSurface())
+				.getNative()).getFrame().dispose();
+				otherWindow = null;
+			}
+		};
+		
+		PApplet.runSketch(new String[] {otherWindow.getClass().getSimpleName()}, otherWindow);
 	}
 	
 }

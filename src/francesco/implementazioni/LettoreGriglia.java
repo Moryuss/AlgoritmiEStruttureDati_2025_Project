@@ -14,7 +14,7 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 	public IGriglia<?> crea(Path file) {
 		File jsonFile = file.toFile();
 		if (!jsonFile.exists()) {
-			System.out.println("Errore nella lettura del file, ritorno una griglia vuota 50x50...");
+			System.err.println("Errore nella lettura del file, ritorno una griglia vuota 50x50...");
 			Cella[][] mat = GrigliaMatrix.inizializzaMatrice(50, 50);
 			GrigliaMatrix griglia = new GrigliaMatrix(mat, 0);
 			return griglia;
@@ -37,9 +37,9 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 		
 		return griglia;
 	}
-
-
-	private IGriglia<?> generaOstacoli(int width, int height, IGriglia<?> griglia, int randomSeed, JSONObject json) {
+	
+	
+	private static IGriglia<?> generaOstacoli(int width, int height, IGriglia<?> griglia, int randomSeed, JSONObject json) {
 		IGriglia<?> result = griglia;
 		int ostCounter = 0;
 		for (TipoOstacolo ost : TipoOstacolo.values()) {
@@ -65,4 +65,5 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 		
 		return result;
 	}
+	
 }

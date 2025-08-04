@@ -27,7 +27,7 @@ public class TestCompitoTreImpl {
 
 	IProgressoMonitor monitor = new ProgressoMonitor();
 	IProgressoMonitor monitorMin = new ProgressoMonitor();
-	IGriglia<ICella> griglia = null;
+	IGriglia<?> griglia = null;
 	ICompitoTre c;
 
 	@BeforeEach
@@ -72,7 +72,7 @@ public class TestCompitoTreImpl {
 	}
 
 	private void bitPrint(int numero) {
-		String bit = String.format("%32s", Integer.toBinaryString(numero)).replace(' ', '0');
+		String bit = String.format("%8s", Integer.toBinaryString(numero)).replace(' ', '0');
 		System.out.println(bit);
 	}
 
@@ -707,9 +707,8 @@ public class TestCompitoTreImpl {
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0);
 		ICellaConDistanze start = g.getCellaAt(0, 0);
 		ICellaConDistanze end = g.getCellaAt(0,6);
-
-		// Configura il timeout a 500ms
-		((CompitoTreImplementation)c).setTimeout(500);
+		
+		((CompitoTreImplementation)c).setTimeout(500, TimeUnit.MILLISECONDS);
 
 		long startTime = System.currentTimeMillis();
 		ICammino cammino = c.camminoMin(griglia, start, end);

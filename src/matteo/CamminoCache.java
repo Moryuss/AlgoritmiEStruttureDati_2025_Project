@@ -99,13 +99,11 @@ public class CamminoCache {
 
 	private int calcolaHashOstacoli(IGriglia<?> griglia) {
 		List<Point> ostacoli = new ArrayList<>();
-		for (int x = 0; x < griglia.width(); x++) {
-			for (int y = 0; y < griglia.height(); y++) {
-				if (StatoCella.OSTACOLO.is(griglia.getCellaAt(x, y).stato())) {
-					ostacoli.add(new Point(x, y));
-				}
+		griglia.forEach((x,y) -> {
+			if (StatoCella.OSTACOLO.is(griglia.getCellaAt(x, y).stato())) {
+				ostacoli.add(new Point(x, y));
 			}
-		}
+		});
 		return Objects.hash(ostacoli);
 	}
 }

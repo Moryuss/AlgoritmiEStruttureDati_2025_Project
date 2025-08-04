@@ -1,6 +1,11 @@
 package matteo;
 
+import java.util.concurrent.TimeUnit;
+
 public interface IInterrompibile {
+	
     void interrupt();
-    void setTimeout(long time);
+    
+    void setTimeout(long amount, TimeUnit unit);
+    
 }
