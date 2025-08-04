@@ -41,23 +41,26 @@ public class MainSperimentazione {
 	private static final String SCACCHIERA_PATH = "src/sperimentazione/scacchiera";
 
 	private static final List<String> CARTELLE = List.of(
-                		LINEA_SPEZZATA_PATH
-                        , VARIAZIONE_OSTACOLI_PATH
-                        , VARIAZIONE_DIMENSIONI_PATH
-//            , TIPO_GRIGLIA_PATH
-//            SPIRALE_PATH
-//            , DOPPIO_DENTE_DI_SEGA_PATH
-//            , SCACCHIERA_PATH
+			DOPPIO_DENTE_DI_SEGA_PATH,
+			LINEA_SPEZZATA_PATH,
+			SCACCHIERA_PATH,
+			SPIRALE_PATH,
+//			TIPO_GRIGLIA_PATH,
+			VARIAZIONE_DIMENSIONI_PATH,
+			VARIAZIONE_OSTACOLI_PATH
             );
 
-    private static final List<ConfigurationMode> TRES = List.of(ConfigurationMode.DEFAULT,
+    private static final List<ConfigurationMode> TRES = List.of(
+    		ConfigurationMode.DEFAULT,
             ConfigurationMode.PERFORMANCE_NO_CACHE,
             ConfigurationMode.PERFORMANCE_NO_SORTED_FRONTIERA,
             ConfigurationMode.PERFORMANCE_NO_CONDIZIONE_RAFFORZATA,
             ConfigurationMode.PERFORMANCE_CACHE,
             ConfigurationMode.PERFORMANCE_SORTED_FRONTIERA,
             ConfigurationMode.PERFORMANCE_CONDIZIONE_RAFFORZATA,
-            ConfigurationMode.PERFORMANCE
+            ConfigurationMode.PERFORMANCE,
+    		ConfigurationMode.PERFORMANCE_SVUOTA_FRONTIERA,
+    		ConfigurationMode.PERFORMANCE_FULL
     );
 
     private static final List<ICompitoDue> DUES = List.of(CompitoDueImpl.V0);
@@ -101,7 +104,8 @@ public class MainSperimentazione {
                     compitiUsati = compiti;
                     for (int i = 0; i < files.size(); i++) {
                         String nomeGriglia = nomi.get(i);
-                        String path = pathTxt + "_" + nomeGriglia + "_" + compitiUsati;
+                        // Viene aggiunto il due.toString() per motivi di organizzazione dei file
+                        String path = pathTxt + "." + due.toString().toLowerCase() + "_" + nomeGriglia + "_" + compitiUsati;
                         ScritturaFile.pulisciFile(path + ".txt");
                         List<IStatisticheEsecuzione> statistiche = new ArrayList<>();
                         try {
@@ -127,7 +131,6 @@ public class MainSperimentazione {
                                 ICellaConDistanze end = gO.getCellaAt(destinazione.x(), destinazione.y());
 
                                 // Trova il cammino minimo con CompitoTre
-//                                CompitoTreImplementation implementazioneTreCast = (CompitoTreImplementation) implementazioneTre;
                                 implementazioneTre.setTimeout(TEMPO_SCADENZA_ESECUZIONE);
                                 ICammino cammino1 = implementazioneTre.camminoMin(griglia, start, end, due);
                                 
@@ -194,7 +197,7 @@ public class MainSperimentazione {
                 }
             }
             // Qui vengono calcolate numerose informazioni legate ai tempi
-            scriviInformazioniGenerali(tempi);
+            scriviInformazioniGenerali(tempi, pathTxt + "." + due.toString());
         }
     }
 
@@ -357,8 +360,6 @@ public class MainSperimentazione {
     }
 
     private static void scriviEStampaGenerico(String msg) {
-//        System.out.println(msg);
-//        ScritturaFile.writeToFile(pathTxt, msg);
     	scriviEStampaConPath(msg, pathTxt);
     }
 
@@ -390,7 +391,7 @@ public class MainSperimentazione {
         }
     }
 
-    private static void scriviInformazioniGenerali(HashMap<String, TreeMap<Long, String>> tempi) {
+    private static void scriviInformazioniGenerali(HashMap<String, TreeMap<Long, String>> tempi, String path) {
         // Viene anzitutto pulito il file
         ScritturaFile.pulisciFile(pathTxt + ".txt");
         StringBuilder sb = new StringBuilder();
@@ -422,7 +423,8 @@ public class MainSperimentazione {
             deviazioneStandard = (long) Math.sqrt(deviazioneStandard / map.size());
             sb.append("Deviazione standard: " + deviazioneStandard + "\n");
         }
-        scriviEStampaGenerico(sb.toString());
+//        scriviEStampaGenerico(sb.toString());
+        scriviEStampaConPath(sb.toString(), path);
     }
 
     /**
