@@ -2,15 +2,12 @@ package matteo.Strategies;
 
 import matteo.CamminoCache;
 import matteo.CamminoConfiguration;
-import matteo.Strategies.Cache.CacheAttiva;
-import matteo.Strategies.Cache.CacheNull;
-import matteo.Strategies.Condizione.CondizioneNormale;
-import matteo.Strategies.Condizione.CondizioneRafforzata;
-import matteo.Strategies.Debug.DebugAbilitato;
-import matteo.Strategies.Debug.DebugDisabilitato;
-import matteo.Strategies.Frontiera.FrontieraStrategy;
-import matteo.Strategies.SvuotaFrontiera.SvuotaFrontieraAbilitato;
-import matteo.Strategies.SvuotaFrontiera.SvuotaFrontieraDisabilitato;
+import matteo.Strategies.Cache.*;
+import matteo.Strategies.Condizione.*;
+import matteo.Strategies.Debug.*;
+import matteo.Strategies.Frontiera.*;
+import matteo.Strategies.SvuotaFrontiera.*;
+
 
 /**
  * Factory semplificato che sfrutta direttamente i ConfigurationMode predefiniti.
@@ -29,19 +26,14 @@ public class StrategyFactory {
 	}
 
 	/**
-	 * Crea tutte le strategy da un CamminoCOnfiguration
+	 * Crea tutte le strategy da un CamminoConfiguration
 	 */
 	public StrategyBundle createStrategies(CamminoConfiguration mode) {
 		return new StrategyBundle(
-				mode.isDebugEnabled() ? new DebugAbilitato() : new DebugDisabilitato(),
-				mode.isCacheEnabled() ? new CacheAttiva(cache) : new CacheNull(),
-				mode.isCondizioneRafforzataEnabled() ? new CondizioneRafforzata() : new CondizioneNormale(),
-				mode.isSortedFrontieraEnabled() ? new FrontieraStrategy.FrontieraNormale() : new FrontieraStrategy.FrontieraOrdinata(),
-				mode.isSvuotaFrontieraEnabled() ? new SvuotaFrontieraAbilitato() : new SvuotaFrontieraDisabilitato());
+				mode.isDebugEnabled() ? new DebugStrategy.DebugAbilitato() : new DebugStrategy.DebugDisabilitato(),
+						mode.isCacheEnabled() ? new CacheStrategy.CacheAttiva(cache) : new CacheStrategy.CacheNull(),
+								mode.isCondizioneRafforzataEnabled() ? new CondizioneStrategy.CondizioneRafforzata() : new CondizioneStrategy.CondizioneNormale(),
+										mode.isSortedFrontieraEnabled() ? new FrontieraStrategy.FrontieraNormale() : new FrontieraStrategy.FrontieraOrdinata(),
+												mode.isSvuotaFrontieraEnabled() ? new SvuotaFrontieraStrategy.SvuotaFrontieraAbilitato() : new SvuotaFrontieraStrategy.SvuotaFrontieraDisabilitato());
 	}
-
-
-
-
-
 }
