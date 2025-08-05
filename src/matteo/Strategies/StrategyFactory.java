@@ -33,7 +33,7 @@ public class StrategyFactory {
 				mode.isDebugEnabled() ? new DebugStrategy.DebugAbilitato() : new DebugStrategy.DebugDisabilitato(),
 						mode.isCacheEnabled() ? new CacheStrategy.CacheAttiva(cache) : new CacheStrategy.CacheNull(),
 								mode.isCondizioneRafforzataEnabled() ? new CondizioneStrategy.CondizioneRafforzata() : new CondizioneStrategy.CondizioneNormale(),
-										mode.isSortedFrontieraEnabled() ? new FrontieraStrategy.FrontieraNormale() : new FrontieraStrategy.FrontieraOrdinata(),
+										mode.isSortedFrontieraEnabled() ? new FrontieraStrategy.FrontieraOrdinata() : new FrontieraStrategy.FrontieraNormale(),
 												mode.isSvuotaFrontieraEnabled() ? new SvuotaFrontieraStrategy.SvuotaFrontieraAbilitato() : new SvuotaFrontieraStrategy.SvuotaFrontieraDisabilitato());
 	}
 }
