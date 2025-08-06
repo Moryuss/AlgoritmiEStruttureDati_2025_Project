@@ -28,6 +28,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 	private String report;
 	private int livelloRicorsione = 0;
+	private int maxProfonditaRicorsione = 0;
 
 	private Deque<ILandmark> stackCammino = new ArrayDeque<ILandmark>();
 
@@ -101,11 +102,10 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	public ICammino camminoMin(IGriglia<?> griglia, ICella2D O, ICella2D D, ICompitoDue compitoDue) {
 
 		stampaStatiOrigineDestinazione(O, D);
-		inizializzaCalcolo(griglia, O, D);
+		inizializzaCalcolo(griglia, O, D, compitoDue);
 		ICammino risultato = null;
 		try {
-
-			stackCammino.push(new Landmark(StatoCella.LANDMARK.addTo(O.stato()), O.x(), O.y()));
+			pushOrigineInStack(O);
 
 			risultato = calcoloCamminoMin(griglia, O, D, stats, compitoDue);
 			stampaStatoDestinazioneFinale(risultato);
@@ -113,10 +113,14 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		} catch (InterruptedException e) {
 			return gestisciInterruzione_GeneraCammino(e);
 		} finally {
-			finalizzaCalcoloTempo(); // Salva il tempo di esecuzione
+			finalizzaStatisticheEsecuzione(); // Salva il tempo di esecuzione
 			// Genera sempre il report, anche in caso di interruzione
 			generaReportAlways(risultato);
 		}
+	}
+
+	private void pushOrigineInStack(ICella2D O) {
+		stackCammino.push(new Landmark(StatoCella.LANDMARK.addTo(O.stato()), O.x(), O.y()));
 	}
 
 	private void generaReportAlways(ICammino risultato) {
@@ -130,8 +134,9 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		}
 	}
 
-	private void finalizzaCalcoloTempo() {
+	private void finalizzaStatisticheEsecuzione() {
 		stats.saveTime();
+		stats.setMaxDepth(maxProfonditaRicorsione);
 	}
 
 	private void generaReportFinale(ICammino risultato) {
@@ -169,14 +174,29 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		}
 	}
 
-	private void inizializzaCalcolo(IGriglia<?> griglia, ICella2D O, ICella2D D) {
+	/**
+	 * Inizializza le statistiche, il compitoDue, la modalità del compitoTre, la cache,
+	 * i monitor e la frontiera. Salva le informazioni della griglia e inizializza lo
+	 * stack del cammino.
+	 * 
+	 * @param griglia   La griglia su cui calcolare il cammino
+	 * @param O        La cella di origine
+	 * @param D        La cella di destinazione
+	 * @param compitoDue Il compitoDue da usare per il calcolo del cammino
+	 */
+	private void inizializzaCalcolo(IGriglia<?> griglia, ICella2D O, ICella2D D, ICompitoDue compitoDue) {
 		inizializzaStatistiche();
+		inizializzaCompitoDue(compitoDue);
 		inizializzaCompitoTreMode();
 		inizializzaCache();
 		inizializzaMonitors(O, D);
 		inizializzazioneFrontiera();
 		salvaInformazioniGriglia(griglia, O, D);
 		inizializzaStackCammino();
+	}
+
+	private void inizializzaCompitoDue(ICompitoDue compitoDue) {
+		stats.setNomeCompitoDue(compitoDue.name());
 	}
 
 	private void inizializzaStackCammino() {
@@ -226,7 +246,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			return risultatoCache;
 		}
 
-		//Thread.sleep(100);
+//		Thread.sleep(100);
 
 		IGrigliaConOrigine g = compitoDue.calcola(griglia, O);
 		ICella2D origine = g.getCellaAt(O.x(), O.y());
@@ -432,10 +452,17 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	}
 
 	private void preparaRicorsione(ICella2D O) throws InterruptedException {
-		livelloRicorsione++;
+		aumentaValoreRicorsione();
 		this.gestoreInterruzioni.checkInterruzione();
 
 		strategies.getDebugStrategy().println("Chiamata camminoMinConStatistiche livello " + livelloRicorsione);
+	}
+
+	private void aumentaValoreRicorsione() {
+		livelloRicorsione++;
+		if(livelloRicorsione > maxProfonditaRicorsione) {
+			maxProfonditaRicorsione  = livelloRicorsione;
+		}
 	}
 
 	private ICammino verificaPresenzaCamminoInCache(IGriglia<?> griglia, ICella2D O, ICella2D D) {

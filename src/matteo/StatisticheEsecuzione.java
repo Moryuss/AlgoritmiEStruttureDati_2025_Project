@@ -22,6 +22,8 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	private int totaleSvuotaFrontiera = 0;
 	private List<String> prestazioni = new ArrayList<>();
 	
+	private int maxDepth = 0;
+
 	private Long tempoInizio;
 	private Long tempoTotaleNs;
 	
@@ -30,6 +32,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	private boolean frontieraSotred = false;
 	private boolean svuotaFrontiera = false;
 	
+	private String compitoDueName = "Compito Due";
 	private CamminoConfiguration compitoTreMode = ConfigurationMode.DEFAULT.toCamminoConfiguration();
 	
 
@@ -91,6 +94,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		return this.frontieraSotred;
 	}
 	
+	
 	@Override
 	public void setCompitoTreMode(CamminoConfiguration mode) {
 		this.compitoTreMode = mode;
@@ -108,7 +112,9 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 		sb.append("Origine: (").append(origine.x()).append(",").append(origine.y()).append(")").append("\n");
 		sb.append("Destinazione: (").append(destinazione.x()).append(",").append(destinazione.y()).append(")").append("\n");
 		sb.append("Modalità Compito Tre: ").append(compitoTreMode.toString()).append("\n");
+		sb.append("Modalità Compito Due: ").append(compitoDueName).append("\n");
 		sb.append("Tempo di esecuzione: ").append(tempoFormattato).append("\n");
+		sb.append("Profondità massima ricorsione: " + maxDepth).append("\n");
 		sb.append("Totale celle di frontiera considerate: ").append(totaleCelleFrontiera).append("\n");
 		sb.append("Totale iterazioni condizione (riga 16/17): ").append(totaleIterazioniCondizione).append("\n");
 		sb.append("Calcolo interrotto: ").append(calcoloInterrotto ? "SI" : "NO").append("\n");
@@ -227,6 +233,26 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	@Override
 	public int getQuantitaSvuotaFrontiera() {
 		return this.totaleSvuotaFrontiera;
+	}
+
+	@Override
+	public void setMaxDepth(int maxDepth) {
+		this.maxDepth = maxDepth;		
+	}
+
+	@Override
+	public int getMaxDepth() {
+		return this.maxDepth;
+	}
+
+	@Override
+	public String getNomeCompitoDue() {
+		return this.compitoDueName;
+	}
+
+	@Override
+	public void setNomeCompitoDue(String nomeCompitoDue) {
+		this.compitoDueName = nomeCompitoDue;		
 	}
 	
 }

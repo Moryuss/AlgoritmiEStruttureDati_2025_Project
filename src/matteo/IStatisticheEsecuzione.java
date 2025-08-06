@@ -51,4 +51,9 @@ public interface IStatisticheEsecuzione {
 	
 	public long getTempoEsecuzione();
 
+	public void setMaxDepth(int maxDepth);
+	public int getMaxDepth();
+	
+	public String getNomeCompitoDue();
+	public void setNomeCompitoDue(String nomeCompitoDue);
 }
