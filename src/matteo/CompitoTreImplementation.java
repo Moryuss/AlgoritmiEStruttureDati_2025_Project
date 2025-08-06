@@ -13,6 +13,8 @@ import francesco.IHave2DCoordinate;
 import matteo.Strategies.StrategyBundle;
 import matteo.Strategies.StrategyFactory;
 import nicolas.*;
+import utils.Utils;
+
 
 public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor {
 
@@ -407,12 +409,14 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		ILandmark landmarkDestinazione = new Landmark(StatoCella.LANDMARK.addTo(dest.stato()), dest.x(), dest.y());
 
 		if (config.isMonitorEnabled()) {
-			stackCammino.push(landmarkDestinazione);
+		    stackCammino.push(landmarkDestinazione);
 
-			if (livelloRicorsione == 1) { // serve per far funzionare il MonitorMin se dest è in Chiusura subito
-				updateMonitorMin(distanzaTorre, distanzaAlfiere);
-			}
-			stackCammino.pop();
+		    List<ILandmark> percorsoCorrente = new ArrayList<>(stackCammino).reversed();
+		    double distanza = percorsoCorrente.stream().collect(Utils.collectPairsToDouble(Utils::distanzaLiberaTra)).sum();
+		    if (condizioneAggiornaMoniorMin(distanza)) {
+		        aggiornaMonitorMinInCasoBase(percorsoCorrente, distanza);
+		    }
+		    stackCammino.pop();
 		}
 		livelloRicorsione--;
 
@@ -423,6 +427,15 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		strategies.getCacheStrategy().put(g, O, dest, risultato);
 
 		return risultato;
+	}
+
+	private void aggiornaMonitorMinInCasoBase(List<ILandmark> percorso,double lunghezzaTot) {
+		monitorMin.setCammino(new Cammino(0, 0, percorso, lunghezzaTot));
+	}
+
+	private boolean condizioneAggiornaMoniorMin(double distanza) {
+		return monitorMin.getCammino()==null || 
+				monitorMin.getCammino().lunghezza()>distanza;
 	}
 
 	private static boolean condizioneCasoBase(IGriglia<?> g, IHave2DCoordinate dest) {
@@ -436,19 +449,6 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 			monitor.setCammino(new Cammino(lTorre, lAlfiere, new ArrayList<>(percorsoCorrente)));
 		}
-	}
-
-	/**
-	 * Utilizzato nei casi base, per gli edge case che non entrano nel ciclo for
-	 * 
-	 * @param d
-	 * @param g
-	 */
-	private void updateMonitorMin(int distanzaTorre, int distanzaAlfiere) {
-		List<ILandmark> percorsoCorrente = new ArrayList<>(stackCammino);
-		Collections.reverse(percorsoCorrente);
-
-		monitorMin.setCammino(new Cammino(distanzaTorre, distanzaAlfiere, percorsoCorrente));
 	}
 
 	private void preparaRicorsione(ICella2D O) throws InterruptedException {
