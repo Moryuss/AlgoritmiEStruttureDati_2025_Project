@@ -157,7 +157,7 @@ public class MainSperimentazione {
                                 
                                 if(cammino1.landmarks().isEmpty() || Double.isInfinite(cammino1.lunghezza())) {
                                 	scriviEStampaConPath(MSG_UNREACHABLE_DESTINATION, path);
-                                	System.out.println("Timeout.");
+                                	System.out.println("Destinazione non Raggiungibile.");
                                 	break;
                                 }
                                 scriviEStampaConPath("==============================", path);
@@ -237,7 +237,7 @@ public class MainSperimentazione {
      * @param secondoCammino
      * @return
      */
-    private static boolean isLunghezzaUguale(ICammino primoCammino, ICammino secondoCammino) {
+    public static boolean isLunghezzaUguale(ICammino primoCammino, ICammino secondoCammino) {
         // Uguaglianze tra float non consigliate
         return Math.abs(primoCammino.lunghezza() - secondoCammino.lunghezza()) < MAX_DIFF;
     }
@@ -432,6 +432,7 @@ public class MainSperimentazione {
             	}
             	sb.append("\nCombinazione: " + tempi.get(tempo) + "\n");
             }
+            sb.append("\n");
             sb.append("Differenza Migliore-Peggiore: ");
             sb.append(Utils.formatTempo(differenzaMassima) + "\n");
             sb.append("\n");
