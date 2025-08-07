@@ -67,9 +67,9 @@ public class Regione {
 	public int maxWidth() {return xmax-xmin+1;}
 	public int maxHeight() {return ymax-ymin+1;}
 	
-	public Stream<ICellaConDistanze> frontiera(IHave2DCoordinate O) {
+	public Stream<ICella2D> frontiera(IHave2DCoordinate O) {
 		return frontiera.stream()
-		.map(c -> ICellaConDistanze.of(c.x(), c.y(), c.stato(), GrigliaConOrigineFactory.calcDist(c, O)));
+		.map(c -> ICella2D.of(c.x(), c.y(), c.stato()));
 	}
 	
 }

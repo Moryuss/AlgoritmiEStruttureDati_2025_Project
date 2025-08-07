@@ -1,9 +1,11 @@
 package utils;
 
 import static nicolas.StatoCella.*;
-import static java.lang.Math.*;
 import java.io.File;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.stream.Stream;
 import francesco.*;
 import francesco.implementazioni.Cella;
 import francesco.implementazioni.Cella2D;
+import nicolas.DistanzaLibera;
 import processing.core.PApplet;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
@@ -31,6 +34,12 @@ public final class Utils {
 	
 	public static final double sqrt2 = Math.sqrt(2);
 	
+	private static final DateTimeFormatter DTF = DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneOffset.UTC);
+	
+	
+	public static String getCurrentTimestamp() {
+		return DTF.format(Instant.now()).replace(':', '-');
+	}
 	
 	
 	public static Optional<Integer> parseHex(String str) {
@@ -62,11 +71,7 @@ public final class Utils {
 	
 	
 	public static double distanzaLiberaTra(int x1, int y1, int x2, int y2) {
-		var Dx = abs(x1-x2);
-		var Dy = abs(y1-y2);
-		var d2 = min(Dx, Dy);
-		var d1 = max(Dx, Dy)-d2;
-		return d1 + d2*sqrt2;
+		return DistanzaLibera.from(x1, y1, x2, y2).distanza();
 	}
 	
 	public static double distanzaLiberaTra(IHave2DCoordinate a, IHave2DCoordinate b) {

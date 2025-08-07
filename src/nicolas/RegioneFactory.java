@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.function.BiFunction;
 import francesco.GrigliaMatrix;
 import francesco.ICella;
+import francesco.ICella2D;
 import francesco.IGriglia;
 import francesco.implementazioni.Cella;
 import francesco.implementazioni.Cella2D;
@@ -11,7 +12,7 @@ import utils.BiHashmap;
 
 public class RegioneFactory {
 	
-	public static Regione regioneContenente2(IGriglia<?> griglia, int x, int y, BiFunction<Integer,Integer,ICellaConDistanze> func) {
+	public static Regione regioneContenente2(IGriglia<?> griglia, int x, int y, BiFunction<Integer,Integer,ICella2D> func) {
 		var indexer = new BiHashmap<Integer,Integer>();
 		griglia.forEach((j,i) -> {
 			var stato = griglia.getCellaAt(j, i).stato();
@@ -25,7 +26,7 @@ public class RegioneFactory {
 	
 	
 	
-	private static void bucketPaint(IGriglia<?> griglia, BiHashmap<Integer,Integer> indexer, int regioneIndex, Regione regione, int x, int y, BiFunction<Integer,Integer,ICellaConDistanze> func) {
+	private static void bucketPaint(IGriglia<?> griglia, BiHashmap<Integer,Integer> indexer, int regioneIndex, Regione regione, int x, int y, BiFunction<Integer,Integer,ICella2D> func) {
 		if (indexer.getOrDefault(y, x,-1)>=0) return;
 		var c = griglia.getCellaAt(x, y);
 		if (StatoCella.DESTINAZIONE.removeTo(c.stato())!=0) {
@@ -58,7 +59,7 @@ public class RegioneFactory {
 	
 	
 	
-	public static Regione regioneContenente(IGriglia<?> griglia, int x, int y, BiFunction<Integer,Integer,ICellaConDistanze> func) {
+	public static Regione regioneContenente(IGriglia<?> griglia, int x, int y, BiFunction<Integer,Integer,ICella2D> func) {
 		int[] array = new int[griglia.width()*griglia.height()];
 		griglia.forEach((j,i) -> {
 			var stato = griglia.getCellaAt(j, i).stato();
@@ -71,14 +72,14 @@ public class RegioneFactory {
 		return regioneContenente(griglia, x, y, array, 1, func);
 	}
 	
-	public static Regione regioneContenente(IGriglia<?> griglia, int x, int y, int[]array, int regioneIndex, BiFunction<Integer,Integer,ICellaConDistanze> func) {
+	public static Regione regioneContenente(IGriglia<?> griglia, int x, int y, int[]array, int regioneIndex, BiFunction<Integer,Integer,ICella2D> func) {
 		var regione = new Regione(func.apply(x, y));
 		bucketPaint(griglia, array, regioneIndex, regione, x, y, func);
 		return regione;
 	}
 	
 	
-	private static void bucketPaint(IGriglia<?> griglia, int[] mapper, int regioneIndex, Regione regione, int x, int y, BiFunction<Integer,Integer,ICellaConDistanze> func) {
+	private static void bucketPaint(IGriglia<?> griglia, int[] mapper, int regioneIndex, Regione regione, int x, int y, BiFunction<Integer,Integer,ICella2D> func) {
 		var w = griglia.width();
 		if (mapper[x+y*w]>=0) return;
 		var c = griglia.getCellaAt(x, y);
@@ -111,10 +112,10 @@ public class RegioneFactory {
 	
 	
 	
-	public static GrigliaConRegioni<ICellaConDistanze> from(IGrigliaConOrigine griglia) {
+	public static GrigliaConRegioni<ICella2D> from(IGrigliaConOrigine griglia) {
 		return from(griglia, griglia::getCellaAt);
 	}
-	public static <C extends ICella> GrigliaConRegioni<C> from(IGriglia<C> griglia, BiFunction<Integer,Integer,ICellaConDistanze> func) {
+	public static <C extends ICella> GrigliaConRegioni<C> from(IGriglia<C> griglia, BiFunction<Integer,Integer,ICella2D> func) {
 		int[] mapper = new int[griglia.width()*griglia.height()];
 		var regioni = new LinkedList<Regione>();
 		for (int i = 0; i < mapper.length; i++) {

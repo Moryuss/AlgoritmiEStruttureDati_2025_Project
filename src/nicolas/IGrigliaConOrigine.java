@@ -6,11 +6,11 @@ import francesco.IGriglia;
 import francesco.IObstacle;
 import processing.data.JSONArray;
 
-public interface IGrigliaConOrigine extends IGriglia<ICellaConDistanze> {
+public interface IGrigliaConOrigine extends IGriglia<ICella2D> {
 	
 	ICella2D getOrigine();
 	
-	Stream<ICellaConDistanze> getFrontiera();
+	Stream<ICella2D> getFrontiera();
 	
 	IObstacle convertiChiusuraInOstacolo();
 	

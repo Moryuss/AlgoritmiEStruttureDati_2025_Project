@@ -4,15 +4,16 @@ import francesco.ICella2D;
 
 public interface IProgressoMonitor {
 
-	public ICammino getCammino();
+	ICammino getCammino();
 	
-	public ICella2D getOrigine();
+	ICella2D getOrigine();
 
-	public ICella2D getDestinazione();
+	ICella2D getDestinazione();
 	
-	public void setCammino(ICammino cammino);
+	void setCammino(ICammino cammino);
 
-	public void setOrigine(ICella2D origine);
+	void setOrigine(ICella2D origine);
 	
-	public void setDestinazione(ICella2D destinazione);
+	void setDestinazione(ICella2D destinazione);
+	
 }

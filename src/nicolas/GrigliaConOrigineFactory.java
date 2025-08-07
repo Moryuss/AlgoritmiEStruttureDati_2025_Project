@@ -19,64 +19,59 @@ public final class GrigliaConOrigineFactory {
 	private GrigliaConOrigineFactory() {}
 	
 	
-	private static void paint(int xmin, int ymin, int[][] out, int[][] in, int[][] dist, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy, BiConsumer<Integer,Integer> onPaint) {
+	private static void paint(int xmin, int ymin, int[][] out, int[][] in, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy, BiConsumer<Integer,Integer> onPaint) {
 		while (true) {
 			x += dx;
 			y += dy;
 			if (x<0 || y<0 || x>=in[0].length || y>=in.length
 					|| OSTACOLO.is(in[y][x])) return;
 			out[y][x] = col;
-			var d = dist[y-dy][x-dx]+ (1<<(((dx^~dy)&1)<<4));
-			dist[y][x] = d;
 			chiusura.addLast(new Cella2D(col, x+xmin, y+ymin));
 			onPaint.accept(x, y);
 		}
 	}
-	private static void paint(int xmin, int ymin, int[][] out, int[][] in, int[][] dist, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy) {
-		paint(xmin, ymin, out, in, dist, chiusura, x, y, col, dx, dy, (i,j)->{});
+	private static void paint(int xmin, int ymin, int[][] out, int[][] in, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy) {
+		paint(xmin, ymin, out, in, chiusura, x, y, col, dx, dy, (i,j)->{});
 	}
-	private static void paint0(int xmin, int ymin, int[][] out, int[][] in, int[][] dist, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy, int dx1, int dy1, int dx2, int dy2) {
-		paint(xmin, ymin, out, in, dist, chiusura, x, y, REGINA.value(), dx, dy, (j,i)->{
-			paint(xmin, ymin, out, in, dist, chiusura, j, i, col, dx1, dy1);
-			paint(xmin, ymin, out, in, dist, chiusura, j, i, col, dx2, dy2);
+	private static void paint0(int xmin, int ymin, int[][] out, int[][] in, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy, int dx1, int dy1, int dx2, int dy2) {
+		paint(xmin, ymin, out, in, chiusura, x, y, REGINA.value(), dx, dy, (j,i)->{
+			paint(xmin, ymin, out, in, chiusura, j, i, col, dx1, dy1);
+			paint(xmin, ymin, out, in, chiusura, j, i, col, dx2, dy2);
 		});
 	}
 	
 	public static GrigliaConOrigine creaV0(IGriglia<?> griglia, int Ox, int Oy) {
 		var in = new int[griglia.height()][griglia.width()];
 		var res = Utils.sameSizeOf(in);
-		var dist = Utils.sameSizeOf(in);
 		
 		for (int i = 0; i < in.length; i++) {
 			for (int j = 0; j < in[0].length; j++) {
 				in[i][j] = griglia.getCellaAt(j+griglia.xmin(), i+griglia.ymin()).stato();
 				res[i][j] = OSTACOLO.is(in[i][j]) ? in[i][j] : 0;
-				dist[i][j] = Integer.MAX_VALUE;
 			}
 		}
 		
 		int xmin=griglia.xmin(), ymin=griglia.ymin();
 		
-		dist[Oy-=ymin][Ox-=xmin] = 0;
 		var chiusura = new LinkedList<ICella2D>();
 		var com = COMPLEMENTO.value();
 		var cont = CONTESTO.value();
 		
-		paint0(xmin, ymin, res, in, dist, chiusura, Ox, Oy, com,   0, -1, -1, -1,  1,-1);
-		paint0(xmin, ymin, res, in, dist, chiusura, Ox, Oy, com,   0,  1, -1,  1,  1, 1);
-		paint0(xmin, ymin, res, in, dist, chiusura, Ox, Oy, com,   1,  0,  1, -1,  1, 1);
-		paint0(xmin, ymin, res, in, dist, chiusura, Ox, Oy, com,  -1,  0, -1, -1, -1, 1);
+		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, com,   0, -1, -1, -1,  1,-1);
+		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, com,   0,  1, -1,  1,  1, 1);
+		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, com,   1,  0,  1, -1,  1, 1);
+		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, com, -1,  0,  -1, -1, -1, 1);
 		
-		paint0(xmin, ymin, res, in, dist, chiusura, Ox, Oy, cont,  1, 1,  1,0, 0, 1);                  
-		paint0(xmin, ymin, res, in, dist, chiusura, Ox, Oy, cont,  1,-1,  1,0, 0,-1);                  
-		paint0(xmin, ymin, res, in, dist, chiusura, Ox, Oy, cont, -1,-1, -1,0, 0,-1);                  
-		paint0(xmin, ymin, res, in, dist, chiusura, Ox, Oy, cont, -1, 1, -1,0, 0, 1);
+		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, cont, 1,  1, 1,  0,0, 1);                  
+		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, cont, 1,  -1,1,  0,0, -1);                  
+		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, cont, -1, -1,-1, 0,0, -1);                  
+		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, cont, -1, 1, -1, 0,0, 1);
 		
 		
-		res[Oy][Ox] = ORIGINE.value();
+		res[Oy-ymin][Ox-xmin] = ORIGINE.value();
 		chiusura.add(new Cella2D(ORIGINE.value(), Ox, Oy));
 		
-		var frontiera = new ArrayDeque<ICellaConDistanze>();
+		var frontiera = new ArrayDeque<ICella2D>();
 		
 		
 		for (int i = 0; i < res.length; i++) {
@@ -92,7 +87,7 @@ public final class GrigliaConOrigineFactory {
 						if (CHIUSURA.isNot(res[iii][jjj])
 							&& !OSTACOLO.is(res[iii][jjj])) {
 							res[i][j] |= FRONTIERA.value();
-							frontiera.addLast(ICellaConDistanze.of(j+xmin, i+ymin, res[i][j], dist[i][j]));
+							frontiera.addLast(ICella2D.of(j+xmin, i+ymin, res[i][j]));
 							continue outer;
 						}
 					}
@@ -101,7 +96,7 @@ public final class GrigliaConOrigineFactory {
 			}
 		}
 		
-		return new GrigliaConOrigine(res, dist, Ox, Oy, chiusura, frontiera.toArray(ICellaConDistanze[]::new), griglia.getTipo());
+		return new GrigliaConOrigine(res, Ox, Oy, xmin, ymin, chiusura, frontiera.toArray(ICella2D[]::new), griglia.getTipo());
 	}
 	
 	
@@ -155,7 +150,7 @@ public final class GrigliaConOrigineFactory {
 		map.put(Oy, Ox, ORIGINE.value());
 		chiusura.add(new Cella2D(ORIGINE.value(), Ox, Oy));
 		
-		var frontiera = new ArrayDeque<ICellaConDistanze>();
+		var frontiera = new ArrayDeque<ICella2D>();
 		
 		griglia.forEach((j,i) -> {
 			if (!CHIUSURA.check(map.get(i, j))) return;
@@ -167,8 +162,7 @@ public final class GrigliaConOrigineFactory {
 					var s = map.get(iii, jjj);
 					if (CHIUSURA.isNot(s) && !OSTACOLO.is(s)) {
 						map.compute(i, j, v->v|FRONTIERA.value());
-						var dist = calcDist(Ox, Oy, j, i);
-						frontiera.addLast(ICellaConDistanze.of(j, i, s, dist));
+						frontiera.addLast(ICella2D.of(j, i, s));
 						return;
 					}
 				}
@@ -186,12 +180,12 @@ public final class GrigliaConOrigineFactory {
 			public int xmin() {return griglia.xmin();};
 			public int ymin() {return griglia.ymin();};
 			@Override
-			public ICellaConDistanze getCellaAt(int x, int y) {
-				return ICellaConDistanze.of(x, y, map.get(y, x), calcDist(x, y, Ox, Oy));
+			public ICella2D getCellaAt(int x, int y) {
+				return new Cella2D(map.get(y, x), x, y);
 			}
 			
 			@Override
-			public IGriglia<ICellaConDistanze> addObstacle(IObstacle obstacle, int tipoOstacolo) {
+			public IGriglia<ICella2D> addObstacle(IObstacle obstacle, int tipoOstacolo) {
 				throw new UnsupportedOperationException();
 			}
 			
@@ -201,12 +195,12 @@ public final class GrigliaConOrigineFactory {
 			}
 			
 			@Override
-			public ICellaConDistanze getOrigine() {
-				return ICellaConDistanze.of(Ox, Oy, StatoCella.ORIGINE.value(), 0);
+			public ICella2D getOrigine() {
+				return ICella2D.of(Ox, Oy, StatoCella.ORIGINE.value());
 			}
 			
 			@Override
-			public Stream<ICellaConDistanze> getFrontiera() {
+			public Stream<ICella2D> getFrontiera() {
 				return frontiera.stream();
 			}
 			

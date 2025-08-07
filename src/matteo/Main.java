@@ -2,14 +2,9 @@ package matteo;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import francesco.ICella;
-import francesco.IGriglia;
+import francesco.*;
 import francesco.implementazioni.LettoreGriglia;
-import nicolas.GrigliaConOrigineFactory;
-import nicolas.ICellaConDistanze;
-import nicolas.IGrigliaConOrigine;
-import nicolas.StatoCella;
+import nicolas.*;
 
 public class Main  {
 
@@ -35,9 +30,8 @@ public class Main  {
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0, 0); //impl nicolas
 		
 		
-		ICellaConDistanze start = g.getCellaAt(0, 0);
-//		ICella2 end =  g.getCellaAt(g.width()-1, g.height()-1); // esplode 
-		ICellaConDistanze end =  g.getCellaAt(11,3); 
+		ICella2D start = g.getCellaAt(0, 0); 
+		ICella2D end =  g.getCellaAt(11,3); 
 	
 		if(StatoCella.OSTACOLO.is(end.stato())) {
 			System.out.println("Cella è ostacolo");

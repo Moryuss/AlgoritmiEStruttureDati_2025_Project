@@ -9,6 +9,8 @@ import francesco.*;
 import francesco.implementazioni.Cella2D;
 import francesco.implementazioni.LettoreGriglia;
 import matteo.*;
+import matteo.Riassunto.IStatisticheEsecuzione;
+import matteo.Riassunto.TipiRiassunto;
 import nicolas.*;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -27,6 +29,7 @@ public class AppletMain extends PApplet {
 	
 	int w,h,s;
 	int[] palette, colors;
+	boolean mouseEnabled = true;
 	IGrigliaMutabile<?> griglia;
 	CompitoDueImpl compitoDue = CompitoDueImpl.V0;
 	CamminoConfiguration camminoConfiguration = ConfigurationMode.DEFAULT.toCamminoConfiguration();
@@ -155,15 +158,6 @@ public class AppletMain extends PApplet {
 				textAlign(CENTER, CENTER);
 				fill(150);
 				text(n, (0.5f+j)*s, (0.5f+i)*s);
-				
-				if (griglia.getCellaAt(j, i) instanceof ICellaConDistanze c2) {
-					textAlign(LEFT, TOP);
-					if (c2.isUnreachable()) text("+∞", (0f+j)*s, (+i)*s);
-					else {
-						//text("%.2f".formatted(c2.distanzaDaOrigine()), j*s, i*s);
-						text(c2.distanzaTorre()+":"+c2.distanzaAlfiere(), j*s, i*s);
-					}
-				}
 			}
 			
 			
@@ -206,7 +200,7 @@ public class AppletMain extends PApplet {
 			}
 		}
 		
-		if (monitorMin!=null) { // 48+21√2=77,698485
+		if (monitorMin!=null) {
 			var cammino = monitorMin.getCammino();
 			if (cammino!=null) {
 				stroke(0, 150, 0);
@@ -251,12 +245,14 @@ public class AppletMain extends PApplet {
 	IProgressoMonitor monitor,monitorMin;
 	IGrigliaConOrigine grigliaConOrigine;
 	CompitoTreImplementation compitoTreImpl;
+	IStatisticheEsecuzione statisticheEsecuzione;
 	String report = "";
-	GrigliaConRegioni<ICellaConDistanze> grigliaNazione;
+	GrigliaConRegioni<ICella2D> grigliaNazione;
 	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if (!mouseEnabled) return;
 		int x = e.getX() * w / width;
 		int y = e.getY() * h / height;
 		
@@ -291,6 +287,8 @@ public class AppletMain extends PApplet {
 				compitoTreImpl = new CompitoTreImplementation(camminoConfiguration);
 				monitor = compitoTreImpl.getProgress();
 				monitorMin = compitoTreImpl.getProgressMin();
+				mouseEnabled = false;
+				
 				new Thread(()->{
 					System.out.println("inizio camminoMin");
 					var cammino = compitoTreImpl.camminoMin(griglia, O, D, compitoDue);
@@ -301,6 +299,15 @@ public class AppletMain extends PApplet {
 							cammino.lunghezzaAlfiere(), cammino.lunghezza());
 					monitor=null;
 					report = compitoTreImpl.getReport();
+					statisticheEsecuzione = compitoTreImpl.getStatisticheEsecuzione();
+					
+					var timeStamp = Utils.getCurrentTimestamp();
+					for (var tr : TipiRiassunto.values()) {
+						statisticheEsecuzione.generaRiassunto(tr)
+						.salvaFile(tr.name().toLowerCase(), "output/"+timeStamp);
+					}
+					
+					mouseEnabled = true;
 				}).start();
 				
 			} catch(Exception ex) {
@@ -333,7 +340,7 @@ public class AppletMain extends PApplet {
 	
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		
+		if (!mouseEnabled) return;
 		int x = e.getX() * w / width;
 		int y = e.getY() * h / height;
 		x = constrain(x, 0, w-1);

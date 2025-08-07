@@ -186,7 +186,7 @@ public class CamminoConfiguration {
     public String toString() {
         return  getConfigurationName() + 
                ", flags: " + toBinaryString() + 
-               ", active: " + getActiveFlags() + "}";
+               ", active: " + getActiveFlags();
     }
 
     @Override

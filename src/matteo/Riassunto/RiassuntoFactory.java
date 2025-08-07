@@ -6,30 +6,22 @@ import nicolas.StatoCella;
 import utils.Utils;
 
 public class RiassuntoFactory {
-
+	
 	public static Riassunto creaRiassunto(TipiRiassunto tipo, IStatisticheEsecuzione stats) {
-		switch (tipo) {
-		case VERBOSE:
-			return creaRiassuntoVerbose(stats);
-		case TABELLA:
-			return creaRiassuntoTabella(stats);
-		case COMPATTO:
-			return creaRiassuntoCompatto(stats);
-		case JSON:
-			return creaRiassuntoJSON(stats);
-		case CSV:
-			return creaRiassuntoCSV(stats);
-		case MARKDOWN:
-			return creaRiassuntoMarkdown(stats);
-		default:
-			return creaRiassuntoVerbose(stats);
-		}
+		return switch(tipo) {
+		case CSV -> creaRiassuntoCSV(stats);
+		case JSON -> creaRiassuntoJSON(stats);
+		case VERBOSE -> creaRiassuntoVerbose(stats);
+		case TABELLA -> creaRiassuntoTabella(stats);
+		case COMPATTO -> creaRiassuntoCompatto(stats);
+		case MARKDOWN -> creaRiassuntoMarkdown(stats);
+		};
 	}
-
+	
 	private static Riassunto creaRiassuntoVerbose(IStatisticheEsecuzione stats) {
 		String tempoFormattato = Utils.formatTempo(stats.getTempoEsecuzione());
 		ICammino risultato = stats.getCammino();
-
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("=== RIASSUNTO ESECUZIONE CAMMINOMIN ===\n");
 		sb.append("Dimensioni griglia: Width = ").append(stats.getLarghezzaGriglia()).append(", Height = ").append(stats.getAltezzaGriglia()).append("\n");
@@ -50,7 +42,7 @@ public class RiassuntoFactory {
 		sb.append("Frontiera sorted: ").append(stats.isFrontieraSorted() ? "SI" : "NO").append("\n");
 		sb.append("Svuota frontiera attiva: ").append(stats.isSvuotaFrontieraAttiva() ? "SI" : "NO").append("\n");
 		sb.append("Totale svuota frontiera: ").append(stats.getQuantitaSvuotaFrontiera()).append("\n");
-
+		
 		if (risultato != null) {
 			sb.append("Lunghezza cammino trovato: ").append(risultato.lunghezza()).append("\n");
 			sb.append("Numero landmarks: ").append(risultato.landmarks().size()).append("\n");
@@ -61,35 +53,29 @@ public class RiassuntoFactory {
 			}
 			sb.append("\n");
 		}
-
+		
 		return new Riassunto(TipiRiassunto.VERBOSE, sb.toString());
 	}
-
+	
 	private static Riassunto creaRiassuntoTabella(IStatisticheEsecuzione stats) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("┌─────────────────────────────────────┬──────────────────────────────┐\n");
-		sb.append("│ PARAMETRO                           │ VALORE                       │\n");
-		sb.append("├─────────────────────────────────────┼──────────────────────────────┤\n");
-		sb.append(String.format("│ %-35s │ %-28s │\n", "Dimensioni griglia", stats.getLarghezzaGriglia() + "x" + stats.getAltezzaGriglia()));
-		sb.append(String.format("│ %-35s │ %-28s │\n", "Tipo griglia", stats.getTipoGriglia()));
-		sb.append(String.format("│ %-35s │ %-28s │\n", "Origine", "(" + stats.getOrigine().x() + "," + stats.getOrigine().y() + ")"));
-		sb.append(String.format("│ %-35s │ %-28s │\n", "Destinazione", "(" + stats.getDestinazione().x() + "," + stats.getDestinazione().y() + ")"));
-		sb.append(String.format("│ %-35s │ %-28s │\n", "Tempo esecuzione", Utils.formatTempo(stats.getTempoEsecuzione())));
-		sb.append(String.format("│ %-35s │ %-28s │\n", "Celle frontiera", String.valueOf(stats.getQuantitaCelleFrontiera())));
-		sb.append(String.format("│ %-35s │ %-28s │\n", "Iterazioni condizione", String.valueOf(stats.getIterazioniCondizione())));
-		sb.append(String.format("│ %-35s │ %-28s │\n", "Cache hit", String.valueOf(stats.getCacheHit())));
-		sb.append(String.format("│ %-35s │ %-28s │\n", "Max depth", String.valueOf(stats.getMaxDepth())));
-
-		if (stats.getCammino() != null) {
-			sb.append(String.format("│ %-35s │ %-28s │\n", "Lunghezza cammino", String.valueOf(stats.getCammino().lunghezza())));
-			sb.append(String.format("│ %-35s │ %-28s │\n", "Landmarks", String.valueOf(stats.getCammino().landmarks().size())));
-		}
-
-		sb.append("└─────────────────────────────────────┴──────────────────────────────┘\n");
-
+		var map = stats.toSequencedMap();
+		var l1 = map.keySet().stream().mapToInt(String::length).max().getAsInt()+2;
+		var l2 = map.values().stream().mapToInt(String::length).max().getAsInt()+2;
+		var format = "│ %%-%ds │ %%-%ds │\n".formatted(l1-2, l2-2);
+		var top = "┌"+"─".repeat(l1)+"┬"+"─".repeat(l2)+"┐\n";
+		var sep = "├"+"─".repeat(l1)+"┼"+"─".repeat(l2)+"┤\n";
+		var bot = "└"+"─".repeat(l1)+"┴"+"─".repeat(l2)+"┘";
+		
+		var sb = new StringBuilder(top);
+		sb.append(format.formatted("PARAMETRO","VALORE"));
+		sb.append(sep);
+		map.forEach((k,v) -> sb.append(format.formatted(k,v)));
+		sb.append(bot);
+		
 		return new Riassunto(TipiRiassunto.TABELLA, sb.toString());
+		
 	}
-
+	
 	private static Riassunto creaRiassuntoCompatto(IStatisticheEsecuzione stats) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CAMMINOMIN: ");
@@ -97,18 +83,18 @@ public class RiassuntoFactory {
 		sb.append(" | Tempo: ").append(Utils.formatTempo(stats.getTempoEsecuzione()));
 		sb.append(" | Celle frontiera: ").append(stats.getQuantitaCelleFrontiera());
 		sb.append(" | Cache hit: ").append(stats.getCacheHit());
-
+		
 		if (stats.getCammino() != null) {
 			sb.append(" | Cammino: ").append(stats.getCammino().lunghezza());
 		}
-
+		
 		if (stats.isCalcoloInterrotto()) {
 			sb.append(" | INTERROTTO");
 		}
-
+		
 		return new Riassunto(TipiRiassunto.COMPATTO, sb.toString());
 	}
-
+	
 	private static Riassunto creaRiassuntoJSON(IStatisticheEsecuzione stats) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{\n");
@@ -129,19 +115,19 @@ public class RiassuntoFactory {
 		sb.append("  \"frontieraSorted\": ").append(stats.isFrontieraSorted()).append(",\n");
 		sb.append("  \"svuotaFrontieraAttiva\": ").append(stats.isSvuotaFrontieraAttiva()).append(",\n");
 		sb.append("  \"svuotaFrontieraCount\": ").append(stats.getQuantitaSvuotaFrontiera());
-
+		
 		if (stats.getCammino() != null) {
 			sb.append(",\n  \"cammino\": {\n");
 			sb.append("    \"lunghezza\": ").append(stats.getCammino().lunghezza()).append(",\n");
 			sb.append("    \"landmarks\": ").append(stats.getCammino().landmarks().size()).append("\n");
 			sb.append("  }");
 		}
-
+		
 		sb.append("\n}");
-
+		
 		return new Riassunto(TipiRiassunto.JSON, sb.toString());
 	}
-
+	
 	private static Riassunto creaRiassuntoCSV(IStatisticheEsecuzione stats) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("parametro,valore\n");
@@ -162,15 +148,15 @@ public class RiassuntoFactory {
 		sb.append("frontiera_sorted,").append(stats.isFrontieraSorted()).append("\n");
 		sb.append("svuota_frontiera_attiva,").append(stats.isSvuotaFrontieraAttiva()).append("\n");
 		sb.append("svuota_frontiera_count,").append(stats.getQuantitaSvuotaFrontiera()).append("\n");
-
+		
 		if (stats.getCammino() != null) {
 			sb.append("lunghezza_cammino,").append(stats.getCammino().lunghezza()).append("\n");
 			sb.append("numero_landmarks,").append(stats.getCammino().landmarks().size()).append("\n");
 		}
-
+		
 		return new Riassunto(TipiRiassunto.CSV, sb.toString());
 	}
-
+	
 	private static Riassunto creaRiassuntoMarkdown(IStatisticheEsecuzione stats) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("# Riassunto Esecuzione CamminoMin\n\n");
@@ -180,7 +166,7 @@ public class RiassuntoFactory {
 		sb.append("- **Destinazione**: (").append(stats.getDestinazione().x()).append(",").append(stats.getDestinazione().y()).append(")\n");
 		sb.append("- **Compito Due**: ").append(stats.getNomeCompitoDue()).append("\n");
 		sb.append("- **Compito Tre**: ").append(stats.getCompitoTreMode().toString()).append("\n\n");
-
+		
 		sb.append("## Risultati Esecuzione\n");
 		sb.append("- **Tempo**: ").append(Utils.formatTempo(stats.getTempoEsecuzione())).append("\n");
 		sb.append("- **Profondità massima**: ").append(stats.getMaxDepth()).append("\n");
@@ -188,18 +174,19 @@ public class RiassuntoFactory {
 		sb.append("- **Iterazioni condizione**: ").append(stats.getIterazioniCondizione()).append("\n");
 		sb.append("- **Cache hit**: ").append(stats.getCacheHit()).append("\n");
 		sb.append("- **Calcolo interrotto**: ").append(stats.isCalcoloInterrotto() ? "✅" : "❌").append("\n\n");
-
+		
 		sb.append("## Ottimizzazioni\n");
 		sb.append("- **Cache**: ").append(stats.isCacheAttiva() ? "✅ Attiva" : "❌ Disattiva").append("\n");
 		sb.append("- **Frontiera Sorted**: ").append(stats.isFrontieraSorted() ? "✅ Attiva" : "❌ Disattiva").append("\n");
 		sb.append("- **Svuota Frontiera**: ").append(stats.isSvuotaFrontieraAttiva() ? "✅ Attiva (" + stats.getQuantitaSvuotaFrontiera() + " volte)" : "❌ Disattiva").append("\n\n");
-
+		
 		if (stats.getCammino() != null) {
 			sb.append("## Cammino Trovato\n");
 			sb.append("- **Lunghezza**: ").append(stats.getCammino().lunghezza()).append("\n");
 			sb.append("- **Landmarks**: ").append(stats.getCammino().landmarks().size()).append("\n");
 		}
-
+		
 		return new Riassunto(TipiRiassunto.MARKDOWN, sb.toString());
 	}
+	
 }

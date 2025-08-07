@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import francesco.GrigliaMatrix;
 import processing.core.PApplet;
-import utils.Utils;
 import francesco.implementazioni.Cella2D;
 import francesco.implementazioni.Ostacolo;
 import nicolas.GrigliaConOrigineFactory;
@@ -48,31 +47,6 @@ public class TestGrigliaConOrigine {
 		assertTrue(grigliaO.getCellaAt(5, 0).is(COMPLEMENTO));
 		
 		assertFalse(grigliaO.getCellaAt(4, 5).is(CHIUSURA));
-		
-		
-		
-		assertEquals(0, grigliaO.getCellaAt(2,1).distanzaDaOrigine());
-		
-		assertEquals(1, grigliaO.getCellaAt(2,0).distanzaDaOrigine());
-		assertEquals(1, grigliaO.getCellaAt(2,2).distanzaDaOrigine());
-		assertEquals(1, grigliaO.getCellaAt(1,1).distanzaDaOrigine());
-		assertEquals(1, grigliaO.getCellaAt(3,1).distanzaDaOrigine());
-		
-		assertEquals(Utils.sqrt2, grigliaO.getCellaAt(1,0).distanzaDaOrigine());
-		assertEquals(Utils.sqrt2, grigliaO.getCellaAt(1,2).distanzaDaOrigine());
-		assertEquals(Utils.sqrt2, grigliaO.getCellaAt(3,0).distanzaDaOrigine());
-		assertEquals(Utils.sqrt2, grigliaO.getCellaAt(3,2).distanzaDaOrigine());
-		
-		
-		grigliaO.forEach((x,y) -> {
-			if (grigliaO.getCellaAt(x,y).is(OSTACOLO)) {
-				assertTrue(grigliaO.getCellaAt(x,y).isUnreachable());
-				assertEquals(Double.POSITIVE_INFINITY, grigliaO.getCellaAt(x,y).distanzaDaOrigine());
-			} else if (grigliaO.getCellaAt(x,y).isUnreachable()==false) {
-				assertEquals(Utils.distanzaLiberaTra(2, 1, x, y), grigliaO.getCellaAt(x,y).distanzaDaOrigine());
-			}
-		});
-		
 		
 	}
 	

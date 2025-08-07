@@ -12,6 +12,7 @@ import matteo.Riassunto.IStatisticheEsecuzione;
 import matteo.Riassunto.Riassunto;
 import matteo.Riassunto.StatisticheEsecuzione;
 import matteo.Riassunto.TipiRiassunto;
+import nicolas.DistanzaLibera;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -252,15 +253,8 @@ public class TestRiassunti {
 		}
 
 		@Override
-		public int lunghezzaTorre() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public int lunghezzaAlfiere() {
-			// TODO Auto-generated method stub
-			return 0;
+		public DistanzaLibera distanzaLibera() {
+			return DistanzaLibera.ZERO;
 		}
 	}
 

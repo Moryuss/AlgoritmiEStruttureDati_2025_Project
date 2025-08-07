@@ -1,5 +1,7 @@
 package matteo.Riassunto;
 
+import java.util.SequencedMap;
+
 import francesco.ICella2D;
 import matteo.CamminoConfiguration;
 import matteo.ICammino;
@@ -60,7 +62,10 @@ public interface IStatisticheEsecuzione {
 	public void setCammino(ICammino cammino);
 	public ICammino getCammino();
 	
+	@Deprecated
 	public String generaRiassunto(ICammino risultato);
 	
 	public Riassunto generaRiassunto(TipiRiassunto tipoRiassunto);
+	
+	public SequencedMap<String,String> toSequencedMap();
 }

@@ -1,24 +1,15 @@
 package sperimentazione;
 
-import francesco.GrigliaMatrix;
-import francesco.IGriglia;
-import francesco.IHave2DCoordinate;
+import francesco.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-import matteo.CompitoTreImplementation;
-import matteo.ConfigurationMode;
-import matteo.ICammino;
-import matteo.ICompitoTre;
-import matteo.ILandmark;
+import matteo.*;
 import matteo.Riassunto.IStatisticheEsecuzione;
-import nicolas.CompitoDueImpl;
-import nicolas.ICellaConDistanze;
-import nicolas.ICompitoDue;
-import nicolas.IGrigliaConOrigine;
+import nicolas.*;
 import processing.core.PApplet;
 import processing.data.JSONArray;
 import utils.Utils;
@@ -124,11 +115,11 @@ public class MainSperimentazione {
 
                                 CoordinateCella origine = origini.get(i);
                                 IGrigliaConOrigine gO = due.calcola(griglia, origine);
-                                ICellaConDistanze start = gO.getCellaAt(origine.x(), origine.y());
+                                ICella2D start = gO.getCellaAt(origine.x(), origine.y());
 
                                 CoordinateCella destinazione = destinazioni.get(i);
-                                ICellaConDistanze end = gO.getCellaAt(destinazione.x(), destinazione.y());
-
+                                ICella2D end = gO.getCellaAt(destinazione.x(), destinazione.y());
+                                
                                 // Trova il cammino minimo con CompitoTre
                                 implementazioneTre.setTimeout(TEMPO_SCADENZA_ESECUZIONE, TimeUnit.MILLISECONDS);
                                 ICammino cammino1 = implementazioneTre.camminoMin(griglia, start, end, due);

@@ -1,20 +1,21 @@
 package matteo;
 
 import java.util.List;
-
+import nicolas.DistanzaLibera;
 import utils.Utils;
 
-public record Cammino(int lunghezzaTorre, int lunghezzaAlfiere, List<ILandmark> landmarks, double lunghezza) implements ICammino {
+public record Cammino(DistanzaLibera distanzaLibera, List<ILandmark> landmarks) implements ICammino {
 	
-	public Cammino(int lunghezzaTorre, int lunghezzaAlfiere, List<ILandmark> landmarks) {
-		this(lunghezzaTorre, lunghezzaAlfiere, List.copyOf(landmarks), calcolaLunghezzaComplessiva(lunghezzaTorre, lunghezzaAlfiere));
+	public Cammino {
+		assert !(landmarks.isEmpty() && !distanzaLibera.isInfinity());
 	}
 	
-	private static double calcolaLunghezzaComplessiva(int lunTorre, int lunAlfiere) {
-		if(lunTorre==Integer.MAX_VALUE||lunAlfiere==Integer.MAX_VALUE) {
-			return Double.POSITIVE_INFINITY;
-		}
-		return lunTorre + Utils.sqrt2*lunAlfiere;
+	
+	public static Cammino from(List<ILandmark> landmarks) {
+		var distanzaLibera = landmarks.stream()
+		.collect(Utils.collectPairs(DistanzaLibera::from))
+		.reduce(DistanzaLibera.ZERO, DistanzaLibera::add);
+		return new Cammino(distanzaLibera, landmarks);
 	}
 	
 }

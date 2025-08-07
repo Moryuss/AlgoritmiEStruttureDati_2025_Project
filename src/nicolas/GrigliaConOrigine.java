@@ -6,16 +6,17 @@ import java.util.stream.Stream;
 import francesco.ICella2D;
 import francesco.IGriglia;
 import francesco.IObstacle;
+import francesco.implementazioni.Cella2D;
 import francesco.implementazioni.Ostacolo;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 import utils.Utils;
 
-public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<ICella2D> chiusura, ICellaConDistanze[] frontiera, int tipoGriglia) implements IGrigliaConOrigine {
+public record GrigliaConOrigine(int[][] mat, int Ox, int Oy, int xmin, int ymin, List<ICella2D> chiusura, ICella2D[] frontiera, int tipoGriglia) implements IGrigliaConOrigine {
 	
 	@Override
-	public ICellaConDistanze getCellaAt(int x, int y) {
-		return ICellaConDistanze.of(x, y, mat[y][x], dist[y][x]);
+	public ICella2D getCellaAt(int x, int y) {
+		return new Cella2D(mat[y-ymin][x-xmin], x, y);
 	}
 	
 	
@@ -40,17 +41,17 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 	}
 	
 	@Override
-	public Stream<ICellaConDistanze> getFrontiera() {
+	public Stream<ICella2D> getFrontiera() {
 		return Stream.of(frontiera);
 	}
 	
 	@Override
-	public IGriglia<ICellaConDistanze> addObstacle(IObstacle obstacle, int tipoOstacolo) {
+	public IGriglia<ICella2D> addObstacle(IObstacle obstacle, int tipoOstacolo) {
 		var mat = Utils.copy(this.mat);
 		for (var c : obstacle.list()) {
 			mat[c.y()][c.x()] = OSTACOLO.addTo(mat[c.y()][c.x()]);
 		}
-		return new GrigliaConOrigine(mat, dist, Ox, Oy, chiusura, frontiera, tipoGriglia|tipoOstacolo);
+		return new GrigliaConOrigine(mat, Ox, Oy, xmin, ymin, chiusura, frontiera, tipoGriglia|tipoOstacolo);
 	}
 	
 	@Override
@@ -63,8 +64,6 @@ public record GrigliaConOrigine(int[][] mat, int[][] dist, int Ox, int Oy, List<
 		return toJSON(cella -> {
 			var json = new JSONObject();
 			json.put("stato", cella.stato())
-			.put("distanzaTorre", cella.distanzaTorre())
-			.put("distanzaAlfiere", cella.distanzaAlfiere())
 			.put("isOstacolo", cella.is(OSTACOLO))
 			.put("isChiusura", cella.is(CHIUSURA))
 			.put("isFrontiera", cella.is(FRONTIERA));

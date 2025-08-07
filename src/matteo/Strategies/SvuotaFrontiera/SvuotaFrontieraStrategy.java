@@ -3,22 +3,22 @@ package matteo.Strategies.SvuotaFrontiera;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
-
 import francesco.ICella2D;
 import matteo.ILandmark;
 import matteo.IProgressoMonitor;
 import matteo.Riassunto.IStatisticheEsecuzione;
-import nicolas.ICellaConDistanze;
 import utils.Utils;
 
 public sealed interface SvuotaFrontieraStrategy {
 
-	List<ICellaConDistanze> isFrontieraDaSvuotare(ICella2D O, List<ICellaConDistanze> frontieraList, 
+	List<ICella2D> isFrontieraDaSvuotare(ICella2D O, List<ICella2D> frontieraList, 
 			IProgressoMonitor monitorMinimo, Deque<ILandmark> stackCammino, IStatisticheEsecuzione stats );
-
+	
+	
+	
 	public static record SvuotaFrontieraDisabilitato() implements SvuotaFrontieraStrategy {
 		@Override
-		public List<ICellaConDistanze> isFrontieraDaSvuotare(ICella2D O, List<ICellaConDistanze> frontieraList,
+		public List<ICella2D> isFrontieraDaSvuotare(ICella2D O, List<ICella2D> frontieraList,
 				IProgressoMonitor monitorMinimo, Deque<ILandmark> stackCammino, IStatisticheEsecuzione stats) {
 			return frontieraList;
 		}
@@ -26,7 +26,7 @@ public sealed interface SvuotaFrontieraStrategy {
 
 	public static record SvuotaFrontieraAbilitato() implements SvuotaFrontieraStrategy {
 		@Override
-		public List<ICellaConDistanze> isFrontieraDaSvuotare(ICella2D O, List<ICellaConDistanze> frontieraList,
+		public List<ICella2D> isFrontieraDaSvuotare(ICella2D O, List<ICella2D> frontieraList,
 				IProgressoMonitor monitorMinimo, Deque<ILandmark> stackCammino,IStatisticheEsecuzione stats){
 			var camminoMonitor = monitorMinimo.getCammino();
 			if (camminoMonitor!=null) {
