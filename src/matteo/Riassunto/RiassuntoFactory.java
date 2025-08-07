@@ -32,8 +32,8 @@ public class RiassuntoFactory {
 		sb.append("Modalità Compito Due: ").append(stats.getNomeCompitoDue()).append("\n");
 		sb.append("Tempo di esecuzione: ").append(tempoFormattato).append("\n");
 		sb.append("Profondità massima ricorsione: ").append(stats.getMaxDepth()).append("\n");
-		sb.append("Spazio occupato singola griglia: ").append(CalcoloUsoMemoria.calcolaUsoMemoriaSingolaGriglia(stats, TipoCella.TIPO_A)).append(" bytes\n");
-		sb.append("Massimo spazio occupato in memoria: ").append(CalcoloUsoMemoria.calcolaUsoMemoria(stats, TipoCella.TIPO_A)).append(" bytes\n");
+		sb.append("Spazio occupato singola griglia: ").append(CalcoloUsoMemoria.formattaMemoria(CalcoloUsoMemoria.calcolaUsoMemoriaSingolaGriglia(stats, TipoCella.TIPO_A))).append("\n");
+		sb.append("Massimo spazio occupato in memoria: ").append(CalcoloUsoMemoria.formattaMemoria(CalcoloUsoMemoria.calcolaUsoMemoria(stats, TipoCella.TIPO_A))).append("\n");
 		sb.append("Totale celle di frontiera considerate: ").append(stats.getQuantitaCelleFrontiera()).append("\n");
 		sb.append("Totale iterazioni condizione (riga 16/17): ").append(stats.getIterazioniCondizione()).append("\n");
 		sb.append("Calcolo interrotto: ").append(stats.isCalcoloInterrotto() ? "SI" : "NO").append("\n");

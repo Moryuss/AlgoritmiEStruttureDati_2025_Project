@@ -1,7 +1,7 @@
 package matteo.Riassunto;
 
 public enum TipoCella {
-    TIPO_A(29); // 29 Byte = 5 * 4 int(4) + 1 double(8) + 1 boolean(1)
+    TIPO_A(4); // 4 byte = 1 intero == stato della cella
 
     private final int dimensioneCella;
 
