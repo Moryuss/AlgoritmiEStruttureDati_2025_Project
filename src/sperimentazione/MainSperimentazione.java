@@ -8,14 +8,16 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import matteo.*;
+import matteo.Riassunto.CalcoloUsoMemoria;
 import matteo.Riassunto.IStatisticheEsecuzione;
+import matteo.Riassunto.TipoCella;
 import nicolas.*;
 import processing.core.PApplet;
 import processing.data.JSONArray;
 import utils.Utils;
 
 public class MainSperimentazione {
-	private static final String MSG_UNREACHABLE_DESTINATIONù = "Destinazione Irraggiungibile.";
+	private static final String MSG_UNREACHABLE_DESTINATION = "Destinazione Irraggiungibile.";
 	private static final String MSG_TIMEOUT = "La Griglia %s e' stata interrotta per tempo limite (%d)";
 //	private static final long TEMPO_SCADENZA_ESECUZIONE = TimeUnit.MINUTES.toMillis(30);
 	private static final long TEMPO_SCADENZA_ESECUZIONE = TimeUnit.MINUTES.toMillis(15);
@@ -33,13 +35,13 @@ public class MainSperimentazione {
 	private static final String SCACCHIERA_PATH = "src/sperimentazione/scacchiera";
 
 	private static final List<String> CARTELLE = List.of(
-			DOPPIO_DENTE_DI_SEGA_PATH,
-			LINEA_SPEZZATA_PATH,
-			SCACCHIERA_PATH,
-			SPIRALE_PATH,
+//			DOPPIO_DENTE_DI_SEGA_PATH,
+//			LINEA_SPEZZATA_PATH,
+//			SCACCHIERA_PATH,
+//			SPIRALE_PATH,
 //			TIPO_GRIGLIA_PATH,
-			VARIAZIONE_DIMENSIONI_PATH,
-			VARIAZIONE_OSTACOLI_PATH
+			VARIAZIONE_DIMENSIONI_PATH
+//			VARIAZIONE_OSTACOLI_PATH
             );
 
     private static final List<ConfigurationMode> TRES = List.of(
@@ -55,10 +57,14 @@ public class MainSperimentazione {
     		ConfigurationMode.PERFORMANCE_FULL
     );
 
-    private static final List<ICompitoDue> DUES = List.of(CompitoDueImpl.V0);
+    private static final List<ICompitoDue> DUES = List.of(
+    		CompitoDueImpl.V0
+    		, CompitoDueImpl.V1
+    		);
 
     private static String pathTxt;
     private static String compitiUsati;
+    private static String nomeTxt;
 
     // Per qualsiasi cosa, controlla classe Test Compito Tre
     // ma guarda la lettura da file da AppletMain
@@ -77,8 +83,8 @@ public class MainSperimentazione {
         // ================================================================
         for (String cartella : CARTELLE) {
             System.out.println("Cartella: " + cartella + "\n");
-            // HashMap con chiave il nome della griglia e come valore una TreeMap con combinazione e tempo
-            HashMap<String, TreeMap<Long, String>> tempi = new HashMap<String, TreeMap<Long, String>>();
+            // HashMap con chiave il nome della griglia e come valore una TreeMap con combinazione e tempo+spazio
+            HashMap<String, HashMap<TempoESpazioMedio, String>> tempi = new HashMap<String, HashMap<TempoESpazioMedio, String>>();
             List<String> nomi = new ArrayList<>();
             List<CoordinateCella> origini = new ArrayList<>();
             List<CoordinateCella> destinazioni = new ArrayList<>();
@@ -93,13 +99,20 @@ public class MainSperimentazione {
                 
                 for (ICompitoDue due : DUES) {
                     String compiti = tre.name() + "_" + due.toString();
+                    String pathCartella = pathTxt + "\\" + due.toString().toLowerCase();
+                    File cartellaSalvataggio = new File(pathCartella);
+                    if(!cartellaSalvataggio.exists()) {
+                    	boolean creata = cartellaSalvataggio.mkdirs();
+                    }
                     compitiUsati = compiti;
                     for (int i = 0; i < files.size(); i++) {
                         String nomeGriglia = nomi.get(i);
                         // Viene aggiunto il due.toString() per motivi di organizzazione dei file
-                        String path = pathTxt + "." + due.toString().toLowerCase() + "_" + nomeGriglia + "_" + compitiUsati;
+                        // A mettere due prima, finisce prima di source
+                        String path =  pathCartella + nomeTxt + "_" + nomeGriglia + "_" + compitiUsati;
                         ScritturaFile.pulisciFile(path + ".txt");
                         List<IStatisticheEsecuzione> statistiche = new ArrayList<>();
+                        boolean tuttoCorretto = true;
                         try {
                             scriviEStampaConPath("Nuova Griglia: " + nomeGriglia, path);
                             for (int j = 0; j < GRIGLIA_TRY; j++) {
@@ -143,7 +156,7 @@ public class MainSperimentazione {
                                 }
                                 
                                 if(cammino1.landmarks().isEmpty() || Double.isInfinite(cammino1.lunghezza())) {
-                                	scriviEStampaConPath(MSG_UNREACHABLE_DESTINATIONù, path);
+                                	scriviEStampaConPath(MSG_UNREACHABLE_DESTINATION, path);
                                 	System.out.println("Timeout.");
                                 	break;
                                 }
@@ -161,6 +174,7 @@ public class MainSperimentazione {
 
                                 boolean corretto = isLunghezzaUguale(cammino1, cammino2);
                                 scriviEStampaConPath("e' corretto?: " + corretto, path);
+                                tuttoCorretto = tuttoCorretto && corretto;
 
                                 System.out.println("Inizio verifica opposizione...");
                                 boolean opposto = isOpposto(cammino1.landmarks(), cammino2.landmarks());
@@ -177,9 +191,9 @@ public class MainSperimentazione {
                         }
                         // Qui vengono calcolate e scritte le media per griglia
                         if (!statistiche.isEmpty()) {
-                            long tempo = scriviMediaEsecuzioni(statistiche, GRIGLIA_TRY, path);
+                        	TempoESpazioMedio tempoESpazio = scriviMediaEsecuzioni(statistiche, GRIGLIA_TRY, path, tuttoCorretto);
                             // Aggiunta del tempo MEDIO 
-                            aggiungiTempo(tempo, compiti, nomeGriglia, tempi);
+                            aggiungiTempo(tempoESpazio, compiti, nomeGriglia, tempi);
                         } else {
                             scriviEStampaConPath("Nessuna esecuzione riuscita per questa griglia", path);
                         }
@@ -230,16 +244,16 @@ public class MainSperimentazione {
 
     /**
      * Dato un path iniziale, carica le griglie scritte. La convenzione è l'uso
-     * di un file paths.json contenente i seguenti campi: - path: un array di
-     * stringhe che rappresentano i percorsi relativi ai file JSON delle griglie
-     * (nella stessa cartella) - name: un array di stringhe che rappresentano i
-     * nomi delle griglie (ossia il campo da cui attingere, ma usato anche per
-     * differenziare le griglie) - ox: un array di interi che rappresentano le
-     * origini X delle griglie - oy: un array di interi che rappresentano le
-     * origini Y delle griglie - dx: un array di interi che rappresentano le
-     * destinazioni X delle griglie - dy: un array di interi che rappresentano
-     * le destinazioni Y delle griglie - txt: path al txt dove scrivere report e
-     * controlli
+     * di un file paths.json contenente i seguenti campi: 
+     * - path: un array di stringhe che rappresentano i percorsi relativi ai file JSON delle griglie
+     * (nella stessa cartella) 
+     * - name: un array di stringhe che rappresentano i nomi delle griglie (ossia il campo da cui attingere, ma usato anche per
+     * differenziare le griglie) 
+     * - ox: un array di interi che rappresentano le origini X delle griglie 
+     * - oy: un array di interi che rappresentano le origini Y delle griglie 
+     * - dx: un array di interi che rappresentano le destinazioni X delle griglie 
+     * - dy: un array di interi che rappresentano le destinazioni Y delle griglie 
+     * - txt: path al txt dove scrivere report e controlli
      *
      * @param pathIniziale path che porta alla cartella desiderata
      * @param nomi array inizialmente vuoto che verrà riempito con i nomi delle
@@ -304,7 +318,8 @@ public class MainSperimentazione {
             statiArray = config.getJSONArray("stati").toIntArray();
         }
 
-        pathTxt = pathIniziale + "/" + config.getString("txt");
+        pathTxt = pathIniziale;
+        nomeTxt = "/" + config.getString("txt");
 
         if (paths == null) {
             System.err.println("Cartella non trovata o vuota: " + pathname);
@@ -344,7 +359,7 @@ public class MainSperimentazione {
     }
     
     private static void scriviEStampaGenerico(String msg) {
-    	scriviEStampaConPath(msg, pathTxt);
+    	scriviEStampaConPath(msg, pathTxt + nomeTxt);
     }
 
     private static void scriviEStampaConPath(String msg, String path) {
@@ -356,56 +371,127 @@ public class MainSperimentazione {
      * Aggiunge il tempo con relative informazioni su combinazione compiti e
      * griglia usata usando una doppia HashMap e riempiendola in loco
      *
-     * @param tempo
+     * @param tempoESpazio
      * @param combinazione
      * @param griglia
      * @param tempi
      */
-    private static void aggiungiTempo(long tempo, String combinazione, String griglia, HashMap<String, TreeMap<Long, String>> tempi) {
+    private static void aggiungiTempo(TempoESpazioMedio tempoESpazio, String combinazione,
+    		String griglia, HashMap<String, HashMap<TempoESpazioMedio, String>> tempi) {
         if (tempi.containsKey(griglia)) {
             // cerco l'HashMap già esistente
-            TreeMap<Long, String> map = tempi.get(griglia);
+        	HashMap<TempoESpazioMedio, String> map = tempi.get(griglia);
             // Se la map ottenuta è vuota, allora aggiungo il valore
-            map.put(tempo, combinazione);
+            map.put(tempoESpazio, combinazione);
         } // la chiave non esisteva, creo una nuova map ed usa la chiave
         else {
-            TreeMap<Long, String> map = new TreeMap<>();
-            map.put(tempo, combinazione);
+        	HashMap<TempoESpazioMedio, String> map = new HashMap<>();
+            map.put(tempoESpazio, combinazione);
             tempi.put(griglia, map);
         }
     }
 
-    private static void scriviInformazioniGenerali(HashMap<String, TreeMap<Long, String>> tempi) {
+    private static void scriviInformazioniGenerali(HashMap<String, HashMap<TempoESpazioMedio, String>> tempiESpazi) {
         // Viene anzitutto pulito il file
-        ScritturaFile.pulisciFile(pathTxt + ".txt");
+        ScritturaFile.pulisciFile(pathTxt + nomeTxt + ".txt");
         StringBuilder sb = new StringBuilder();
         // Le chiavi sono i nomi delle griglie
-        for (String griglia : tempi.keySet()) {
-            // Viene ottenuta la HashMap che associa i tempi alle combinazioni di implementazioni dei compiti
-            TreeMap<Long, String> map = tempi.get(griglia);
+        for (String griglia : tempiESpazi.keySet()) {
+            // Viene ottenuta la HashMap che associa i tempi+spazi alle combinazioni di implementazioni dei compiti
+        	HashMap<TempoESpazioMedio, String> map = tempiESpazi.get(griglia);
+            // Si converte il record custom per dividere tempi e spazi.
+        	// Viene usata una TreeMap per ordinamento crescente automatico per ottenere facilmente minimi e massimi
+            TreeMap<Long, String> tempi = new TreeMap<>();
+            TreeMap<Integer, String> spazi = new TreeMap<>();
+            for(TempoESpazioMedio chiave : map.keySet()) {
+				tempi.put(chiave.tempo(), map.get(chiave));
+				spazi.put(chiave.spazio(), map.get(chiave));
+            }
             // Ora si forma una String unica per trovare 
+            sb.append("\n\n\n");
             sb.append("\t=============== NUOVA GRIGLIA ===============\n");
             sb.append("Statistiche per la griglia: " + griglia + "\n");
+            sb.append("\t ---------- CONFRONTO TEMPORALE ----------\n");
+            sb.append("Tutti i valori: \n");
+            List<Long> chiaviTempi = new ArrayList<>(tempi.keySet());
+            long tempoSalvato = 0;
+            long differenzaMassima = 0;
+            for(int i = 0; i < chiaviTempi.size(); i++) {
+            	sb.append("\nPOSIZIONE " + (i+1));
+            	long tempo = chiaviTempi.get(i);
+            	sb.append("\nTempo: " + Utils.formatTempo(tempo));
+            	if (i > 0) {
+            		long differenza = tempo - chiaviTempi.get(i-1);
+					sb.append("\nDiff: - " + Utils.formatTempo(differenza));
+				}
+            	else {
+            		tempoSalvato = tempo;
+            	}
+            	if(i == chiaviTempi.size() - 1) {
+            		differenzaMassima = tempo-tempoSalvato;
+            	}
+            	sb.append("\nCombinazione: " + tempi.get(tempo) + "\n");
+            }
+            sb.append("Differenza Migliore-Peggiore: ");
+            sb.append(Utils.formatTempo(differenzaMassima) + "\n");
+            sb.append("\n");
             // Min
-            long valoreMinimo = map.firstKey();
-            sb.append("Valore minimo: " + valoreMinimo + ", combinazione: " + map.get(valoreMinimo) + "\n");
+            long tempoMinimo = tempi.firstKey();
+            sb.append("Valore minimo: " + Utils.formatTempo(tempoMinimo) + ", combinazione: " + tempi.get(tempoMinimo) + "\n");
             // Max
-            long valoreMassimo = map.lastKey();
-            sb.append("Valore massimo: " + valoreMassimo + ", combinazione: " + map.get(valoreMassimo) + "\n");
+            long tempoMassimo = tempi.lastKey();
+            sb.append("Valore massimo: " + Utils.formatTempo(tempoMassimo) + ", combinazione: " + tempi.get(tempoMassimo) + "\n");
             // Media
-            long valoreMedio = 0;
-            for (Long tempo : map.keySet()) {
-                valoreMedio += tempo;
+            long tempoMedio = 0;
+            for (Long tempo : tempi.keySet()) {
+                tempoMedio += tempo;
             }
-            valoreMedio /= map.size();
-            sb.append("Valore medio: " + valoreMedio + "\n");
+            tempoMedio /= tempi.size();
+            sb.append("Valore medio: " + Utils.formatTempo(tempoMedio) + "\n");
             // Deviazione standard
-            long deviazioneStandard = 0;
-            for (Long tempo : map.keySet()) {
-                deviazioneStandard += Math.pow(tempo - valoreMedio, 2);
+            double deviazioneStandardTempo = 0;
+            for (Long tempo : tempi.keySet()) {
+                deviazioneStandardTempo += Math.pow(tempo - tempoMedio, 2);
             }
-            deviazioneStandard = (long) Math.sqrt(deviazioneStandard / map.size());
-            sb.append("Deviazione standard: " + deviazioneStandard + "\n");
+            deviazioneStandardTempo = Math.sqrt(deviazioneStandardTempo / tempi.size());
+            sb.append("Deviazione standard: " + deviazioneStandardTempo + "\n");
+            
+            sb.append("\n");
+            
+            sb.append("\t ---------- CONFRONTO SPAZIALE ----------\n");
+            
+            sb.append("Tutti i valori: \n");
+            List<Integer> spaziTempi = new ArrayList<>(spazi.keySet());
+            for(int i = 0; i < spaziTempi.size(); i++) {
+            	sb.append("POSIZIONE " + (i+1));
+            	int spazio= spaziTempi.get(i);
+            	sb.append("\nTempo: " + CalcoloUsoMemoria.formattaMemoria(spazio));
+            	if (i > 0) {
+            		int differenza = spazio - spaziTempi.get(i-1);
+					sb.append(" \nDiff: - " + CalcoloUsoMemoria.formattaMemoria(differenza));
+				}
+            	sb.append("\nCombinazione: " + spazi.get(spazio) + "\n");
+            }
+            sb.append("\n");
+            int spazioMinimo = spazi.firstKey();
+            sb.append("Valore minimo: " + CalcoloUsoMemoria.formattaMemoria(spazioMinimo) + ", combinazione: " + spazi.get(spazioMinimo) + "\n");
+            // Max
+            int spazioMassimo = spazi.lastKey();
+            sb.append("Valore massimo: " + CalcoloUsoMemoria.formattaMemoria(spazioMassimo) + ", combinazione: " + spazi.get(spazioMassimo) + "\n");
+            // Media
+            int spazioMedio = 0;
+            for (Integer spazio : spazi.keySet()) {
+                spazioMedio += spazio;
+            }
+            spazioMedio /= spazi.size();
+            sb.append("Valore medio: " + CalcoloUsoMemoria.formattaMemoria(spazioMedio) + "\n");
+            // Deviazione standard
+            double deviazioneStandardSpazio = 0;
+            for (Integer spazio : spazi.keySet()) {
+                deviazioneStandardSpazio += Math.pow(spazio - spazioMedio, 2);
+            }
+            deviazioneStandardSpazio = Math.sqrt(deviazioneStandardSpazio / spazi.size());
+            sb.append("Deviazione standard: " + deviazioneStandardSpazio + "\n");
         }
         scriviEStampaGenerico(sb.toString());
     }
@@ -417,7 +503,8 @@ public class MainSperimentazione {
      * @param tentativi
      * @param path
      */
-    private static long scriviMediaEsecuzioni(List<IStatisticheEsecuzione> statistiche, int tentativi, String path) {
+    private static TempoESpazioMedio scriviMediaEsecuzioni(List<IStatisticheEsecuzione> statistiche, int tentativi, 
+    		String path, boolean tuttoCorretto) {
         StringBuilder sb = new StringBuilder();
         sb.append("=============== MEDIA ESECUZIONI ===============\n");
         // Si presuppone che tutte le statistiche stiano usando la stessa implementazione
@@ -427,11 +514,16 @@ public class MainSperimentazione {
         int mediaCelle = 0;
         int mediaIterazioni = 0;
         long mediaTempo = 0;
+        int mediaSpazio = 0;
+        double mediaProfondita = 0;
+        
         for (IStatisticheEsecuzione s : statistiche) {
             mediaCache += s.getCacheHit();
             mediaCelle += s.getQuantitaCelleFrontiera();
             mediaIterazioni += s.getIterazioniCondizione();
             mediaTempo += s.getTempoEsecuzione();
+            mediaSpazio += CalcoloUsoMemoria.calcolaUsoMemoria(s, TipoCella.TIPO_A);
+            mediaProfondita += s.getMaxDepth();
         }
         mediaCache /= tentativi;
         sb.append("Media Cache hit: ");
@@ -446,14 +538,22 @@ public class MainSperimentazione {
         sb.append(mediaIterazioni + "\n");
 
         mediaTempo /= tentativi;
-        sb.append("Media Tempo Esecuzione: ");
         sb.append("Media dei Tempi d'Esecuzione: " + Utils.formatTempo(mediaTempo) + "\n");
+        
+        mediaSpazio /= tentativi;
+        sb.append("Media Spazio Occupato: ");
+        sb.append(CalcoloUsoMemoria.formattaMemoria(mediaSpazio) + "\n");
+        
+        mediaProfondita /= tentativi;
+        sb.append("Media Massima Profondita': ");
+        sb.append(mediaProfondita + "\n");
+        
+        sb.append("Tutte le esecuzioni sono corrette? " + tuttoCorretto);
 
-//		ScritturaFile.writeToFile(path, sb.toString());
         scriviEStampaConPath(sb.toString(), path);
         
-        // Questo return è per poi salvare il tempo medio che è ciòc he veramente interessa
-        return mediaTempo;
+        // Questo return è per poi salvare il tempo medio che è ciò che veramente interessa
+        return new TempoESpazioMedio(mediaTempo, mediaSpazio);
     }
 }
 
@@ -463,3 +563,5 @@ public class MainSperimentazione {
 record CoordinateCella(int x, int y) implements IHave2DCoordinate {
 
 }
+
+record TempoESpazioMedio(long tempo, int spazio) {}

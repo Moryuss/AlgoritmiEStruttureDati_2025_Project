@@ -1,0 +1,364 @@
+
+
+
+	=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: Griglia Grande
+	 ---------- CONFRONTO TEMPORALE ----------
+Tutti i valori: 
+
+POSIZIONE 1
+Tempo: 190480 ns
+Combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+
+POSIZIONE 2
+Tempo: 524170 ns
+Diff: - 333690 ns
+Combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V1
+
+POSIZIONE 3
+Tempo: 547030 ns
+Diff: - 22860 ns
+Combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+
+POSIZIONE 4
+Tempo: 860160 ns
+Diff: - 313130 ns
+Combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V1
+
+POSIZIONE 5
+Tempo: 1377200 ns (1,377 ms)
+Diff: - 517040 ns
+Combinazione: PERFORMANCE_NO_CACHE_V0
+
+POSIZIONE 6
+Tempo: 2331370 ns (2,331 ms)
+Diff: - 954170 ns
+Combinazione: PERFORMANCE_FULL_V0
+
+POSIZIONE 7
+Tempo: 2561140 ns (2,561 ms)
+Diff: - 229770 ns
+Combinazione: PERFORMANCE_V0
+
+POSIZIONE 8
+Tempo: 2834920 ns (2,835 ms)
+Diff: - 273780 ns
+Combinazione: PERFORMANCE_SORTED_FRONTIERA_V0
+
+POSIZIONE 9
+Tempo: 4102460 ns (4,102 ms)
+Diff: - 1267540 ns (1,268 ms)
+Combinazione: PERFORMANCE_FULL_V1
+
+POSIZIONE 10
+Tempo: 4311850 ns (4,312 ms)
+Diff: - 209390 ns
+Combinazione: PERFORMANCE_SVUOTA_FRONTIERA_V0
+
+POSIZIONE 11
+Tempo: 4349440 ns (4,349 ms)
+Diff: - 37590 ns
+Combinazione: PERFORMANCE_V1
+
+POSIZIONE 12
+Tempo: 4665540 ns (4,666 ms)
+Diff: - 316100 ns
+Combinazione: PERFORMANCE_NO_CACHE_V1
+
+POSIZIONE 13
+Tempo: 6401400 ns (6,401 ms)
+Diff: - 1735860 ns (1,736 ms)
+Combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+
+POSIZIONE 14
+Tempo: 6485430 ns (6,485 ms)
+Diff: - 84030 ns
+Combinazione: PERFORMANCE_CACHE_V0
+
+POSIZIONE 15
+Tempo: 7181090 ns (7,181 ms)
+Diff: - 695660 ns
+Combinazione: PERFORMANCE_SORTED_FRONTIERA_V1
+
+POSIZIONE 16
+Tempo: 8007870 ns (8,008 ms)
+Diff: - 826780 ns
+Combinazione: PERFORMANCE_SVUOTA_FRONTIERA_V1
+
+POSIZIONE 17
+Tempo: 10796860 ns (10,797 ms)
+Diff: - 2788990 ns (2,789 ms)
+Combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V1
+
+POSIZIONE 18
+Tempo: 11398590 ns (11,399 ms)
+Diff: - 601730 ns
+Combinazione: DEFAULT_V1
+
+POSIZIONE 19
+Tempo: 14270310 ns (14,270 ms)
+Diff: - 2871720 ns (2,872 ms)
+Combinazione: PERFORMANCE_CACHE_V1
+
+POSIZIONE 20
+Tempo: 15165690 ns (15,166 ms)
+Diff: - 895380 ns
+Combinazione: DEFAULT_V0
+
+Valore minimo: 190480 ns, combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 15165690 ns (15,166 ms), combinazione: DEFAULT_V0
+Valore medio: 5418150 ns (5,418 ms)
+Deviazione standard: 4422279.73678622
+	 ---------- CONFRONTO SPAZIALE ----------
+Tutti i valori: 
+POSIZIONE 1
+Tempo: 12,50 KB
+Combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+
+Valore minimo: 12,50 KB, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 12,50 KB, combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 12,50 KB
+Deviazione standard: 0.0
+
+
+
+	=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: Griglia Piccola
+	 ---------- CONFRONTO TEMPORALE ----------
+Tutti i valori: 
+
+POSIZIONE 1
+Tempo: 93710 ns
+Combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+
+POSIZIONE 2
+Tempo: 131830 ns
+Diff: - 38120 ns
+Combinazione: PERFORMANCE_SORTED_FRONTIERA_V0
+
+POSIZIONE 3
+Tempo: 137440 ns
+Diff: - 5610 ns
+Combinazione: PERFORMANCE_V0
+
+POSIZIONE 4
+Tempo: 190270 ns
+Diff: - 52830 ns
+Combinazione: PERFORMANCE_CACHE_V0
+
+POSIZIONE 5
+Tempo: 199550 ns
+Diff: - 9280 ns
+Combinazione: PERFORMANCE_FULL_V0
+
+POSIZIONE 6
+Tempo: 205020 ns
+Diff: - 5470 ns
+Combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+
+POSIZIONE 7
+Tempo: 261400 ns
+Diff: - 56380 ns
+Combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V1
+
+POSIZIONE 8
+Tempo: 312230 ns
+Diff: - 50830 ns
+Combinazione: PERFORMANCE_V1
+
+POSIZIONE 9
+Tempo: 312790 ns
+Diff: - 560 ns
+Combinazione: PERFORMANCE_NO_CACHE_V1
+
+POSIZIONE 10
+Tempo: 313550 ns
+Diff: - 760 ns
+Combinazione: PERFORMANCE_SORTED_FRONTIERA_V1
+
+POSIZIONE 11
+Tempo: 356480 ns
+Diff: - 42930 ns
+Combinazione: PERFORMANCE_SVUOTA_FRONTIERA_V1
+
+POSIZIONE 12
+Tempo: 357790 ns
+Diff: - 1310 ns
+Combinazione: PERFORMANCE_CACHE_V1
+
+POSIZIONE 13
+Tempo: 361710 ns
+Diff: - 3920 ns
+Combinazione: PERFORMANCE_FULL_V1
+
+POSIZIONE 14
+Tempo: 410630 ns
+Diff: - 48920 ns
+Combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V1
+
+POSIZIONE 15
+Tempo: 775600 ns
+Diff: - 364970 ns
+Combinazione: PERFORMANCE_NO_CACHE_V0
+
+POSIZIONE 16
+Tempo: 789090 ns
+Diff: - 13490 ns
+Combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+
+POSIZIONE 17
+Tempo: 943660 ns
+Diff: - 154570 ns
+Combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V1
+
+POSIZIONE 18
+Tempo: 1539140 ns (1,539 ms)
+Diff: - 595480 ns
+Combinazione: PERFORMANCE_SVUOTA_FRONTIERA_V0
+
+POSIZIONE 19
+Tempo: 5420720 ns (5,421 ms)
+Diff: - 3881580 ns (3,882 ms)
+Combinazione: DEFAULT_V1
+
+POSIZIONE 20
+Tempo: 6488890 ns (6,489 ms)
+Diff: - 1068170 ns (1,068 ms)
+Combinazione: DEFAULT_V0
+
+Valore minimo: 93710 ns, combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 6488890 ns (6,489 ms), combinazione: DEFAULT_V0
+Valore medio: 980075 ns
+Deviazione standard: 1700621.080939255
+	 ---------- CONFRONTO SPAZIALE ----------
+Tutti i valori: 
+POSIZIONE 1
+Tempo: 3,13 KB
+Combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+
+Valore minimo: 3,13 KB, combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 3,13 KB, combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+Valore medio: 3,13 KB
+Deviazione standard: 0.0
+
+
+
+	=============== NUOVA GRIGLIA ===============
+Statistiche per la griglia: Griglia Media
+	 ---------- CONFRONTO TEMPORALE ----------
+Tutti i valori: 
+
+POSIZIONE 1
+Tempo: 142140 ns
+Combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+
+POSIZIONE 2
+Tempo: 351670 ns
+Diff: - 209530 ns
+Combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V1
+
+POSIZIONE 3
+Tempo: 373590 ns
+Diff: - 21920 ns
+Combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V0
+
+POSIZIONE 4
+Tempo: 553830 ns
+Diff: - 180240 ns
+Combinazione: PERFORMANCE_NO_SORTED_FRONTIERA_V1
+
+POSIZIONE 5
+Tempo: 836330 ns
+Diff: - 282500 ns
+Combinazione: PERFORMANCE_SORTED_FRONTIERA_V0
+
+POSIZIONE 6
+Tempo: 1083310 ns (1,083 ms)
+Diff: - 246980 ns
+Combinazione: PERFORMANCE_NO_CACHE_V0
+
+POSIZIONE 7
+Tempo: 1331940 ns (1,332 ms)
+Diff: - 248630 ns
+Combinazione: PERFORMANCE_SVUOTA_FRONTIERA_V0
+
+POSIZIONE 8
+Tempo: 1442390 ns (1,442 ms)
+Diff: - 110450 ns
+Combinazione: PERFORMANCE_V0
+
+POSIZIONE 9
+Tempo: 1522550 ns (1,523 ms)
+Diff: - 80160 ns
+Combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V0
+
+POSIZIONE 10
+Tempo: 1708600 ns (1,709 ms)
+Diff: - 186050 ns
+Combinazione: PERFORMANCE_CACHE_V0
+
+POSIZIONE 11
+Tempo: 1910410 ns (1,910 ms)
+Diff: - 201810 ns
+Combinazione: PERFORMANCE_V1
+
+POSIZIONE 12
+Tempo: 1929410 ns (1,929 ms)
+Diff: - 19000 ns
+Combinazione: PERFORMANCE_FULL_V0
+
+POSIZIONE 13
+Tempo: 2132460 ns (2,132 ms)
+Diff: - 203050 ns
+Combinazione: PERFORMANCE_NO_CACHE_V1
+
+POSIZIONE 14
+Tempo: 2150670 ns (2,151 ms)
+Diff: - 18210 ns
+Combinazione: PERFORMANCE_FULL_V1
+
+POSIZIONE 15
+Tempo: 2181470 ns (2,181 ms)
+Diff: - 30800 ns
+Combinazione: PERFORMANCE_SORTED_FRONTIERA_V1
+
+POSIZIONE 16
+Tempo: 2348230 ns (2,348 ms)
+Diff: - 166760 ns
+Combinazione: PERFORMANCE_CACHE_V1
+
+POSIZIONE 17
+Tempo: 2852240 ns (2,852 ms)
+Diff: - 504010 ns
+Combinazione: PERFORMANCE_SVUOTA_FRONTIERA_V1
+
+POSIZIONE 18
+Tempo: 3509910 ns (3,510 ms)
+Diff: - 657670 ns
+Combinazione: PERFORMANCE_NO_CONDIZIONE_RAFFORZATA_V1
+
+POSIZIONE 19
+Tempo: 4553670 ns (4,554 ms)
+Diff: - 1043760 ns (1,044 ms)
+Combinazione: DEFAULT_V1
+
+POSIZIONE 20
+Tempo: 8039080 ns (8,039 ms)
+Diff: - 3485410 ns (3,485 ms)
+Combinazione: DEFAULT_V0
+
+Valore minimo: 142140 ns, combinazione: PERFORMANCE_CONDIZIONE_RAFFORZATA_V0
+Valore massimo: 8039080 ns (8,039 ms), combinazione: DEFAULT_V0
+Valore medio: 2047695 ns (2,048 ms)
+Deviazione standard: 1736801.9645270442
+	 ---------- CONFRONTO SPAZIALE ----------
+Tutti i valori: 
+POSIZIONE 1
+Tempo: 6,25 KB
+Combinazione: PERFORMANCE_SORTED_FRONTIERA_V0
+
+Valore minimo: 6,25 KB, combinazione: PERFORMANCE_SORTED_FRONTIERA_V0
+Valore massimo: 6,25 KB, combinazione: PERFORMANCE_SORTED_FRONTIERA_V0
+Valore medio: 6,25 KB
+Deviazione standard: 0.0
+
