@@ -5,7 +5,7 @@
 │ Tipo griglia                        │ 1                            │
 │ Origine                             │ (5,3)                        │
 │ Destinazione                        │ (18,15)                      │
-│ Tempo esecuzione                    │ 40000 ns                     │
+│ Tempo esecuzione                    │ 21200 ns                     │
 │ Celle frontiera                     │ 150                          │
 │ Iterazioni condizione               │ 500                          │
 │ Cache hit                           │ 25                           │

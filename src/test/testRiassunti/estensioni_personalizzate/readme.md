@@ -8,7 +8,7 @@
 - **Compito Tre**: DEFAULT, flags: 00000010, active: [MONITOR_ENABLED]}
 
 ## Risultati Esecuzione
-- **Tempo**: 30200 ns
+- **Tempo**: 32700 ns
 - **Profondità massima**: 12
 - **Celle frontiera**: 150
 - **Iterazioni condizione**: 500

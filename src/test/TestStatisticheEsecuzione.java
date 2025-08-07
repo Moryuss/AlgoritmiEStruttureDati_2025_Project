@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 import francesco.ICella2D;
-import matteo.CamminoConfiguration;
 import matteo.ConfigurationMode;
 import matteo.ICammino;
 import matteo.ILandmark;
@@ -67,7 +66,7 @@ class TestStatisticheEsecuzione {
 						@Override
 						public int stato() {
 							// TODO Auto-generated method stub
-							return 0;
+							return 1;
 						}
                     },
                     new ILandmark() {
@@ -78,7 +77,7 @@ class TestStatisticheEsecuzione {
 						@Override
 						public int stato() {
 							// TODO Auto-generated method stub
-							return 0;
+							return 2;
 						}
                     }
                 );
@@ -180,7 +179,7 @@ class TestStatisticheEsecuzione {
         assertTrue(riassunto.contains("Frontiera sorted: SI"));
         assertTrue(riassunto.contains("Lunghezza cammino trovato: 7.07"));
         assertTrue(riassunto.contains("Numero landmarks: 2"));
-        assertTrue(riassunto.contains("(2,2)(4,4)"));
+        assertTrue(riassunto.contains("<(2,2),1>, <(4,4),2>"));
         
         // Test formattazione tempo
         assertTrue(riassunto.contains("ns"), "Il riassunto dovrebbe contenere nanosecondi");

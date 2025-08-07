@@ -6,7 +6,7 @@
   "tipoGriglia": 1,
   "origine": {"x": 5, "y": 3},
   "destinazione": {"x": 18, "y": 15},
-  "tempoEsecuzioneNs": 40000,
+  "tempoEsecuzioneNs": 21200,
   "maxDepth": 12,
   "celleFrontiera": 150,
   "iterazioniCondizione": 500,

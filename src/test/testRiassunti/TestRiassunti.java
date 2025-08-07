@@ -19,6 +19,7 @@ import java.util.ArrayList;
 public class TestRiassunti {
 
 	boolean stampaRiassunto = false; // Variabile per decidere se stampare i riassunti
+	boolean salvaRiassunto = false; // Imposta a true per salvare su files i riassunti
 	private IStatisticheEsecuzione stats;
 
 	@BeforeEach
@@ -126,87 +127,91 @@ public class TestRiassunti {
 		}
 	}
 	@Test
-    @DisplayName("Test salvataggio file - tutti i formati")
-    void testSalvataggioFile() {
+	@DisplayName("Test salvataggio file - tutti i formati")
+	void testSalvataggioFile() {
 		String baseDir = "src/test/testRiassunti/tutti_formati";
-        
-        if (stampaRiassunto) {
-            System.out.println("\n=== TEST SALVATAGGIO FILE ===");
-            System.out.println("Directory: " + baseDir);
-        }
-        
-        for (TipiRiassunto tipo : TipiRiassunto.values()) {
-            Riassunto riassunto = stats.generaRiassunto(tipo);
-            String nomeFile = "riassunto_" + tipo.name().toLowerCase();
-            
-            try {
-                // Test salvataggio con estensione automatica
-                riassunto.salvaFile(nomeFile, baseDir);
-                if (stampaRiassunto) {
-                    System.out.println("✓ Salvato: " + tipo.name());
-                }
-            } catch (Exception e) {
-                if (stampaRiassunto) {
-                    System.err.println("✗ Errore salvando " + tipo.name() + ": " + e.getMessage());
-                }
-            }
-        }
-        
-        if (stampaRiassunto) {
-            System.out.println("=== FINE TEST SALVATAGGIO ===\n");
-        }
-    }
-    
-    @Test
-    @DisplayName("Test salvataggio con estensioni personalizzate")
-    void testSalvataggioEstensioniPersonalizzate() {
-        
-        if (stampaRiassunto) {
-            System.out.println("\n=== TEST ESTENSIONI PERSONALIZZATE ===");
-        }
-        
-        // Test con estensioni forzate
-        Riassunto json = stats.generaRiassunto(TipiRiassunto.JSON);
-        json.salvaFile("custom_report.data", "src/test/testRiassunti/estensioni_personalizzate"); // Forza .data invece di .json
-        
-        Riassunto csv = stats.generaRiassunto(TipiRiassunto.CSV);
-        csv.salvaFile("spreadsheet.txt", "src/test/testRiassunti/estensioni_personalizzate"); // Forza .txt invece di .csv
-        
-        Riassunto markdown = stats.generaRiassunto(TipiRiassunto.MARKDOWN);
-        markdown.salvaFile("src/test/testRiassunti/estensioni_personalizzate/readme"); // Estensione automatica (.md)
-        
-        if (stampaRiassunto) {
-            System.out.println("✓ Test estensioni completato");
-            System.out.println("=== FINE TEST ESTENSIONI ===\n");
-        }
-    }
-    
-    @Test
-    @DisplayName("Test salvataggio directory corrente")
-    void testSalvataggioDirectoryCorrente() {
-        if (stampaRiassunto) {
-            System.out.println("\n=== TEST DIRECTORY CORRENTE ===");
-        }
-        
-        Riassunto compatto = stats.generaRiassunto(TipiRiassunto.COMPATTO);
-        
-        try {
-            compatto.salvaFile("src/test/testRiassunti/dir_corrente/riassunto_compatto");
-            if (stampaRiassunto) {
-                System.out.println("✓ File salvato nella directory corrente");
-            }
-        } catch (Exception e) {
-            if (stampaRiassunto) {
-                System.err.println("✗ Errore: " + e.getMessage());
-            }
-        }
-        
-        if (stampaRiassunto) {
-            System.out.println("=== FINE TEST DIRECTORY CORRENTE ===\n");
-        }
-    }
-    
-   
+
+		if (stampaRiassunto) {
+			System.out.println("\n=== TEST SALVATAGGIO FILE ===");
+			System.out.println("Directory: " + baseDir);
+		}
+
+		for (TipiRiassunto tipo : TipiRiassunto.values()) {
+			Riassunto riassunto = stats.generaRiassunto(tipo);
+			String nomeFile = "riassunto_" + tipo.name().toLowerCase();
+
+			try {
+				if(salvaRiassunto) {
+					// Test salvataggio con estensione automatica
+					riassunto.salvaFile(nomeFile, baseDir);
+					if (stampaRiassunto) {
+						System.out.println("✓ Salvato: " + tipo.name());
+					}
+				}
+			} catch (Exception e) {
+				if (stampaRiassunto) {
+					System.err.println("✗ Errore salvando " + tipo.name() + ": " + e.getMessage());
+				}
+			}
+		}
+
+		if (stampaRiassunto) {
+			System.out.println("=== FINE TEST SALVATAGGIO ===\n");
+		}
+	}
+
+	@Test
+	@DisplayName("Test salvataggio con estensioni personalizzate")
+	void testSalvataggioEstensioniPersonalizzate() {
+
+		if (stampaRiassunto) {
+			System.out.println("\n=== TEST ESTENSIONI PERSONALIZZATE ===");
+		}
+
+		// Test con estensioni forzate
+		Riassunto json = stats.generaRiassunto(TipiRiassunto.JSON);
+		if(salvaRiassunto) json.salvaFile("custom_report.data", "src/test/testRiassunti/estensioni_personalizzate"); // Forza .data invece di .json
+
+		Riassunto csv = stats.generaRiassunto(TipiRiassunto.CSV);
+		if(salvaRiassunto) csv.salvaFile("spreadsheet.txt", "src/test/testRiassunti/estensioni_personalizzate"); // Forza .txt invece di .csv
+
+		Riassunto markdown = stats.generaRiassunto(TipiRiassunto.MARKDOWN);
+		if(salvaRiassunto) markdown.salvaFile("src/test/testRiassunti/estensioni_personalizzate/readme"); // Estensione automatica (.md)
+
+		if (stampaRiassunto) {
+			System.out.println("✓ Test estensioni completato");
+			System.out.println("=== FINE TEST ESTENSIONI ===\n");
+		}
+	}
+
+	@Test
+	@DisplayName("Test salvataggio directory corrente")
+	void testSalvataggioDirectoryCorrente() {
+		if (stampaRiassunto) {
+			System.out.println("\n=== TEST DIRECTORY CORRENTE ===");
+		}
+
+		Riassunto compatto = stats.generaRiassunto(TipiRiassunto.COMPATTO);
+
+		try {
+			if(salvaRiassunto) {
+				compatto.salvaFile("src/test/testRiassunti/dir_corrente/riassunto_compatto");
+				if (stampaRiassunto) {
+					System.out.println("✓ File salvato nella directory corrente");
+				}
+			}
+		} catch (Exception e) {
+			if (stampaRiassunto) {
+				System.err.println("✗ Errore: " + e.getMessage());
+			}
+		}
+
+		if (stampaRiassunto) {
+			System.out.println("=== FINE TEST DIRECTORY CORRENTE ===\n");
+		}
+	}
+
+
 
 	// Classi helper per il test
 	private static class CellaEsempio implements ICella2D {

@@ -2,6 +2,7 @@ package matteo.Riassunto;
 
 import matteo.ICammino;
 import matteo.ILandmark;
+import nicolas.StatoCella;
 import utils.Utils;
 
 public class RiassuntoFactory {
@@ -53,7 +54,8 @@ public class RiassuntoFactory {
             sb.append("Numero landmarks: ").append(risultato.landmarks().size()).append("\n");
             sb.append("Sequenza landmarks: ");
             for (ILandmark l : risultato.landmarks()) { 
-                sb.append("(").append(l.x()).append(",").append(l.y()).append(")");
+                sb.append("<(").append(l.x()).append(",").append(l.y()).append("),")
+                .append(StatoCella.CONTESTO.is(l) ? "1" : "2").append(">, ");
             }
             sb.append("\n");
         }

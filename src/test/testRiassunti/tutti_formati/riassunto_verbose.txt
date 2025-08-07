@@ -5,7 +5,7 @@ Origine: (5,3)
 Destinazione: (18,15)
 Modalità Compito Tre: DEFAULT, flags: 00000010, active: [MONITOR_ENABLED]}
 Modalità Compito Due: Compito Due Test
-Tempo di esecuzione: 40000 ns
+Tempo di esecuzione: 21200 ns
 Profondità massima ricorsione: 12
 Totale celle di frontiera considerate: 150
 Totale iterazioni condizione (riga 16/17): 500
@@ -17,4 +17,4 @@ Svuota frontiera attiva: SI
 Totale svuota frontiera: 3
 Lunghezza cammino trovato: 25.0
 Numero landmarks: 4
-Sequenza landmarks: (5,3)(10,8)(15,12)(18,15)
+Sequenza landmarks: <(5,3),2>, <(10,8),2>, <(15,12),2>, <(18,15),2>, 

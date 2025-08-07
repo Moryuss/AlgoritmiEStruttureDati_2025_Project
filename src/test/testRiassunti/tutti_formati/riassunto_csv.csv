@@ -6,7 +6,7 @@ origine_x,5
 origine_y,3
 destinazione_x,18
 destinazione_y,15
-tempo_esecuzione_ns,40000
+tempo_esecuzione_ns,21200
 max_depth,12
 celle_frontiera,150
 iterazioni_condizione,500
