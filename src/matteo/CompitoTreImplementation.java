@@ -10,6 +10,9 @@ import java.util.concurrent.TimeUnit;
 import francesco.ICella2D;
 import francesco.IGriglia;
 import francesco.IHave2DCoordinate;
+import matteo.Riassunto.IStatisticheEsecuzione;
+import matteo.Riassunto.StatisticheEsecuzione;
+import matteo.Riassunto.TipiRiassunto;
 import matteo.Strategies.StrategyBundle;
 import matteo.Strategies.StrategyFactory;
 import nicolas.*;
@@ -142,7 +145,8 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	}
 
 	private void generaReportFinale(ICammino risultato) {
-		report = stats.generaRiassunto(risultato);
+		stats.setCammino(risultato);
+		report = stats.generaRiassunto(TipiRiassunto.VERBOSE).toString();
 	}
 
 	private void stampaStatoDestinazioneFinale(ICammino risultato) {
@@ -212,8 +216,8 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	private void salvaInformazioniGriglia(IGriglia<?> griglia, ICella2D O, ICella2D D) {
 		stats.saveDimensioniGriglia(griglia.height(), griglia.width());
 		stats.saveTipoGriglia(griglia.getTipo());
-		stats.saveOrigine(O);
-		stats.saveDestinazione(D);
+		stats.setOrigine(O);
+		stats.setDestinazione(D);
 	}
 
 	private void inizializzaStatistiche() {

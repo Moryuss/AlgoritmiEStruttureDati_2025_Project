@@ -1,6 +1,8 @@
-package matteo;
+package matteo.Riassunto;
 
 import francesco.ICella2D;
+import matteo.CamminoConfiguration;
+import matteo.ICammino;
 
 public interface IStatisticheEsecuzione {
 
@@ -11,8 +13,8 @@ public interface IStatisticheEsecuzione {
 	public void saveTipoGriglia(int tipo);
 	public int getTipoGriglia();
 
-	public void saveOrigine(ICella2D origine);
-	public void saveDestinazione(ICella2D destinazione);
+	public void setOrigine(ICella2D origine);
+	public void setDestinazione(ICella2D destinazione);
 	public ICella2D getOrigine();
 	public ICella2D getDestinazione();
 
@@ -28,8 +30,6 @@ public interface IStatisticheEsecuzione {
 	public void interrompiCalcolo();
 	public boolean isCalcoloInterrotto();
 	
-	public String generaRiassunto(ICammino risultato);
-
 	public void incrementaCacheHit();
 	public int getCacheHit();
 
@@ -56,4 +56,11 @@ public interface IStatisticheEsecuzione {
 	
 	public String getNomeCompitoDue();
 	public void setNomeCompitoDue(String nomeCompitoDue);
+	
+	public void setCammino(ICammino cammino);
+	public ICammino getCammino();
+	
+	public String generaRiassunto(ICammino risultato);
+	
+	public Riassunto generaRiassunto(TipiRiassunto tipoRiassunto);
 }

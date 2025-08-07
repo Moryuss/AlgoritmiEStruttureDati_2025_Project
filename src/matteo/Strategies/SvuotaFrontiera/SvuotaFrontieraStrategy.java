@@ -7,7 +7,7 @@ import java.util.List;
 import francesco.ICella2D;
 import matteo.ILandmark;
 import matteo.IProgressoMonitor;
-import matteo.IStatisticheEsecuzione;
+import matteo.Riassunto.IStatisticheEsecuzione;
 import nicolas.ICellaConDistanze;
 import utils.Utils;
 

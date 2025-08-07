@@ -14,7 +14,7 @@ import matteo.ConfigurationMode;
 import matteo.ICammino;
 import matteo.ICompitoTre;
 import matteo.ILandmark;
-import matteo.IStatisticheEsecuzione;
+import matteo.Riassunto.IStatisticheEsecuzione;
 import nicolas.CompitoDueImpl;
 import nicolas.ICellaConDistanze;
 import nicolas.ICompitoDue;

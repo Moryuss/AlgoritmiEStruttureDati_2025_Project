@@ -1,0 +1,1 @@
+CAMMINOMIN: Griglia 30x20 | Tempo: 172600 ns | Celle frontiera: 150 | Cache hit: 25 | Cammino: 25.0

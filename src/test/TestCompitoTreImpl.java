@@ -16,11 +16,13 @@ import francesco.*;
 import nicolas.*;
 import utils.Utils;
 import matteo.*;
+import matteo.Riassunto.Riassunto;
+import matteo.Riassunto.TipiRiassunto;
 
 public class TestCompitoTreImpl {
 
 	private boolean debug = false;
-	private boolean riassunto = false;
+	private boolean riassunto = true;
 	private boolean monitorON = true;
 	private boolean debugMonitor = false;	//stampa il monitor nei metodi specific
 	private boolean bit = false;	//stampa lo stato in bit
@@ -50,7 +52,9 @@ public class TestCompitoTreImpl {
 	@AfterEach
 	public void stampaRiassunto() {
 		if (riassunto) {
-			System.out.println(c.getReport());
+			Riassunto riassunto = c.getStatisticheEsecuzione()
+					.generaRiassunto(TipiRiassunto.VERBOSE);
+			riassunto.stampa();
 		}
 
 		if (c instanceof CompitoTreImplementation c2 && monitorON && debugMonitor) {

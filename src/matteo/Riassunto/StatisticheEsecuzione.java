@@ -1,14 +1,20 @@
-package matteo;
+package matteo.Riassunto;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import francesco.ICella2D;
+import matteo.CamminoConfiguration;
+import matteo.ConfigurationMode;
+import matteo.ICammino;
+import matteo.ILandmark;
 import utils.Utils;
 
 // Classe per raccogliere statistiche
 public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 
+	private ICammino cammino;
+	
 	private int width;
 	private int height;
 	private int tipoGriglia;
@@ -48,12 +54,12 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	}
 
 	@Override
-	public void saveOrigine(ICella2D origine) {
+	public void setOrigine(ICella2D origine) {
 		this.origine = origine;
 	}
 
 	@Override
-	public void saveDestinazione(ICella2D destinazione) {
+	public void setDestinazione(ICella2D destinazione) {
 		this.destinazione = destinazione;
 	}
 
@@ -99,46 +105,17 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	public void setCompitoTreMode(CamminoConfiguration mode) {
 		this.compitoTreMode = mode;
 	}
+	@Override
+	public Riassunto generaRiassunto(TipiRiassunto tipoRiassunto) {
+	    return RiassuntoFactory.creaRiassunto(tipoRiassunto, this);
+	}
 	
+	@Deprecated
 	@Override
 	public String generaRiassunto(ICammino risultato) {
-		if(this.tempoTotaleNs==null) tempoTotaleNs = System.nanoTime() - tempoInizio;
-		String tempoFormattato = Utils.formatTempo(tempoTotaleNs);
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append("=== RIASSUNTO ESECUZIONE CAMMINOMIN ===\n");
-		sb.append("Dimensioni griglia: Width = ").append(this.width).append(", Height = ").append(this.height).append("\n");
-		sb.append("Tipo griglia: ").append(this.tipoGriglia).append("\n");
-		sb.append("Origine: (").append(origine.x()).append(",").append(origine.y()).append(")").append("\n");
-		sb.append("Destinazione: (").append(destinazione.x()).append(",").append(destinazione.y()).append(")").append("\n");
-		sb.append("Modalità Compito Tre: ").append(compitoTreMode.toString()).append("\n");
-		sb.append("Modalità Compito Due: ").append(compitoDueName).append("\n");
-		sb.append("Tempo di esecuzione: ").append(tempoFormattato).append("\n");
-		sb.append("Profondità massima ricorsione: " + maxDepth).append("\n");
-		sb.append("Totale celle di frontiera considerate: ").append(totaleCelleFrontiera).append("\n");
-		sb.append("Totale iterazioni condizione (riga 16/17): ").append(totaleIterazioniCondizione).append("\n");
-		sb.append("Calcolo interrotto: ").append(calcoloInterrotto ? "SI" : "NO").append("\n");
-		sb.append("Cache attiva: ").append(cacheAttiva ? "SI" : "NO").append("\n");
-		sb.append("Cache hit: ").append(cacheHit).append("\n");
-		sb.append("Frontiera sorted: ").append(frontieraSotred ? "SI" : "NO").append("\n");
-		sb.append("Svuota frontiera attiva: ").append(svuotaFrontiera ? "SI" : "NO").append("\n");
-		sb.append("Totale svuota frontiera: ").append(totaleSvuotaFrontiera).append("\n");
-		if (risultato != null) {
-			sb.append("Lunghezza cammino trovato: ").append(risultato.lunghezza()).append("\n");
-			sb.append("Numero landmarks: ").append(risultato.landmarks().size()).append("\n");
-			sb.append("Sequenza landmarks: ");
-			for (ILandmark l : risultato.landmarks()) { 
-				sb.append("(").append(l.x()).append(",").append(l.y()).append(")");
-			}
-			sb.append("\n");
-		}
+		if(this.tempoTotaleNs==null) tempoTotaleNs = System.nanoTime() - tempoInizio;		
 
-		//		sb.append("Prestazioni registrate:\n");
-		//		for (String prestazione : prestazioni) {
-		//			sb.append("  - ").append(prestazione).append("\n");
-		//		}
-
-		return sb.toString();
+		return this.generaRiassunto(TipiRiassunto.VERBOSE).toString();
 	}
 
 	@Override
@@ -254,5 +231,17 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione{
 	public void setNomeCompitoDue(String nomeCompitoDue) {
 		this.compitoDueName = nomeCompitoDue;		
 	}
+
+	@Override
+	public void setCammino(ICammino cammino) {
+			this.cammino = cammino;
+	}
+
+	@Override
+	public ICammino getCammino() {
+		return this.cammino;
+	}
+
+	
 	
 }

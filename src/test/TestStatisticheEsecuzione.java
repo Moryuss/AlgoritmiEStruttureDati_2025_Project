@@ -9,8 +9,10 @@ import matteo.CamminoConfiguration;
 import matteo.ConfigurationMode;
 import matteo.ICammino;
 import matteo.ILandmark;
-import matteo.IStatisticheEsecuzione;
-import matteo.StatisticheEsecuzione;
+import matteo.Riassunto.IStatisticheEsecuzione;
+import matteo.Riassunto.Riassunto;
+import matteo.Riassunto.StatisticheEsecuzione;
+import matteo.Riassunto.TipiRiassunto;
 
 class TestStatisticheEsecuzione {
     
@@ -106,8 +108,8 @@ class TestStatisticheEsecuzione {
         assertEquals(1, stats.getTipoGriglia());
         
         // Test origine e destinazione
-        stats.saveOrigine(mockOrigine);
-        stats.saveDestinazione(mockDestinazione);
+        stats.setOrigine(mockOrigine);
+        stats.setDestinazione(mockDestinazione);
         assertEquals(mockOrigine, stats.getOrigine());
         assertEquals(mockDestinazione, stats.getDestinazione());
         
@@ -160,6 +162,7 @@ class TestStatisticheEsecuzione {
         assertTrue(tempoEsecuzione > 1, "Il tempo di esecuzione dovrebbe essere positivo");
         
         // Test generazione riassunto
+        stats.setCammino(mockRisultato);
         String riassunto = stats.generaRiassunto(mockRisultato);
         
         // Verifica che il riassunto contenga le informazioni principali
@@ -183,9 +186,10 @@ class TestStatisticheEsecuzione {
         assertTrue(riassunto.contains("ns"), "Il riassunto dovrebbe contenere nanosecondi");
         
         // Test con risultato null
-        String riassuntoSenzaRisultato = stats.generaRiassunto(null);
-        assertFalse(riassuntoSenzaRisultato.contains("Lunghezza cammino"));
-        assertFalse(riassuntoSenzaRisultato.contains("Numero landmarks"));
+        stats.setCammino(null);
+        Riassunto riassuntoSenzaRisultato = stats.generaRiassunto(TipiRiassunto.VERBOSE);
+        assertFalse(riassuntoSenzaRisultato.getContenuto().contains("Lunghezza cammino"));
+        assertFalse(riassuntoSenzaRisultato.getContenuto().contains("Numero landmarks"));
         
         // Test saveTime
         stats.saveTime();

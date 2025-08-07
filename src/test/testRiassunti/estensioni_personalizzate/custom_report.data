@@ -1,0 +1,23 @@
+{
+  "dimensioni": {
+    "larghezza": 30,
+    "altezza": 20
+  },
+  "tipoGriglia": 1,
+  "origine": {"x": 5, "y": 3},
+  "destinazione": {"x": 18, "y": 15},
+  "tempoEsecuzioneNs": 30200,
+  "maxDepth": 12,
+  "celleFrontiera": 150,
+  "iterazioniCondizione": 500,
+  "cacheHit": 25,
+  "calcoloInterrotto": false,
+  "cacheAttiva": true,
+  "frontieraSorted": true,
+  "svuotaFrontieraAttiva": true,
+  "svuotaFrontieraCount": 3,
+  "cammino": {
+    "lunghezza": 25.0,
+    "landmarks": 4
+  }
+}
