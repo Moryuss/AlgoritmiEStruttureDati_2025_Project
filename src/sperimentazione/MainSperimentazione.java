@@ -37,11 +37,11 @@ public class MainSperimentazione {
 	private static final List<String> CARTELLE = List.of(
 //			DOPPIO_DENTE_DI_SEGA_PATH,
 //			LINEA_SPEZZATA_PATH,
-//			SCACCHIERA_PATH,
+			SCACCHIERA_PATH,
 //			SPIRALE_PATH,
-//			TIPO_GRIGLIA_PATH,
-			VARIAZIONE_DIMENSIONI_PATH
-//			VARIAZIONE_OSTACOLI_PATH
+//			TIPO_GRIGLIA_PATH
+			VARIAZIONE_DIMENSIONI_PATH,
+			VARIAZIONE_OSTACOLI_PATH
             );
 
     private static final List<ConfigurationMode> TRES = List.of(
@@ -526,26 +526,26 @@ public class MainSperimentazione {
             mediaSpazio += CalcoloUsoMemoria.calcolaUsoMemoria(s, TipoCella.TIPO_A);
             mediaProfondita += s.getMaxDepth();
         }
-        mediaCache /= tentativi;
+        mediaCache /= statistiche.size();
         sb.append("Media Cache hit: ");
         sb.append(mediaCache + "\n");
 
-        mediaCelle /= tentativi;
+        mediaCelle /= statistiche.size();
         sb.append("Media Celle di Frontiera: ");
         sb.append(mediaCelle + "\n");
 
-        mediaIterazioni /= tentativi;
+        mediaIterazioni /= statistiche.size();
         sb.append("Media Iterazioni Condizione: ");
         sb.append(mediaIterazioni + "\n");
 
-        mediaTempo /= tentativi;
+        mediaTempo /= statistiche.size();
         sb.append("Media dei Tempi d'Esecuzione: " + Utils.formatTempo(mediaTempo) + "\n");
         
-        mediaSpazio /= tentativi;
+        mediaSpazio /= statistiche.size();
         sb.append("Media Spazio Occupato: ");
         sb.append(CalcoloUsoMemoria.formattaMemoria(mediaSpazio) + "\n");
         
-        mediaProfondita /= tentativi;
+        mediaProfondita /= statistiche.size();
         sb.append("Media Massima Profondita': ");
         sb.append(mediaProfondita + "\n");
         

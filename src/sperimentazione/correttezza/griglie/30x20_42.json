@@ -1,0 +1,27 @@
+{
+	"width":30,
+	"height":20,
+	"randomSeed": 42,
+	"maxOstacoli": {
+		"SEMPLICE": 3,
+		"AGGLOMERATO": 1,
+		"BARRA_VERTICALE": 2,
+		"BARRA_ORIZZONTALE": 2,
+		"BARRA_DIAGONALE": 1,
+		"ZONA_CHIUSA": 0,
+		"DELIMITATORE_VERTICALE": 0,
+		"DELIMITATORE_ORIZZONTALE": 0
+	},
+	"load":{
+		"path":"griglie.int.json",
+		"name":"test1"
+	},
+	"applet":{
+		"width":1200,
+		"height":600,
+		"demo":false,
+		"showText":false,
+		"palette":["0xff0000", "0xff4000", "0xff8000", "0xffb000","0x004000", "0xffffff", "0x000000", "0xff00ff", "0x00ff00"],
+		"paletteLegend":["origine","regina","contesto","complemento","frontiera","vuota","ostacolo","destinazione","landmark"]
+	},
+}
