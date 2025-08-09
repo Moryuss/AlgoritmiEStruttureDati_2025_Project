@@ -76,36 +76,37 @@ public class SperimentazioneCorrettezza {
 			List<CoordinateCella> origini = new ArrayList<>();
 			List<CoordinateCella> destinazioni = new ArrayList<>();
 			
+			int count = 0;
+			
 			List<String> compitiUsati = new ArrayList<>();
 			for(int i = 0; i < RETRIES; i++) {
-				// Genera le celle casuali e scegline casualmente una come origine ed una come destinazione
-				int currentSeed = seedRandom.get(0) + i*seedRandom.get(0);
-				Random random = new Random(currentSeed);
-				
-				List<CoordinateCella> celle = generaCelleCasuali(griglia.width(), griglia.height(), random, griglia);
-				
-				random = new Random(currentSeed + 1);
-				
-				CoordinateCella origine = estraiCoordinataCasualeNonOccupata(celle, griglia, random);
-				if(origine == null) {
-					// In caso di assenza di origine, allora salta
-					continue;
-				}
-				System.out.println("Origine: " + origine.x() + ", " + origine.y());
-				origini.add(origine);
-				
-				random = new Random(currentSeed + 2);
-				
-				CoordinateCella destinazione = estraiCoordinataCasualeNonOccupata(celle, griglia, random);
-				if(destinazione == null) {
-					// In caso di assenza di destinazione, allora salta
-					continue;
-				}
-				System.out.println("Destinazione: " + destinazione.x() + ", " + destinazione.y());
-				destinazioni.add(destinazione);
 				
 				for(ConfigurationMode tre : TRES) {
 					for(ICompitoDue due : DUES) {
+						
+						// Genera le celle casuali e scegline casualmente una come origine ed una come destinazione
+						int currentSeed = seedRandom.get(0) + count*seedRandom.get(0);
+						Random random = new Random(currentSeed);
+						
+						List<CoordinateCella> celle = generaCelleCasuali(griglia.width(), griglia.height(), random, griglia);
+						
+						random = new Random(currentSeed + 1);
+						
+						CoordinateCella origine = estraiCoordinataCasualeNonOccupata(celle, griglia, random);
+						if(origine == null) {
+							// In caso di assenza di origine, allora salta
+							continue;
+						}
+						origini.add(origine);
+						
+						random = new Random(currentSeed + 5);
+						
+						CoordinateCella destinazione = estraiCoordinataCasualeNonOccupata(celle, griglia, random);
+						if(destinazione == null) {
+							// In caso di assenza di destinazione, allora salta
+							continue;
+						}
+						destinazioni.add(destinazione);
 						
 						compitiUsati.add(tre.toString() + "_" + due.name());
 						
@@ -130,15 +131,22 @@ public class SperimentazioneCorrettezza {
 						//Gestione timeout e non raggiungibilita', per quando si implementera' la scrittura su file
 						if(primaEsecuzione.isCalcoloInterrotto()) {
 							System.out.println("Timeout.");
+							origini.remove(origini.size()-1);
+							destinazioni.remove(destinazioni.size()-1);
 							break;
 						}
 						
 						if(cammino1.landmarks().isEmpty() || Double.isInfinite(cammino1.lunghezza())) {
 							System.out.println("Destinazione non Raggiungibile.");
+							origini.remove(origini.size()-1);
+							destinazioni.remove(destinazioni.size()-1);
 							break;
 						}
 						
-						ICammino cammino2 = implementazioneTre.camminoMin(griglia, destinazioneCella, origineCella, due);
+						ICompitoTre implementazioneTreSecondo = new CompitoTreImplementation(tre);
+						implementazioneTreSecondo.setTimeout(TEMPO_SCADENZA_ESECUZIONE, TimeUnit.MILLISECONDS);
+						
+						ICammino cammino2 = implementazioneTreSecondo.camminoMin(griglia, destinazioneCella, origineCella, due);
 						
 						// Caso: cammino inverso non valido (TODO va segnato errore come non correttezza)
 						if (cammino2 == null || cammino2.landmarks().isEmpty() || Double.isInfinite(cammino2.lunghezza())) {
@@ -150,6 +158,8 @@ public class SperimentazioneCorrettezza {
 						
 						coppie.add(new coppiaCammini(cammino1, cammino2));
 						stat.add(new Statistiche(primaEsecuzione, secondaEsecuzione));
+						
+						count++;
 					}
 				}
 			}
@@ -251,6 +261,11 @@ public class SperimentazioneCorrettezza {
 		sb.append("- height: ").append(griglia.height()).append("\n");
 		sb.append("- tipoGriglia: ").append(griglia.getTipo()).append("\n\n");
 		sb.append("# Test\n\n");
+		
+		System.out.println("Origini size: " + origini.size());
+		System.out.println("Destinazioni size: " + destinazioni.size());
+		System.out.println("Coppie size: " + coppie.size());
+		System.out.println("Stat size: " + stat.size());
 		
 		for(int i = 0; i < origini.size(); i++) {
 			
