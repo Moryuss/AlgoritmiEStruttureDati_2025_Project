@@ -36,6 +36,7 @@ public sealed interface SvuotaFrontieraStrategy {
 
 				if (dist>camminoMonitor.lunghezza()) {
 					frontieraList = Collections.emptyList();
+					stats.incrementaSvuotaFrontiera();
 				} else {
 					var landmarks = camminoMonitor.landmarks();
 					for (int i=0; i<landmarks.size(); i++) {
