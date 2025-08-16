@@ -11,7 +11,7 @@ import matteo.ILandmark;
 import matteo.Riassunto.IStatisticheEsecuzione;
 import matteo.Riassunto.Riassunto;
 import matteo.Riassunto.StatisticheEsecuzione;
-import matteo.Riassunto.TipiRiassunto;
+import matteo.Riassunto.TipoRiassunto;
 import nicolas.DistanzaLibera;
 
 class TestStatisticheEsecuzione {
@@ -181,7 +181,7 @@ class TestStatisticheEsecuzione {
         
         // Test con risultato null
         stats.setCammino(null);
-        Riassunto riassuntoSenzaRisultato = stats.generaRiassunto(TipiRiassunto.VERBOSE);
+        Riassunto riassuntoSenzaRisultato = stats.generaRiassunto(TipoRiassunto.VERBOSE);
         assertFalse(riassuntoSenzaRisultato.getContenuto().contains("Lunghezza cammino"));
         assertFalse(riassuntoSenzaRisultato.getContenuto().contains("Numero landmarks"));
         

@@ -123,7 +123,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione {
 	
 	
 	@Override
-	public Riassunto generaRiassunto(TipiRiassunto tipoRiassunto) {
+	public Riassunto generaRiassunto(TipoRiassunto tipoRiassunto) {
 		return RiassuntoFactory.creaRiassunto(tipoRiassunto, this);
 	}
 	
@@ -131,7 +131,7 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione {
 	@Override
 	public String generaRiassunto(ICammino risultato) {
 		if(this.tempoTotaleNs==null) tempoTotaleNs = System.nanoTime() - tempoInizio;
-		return this.generaRiassunto(TipiRiassunto.VERBOSE).toString();
+		return this.generaRiassunto(TipoRiassunto.VERBOSE).toString();
 	}
 	
 	

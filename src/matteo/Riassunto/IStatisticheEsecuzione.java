@@ -65,7 +65,7 @@ public interface IStatisticheEsecuzione {
 	@Deprecated
 	public String generaRiassunto(ICammino risultato);
 	
-	public Riassunto generaRiassunto(TipiRiassunto tipoRiassunto);
+	public Riassunto generaRiassunto(TipoRiassunto tipoRiassunto);
 	
 	public SequencedMap<String,String> toSequencedMap();
 }

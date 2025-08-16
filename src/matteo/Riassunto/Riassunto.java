@@ -1,15 +1,15 @@
 package matteo.Riassunto;
 
 public class Riassunto {
-    private final TipiRiassunto tipo;
+    private final TipoRiassunto tipo;
     private final String contenuto;
     
-    public Riassunto(TipiRiassunto tipo, String contenuto) {
+    public Riassunto(TipoRiassunto tipo, String contenuto) {
         this.tipo = tipo;
         this.contenuto = contenuto;
     }
     
-    public TipiRiassunto getTipo() {
+    public TipoRiassunto getTipo() {
         return tipo;
     }
     

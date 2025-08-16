@@ -17,7 +17,7 @@ import nicolas.*;
 import utils.Utils;
 import matteo.*;
 import matteo.Riassunto.Riassunto;
-import matteo.Riassunto.TipiRiassunto;
+import matteo.Riassunto.TipoRiassunto;
 
 public class TestCompitoTreImpl {
 
@@ -53,7 +53,7 @@ public class TestCompitoTreImpl {
 	public void stampaRiassunto() {
 		if (riassunto) {
 			Riassunto riassunto = c.getStatisticheEsecuzione()
-					.generaRiassunto(TipiRiassunto.VERBOSE);
+					.generaRiassunto(TipoRiassunto.VERBOSE);
 			riassunto.stampa();
 		}
 

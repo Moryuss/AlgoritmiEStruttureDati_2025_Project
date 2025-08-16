@@ -7,7 +7,7 @@ import utils.Utils;
 
 public class RiassuntoFactory {
 	
-	public static Riassunto creaRiassunto(TipiRiassunto tipo, IStatisticheEsecuzione stats) {
+	public static Riassunto creaRiassunto(TipoRiassunto tipo, IStatisticheEsecuzione stats) {
 		return switch(tipo) {
 		case CSV -> creaRiassuntoCSV(stats);
 		case JSON -> creaRiassuntoJSON(stats);
@@ -54,7 +54,7 @@ public class RiassuntoFactory {
 			sb.append("\n");
 		}
 		
-		return new Riassunto(TipiRiassunto.VERBOSE, sb.toString());
+		return new Riassunto(TipoRiassunto.VERBOSE, sb.toString());
 	}
 	
 	private static Riassunto creaRiassuntoTabella(IStatisticheEsecuzione stats) {
@@ -72,7 +72,7 @@ public class RiassuntoFactory {
 		map.forEach((k,v) -> sb.append(format.formatted(k,v)));
 		sb.append(bot);
 		
-		return new Riassunto(TipiRiassunto.TABELLA, sb.toString());
+		return new Riassunto(TipoRiassunto.TABELLA, sb.toString());
 		
 	}
 	
@@ -92,7 +92,7 @@ public class RiassuntoFactory {
 			sb.append(" | INTERROTTO");
 		}
 		
-		return new Riassunto(TipiRiassunto.COMPATTO, sb.toString());
+		return new Riassunto(TipoRiassunto.COMPATTO, sb.toString());
 	}
 	
 	private static Riassunto creaRiassuntoJSON(IStatisticheEsecuzione stats) {
@@ -125,7 +125,7 @@ public class RiassuntoFactory {
 		
 		sb.append("\n}");
 		
-		return new Riassunto(TipiRiassunto.JSON, sb.toString());
+		return new Riassunto(TipoRiassunto.JSON, sb.toString());
 	}
 	
 	private static Riassunto creaRiassuntoCSV(IStatisticheEsecuzione stats) {
@@ -154,39 +154,42 @@ public class RiassuntoFactory {
 			sb.append("numero_landmarks,").append(stats.getCammino().landmarks().size()).append("\n");
 		}
 		
-		return new Riassunto(TipiRiassunto.CSV, sb.toString());
+		return new Riassunto(TipoRiassunto.CSV, sb.toString());
 	}
 	
 	private static Riassunto creaRiassuntoMarkdown(IStatisticheEsecuzione stats) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("# Riassunto Esecuzione CamminoMin\n\n");
 		sb.append("## Configurazione\n");
-		sb.append("- **Griglia**: ").append(stats.getLarghezzaGriglia()).append(" x ").append(stats.getAltezzaGriglia()).append(" (tipo ").append(stats.getTipoGriglia()).append(")\n");
-		sb.append("- **Origine**: (").append(stats.getOrigine().x()).append(",").append(stats.getOrigine().y()).append(")\n");
-		sb.append("- **Destinazione**: (").append(stats.getDestinazione().x()).append(",").append(stats.getDestinazione().y()).append(")\n");
-		sb.append("- **Compito Due**: ").append(stats.getNomeCompitoDue()).append("\n");
-		sb.append("- **Compito Tre**: ").append(stats.getCompitoTreMode().toString()).append("\n\n");
+		sb.append("- **Griglia**: %d x %d (tipo %d)\n".formatted(
+				stats.getLarghezzaGriglia(), stats.getAltezzaGriglia(), stats.getTipoGriglia()));
+		sb.append("- **Origine**: %s\n".formatted(stats.getOrigine().coordinateToString()));
+		sb.append("- **Destinazione**: %s\n".formatted(stats.getDestinazione().coordinateToString()));
+		sb.append("- **Compito Due**: %s\n".formatted(stats.getNomeCompitoDue()));
+		sb.append("- **Compito Tre**: %s\n\n".formatted(stats.getCompitoTreMode()));
 		
 		sb.append("## Risultati Esecuzione\n");
-		sb.append("- **Tempo**: ").append(Utils.formatTempo(stats.getTempoEsecuzione())).append("\n");
-		sb.append("- **Profondità massima**: ").append(stats.getMaxDepth()).append("\n");
-		sb.append("- **Celle frontiera**: ").append(stats.getQuantitaCelleFrontiera()).append("\n");
-		sb.append("- **Iterazioni condizione**: ").append(stats.getIterazioniCondizione()).append("\n");
-		sb.append("- **Cache hit**: ").append(stats.getCacheHit()).append("\n");
-		sb.append("- **Calcolo interrotto**: ").append(stats.isCalcoloInterrotto() ? "✅" : "❌").append("\n\n");
+		sb.append("- **Tempo**: %s\n".formatted(Utils.formatTempo(stats.getTempoEsecuzione())));
+		sb.append("- **Profondità massima**: %d\n".formatted(stats.getMaxDepth()));
+		sb.append("- **Celle frontiera**: %d\n".formatted(stats.getQuantitaCelleFrontiera()));
+		sb.append("- **Iterazioni condizione**: %d\n".formatted(stats.getIterazioniCondizione()));
+		sb.append("- **Cache hit**: %d\n".formatted(stats.getCacheHit()));
+		sb.append("- **Calcolo interrotto**: %s\n\n".formatted(stats.isCalcoloInterrotto() ? "<span style=\"color:green\">✔️</span>" : "<span style=\"color:red\">❌</span>"));
 		
+		String attiva = "<span style=\"color:green\">✔️</span> Attiva";
+		String disattiva = "<span style=\"color:red\">❌</span> Disattiva";
 		sb.append("## Ottimizzazioni\n");
-		sb.append("- **Cache**: ").append(stats.isCacheAttiva() ? "✅ Attiva" : "❌ Disattiva").append("\n");
-		sb.append("- **Frontiera Sorted**: ").append(stats.isFrontieraSorted() ? "✅ Attiva" : "❌ Disattiva").append("\n");
-		sb.append("- **Svuota Frontiera**: ").append(stats.isSvuotaFrontieraAttiva() ? "✅ Attiva (" + stats.getQuantitaSvuotaFrontiera() + " volte)" : "❌ Disattiva").append("\n\n");
+		sb.append("- **Cache**: %s\n".formatted(stats.isCacheAttiva() ? attiva : disattiva));
+		sb.append("- **Frontiera Sorted**: %s\n".formatted(stats.isFrontieraSorted() ? attiva : disattiva));
+		sb.append("- **Svuota Frontiera**: %s\n\n".formatted(stats.isSvuotaFrontieraAttiva() ? attiva+" (" + stats.getQuantitaSvuotaFrontiera() + " volte)" : disattiva));
 		
 		if (stats.getCammino() != null) {
 			sb.append("## Cammino Trovato\n");
-			sb.append("- **Lunghezza**: ").append(stats.getCammino().lunghezza()).append("\n");
-			sb.append("- **Landmarks**: ").append(stats.getCammino().landmarks().size()).append("\n");
+			sb.append("- **Lunghezza**: %f\n".formatted(stats.getCammino().lunghezza()));
+			sb.append("- **Landmarks**: %d\n".formatted(stats.getCammino().landmarks().size()));
 		}
 		
-		return new Riassunto(TipiRiassunto.MARKDOWN, sb.toString());
+		return new Riassunto(TipoRiassunto.MARKDOWN, sb.toString());
 	}
 	
 }

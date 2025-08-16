@@ -12,11 +12,10 @@ import francesco.IGriglia;
 import francesco.IHave2DCoordinate;
 import matteo.Riassunto.IStatisticheEsecuzione;
 import matteo.Riassunto.StatisticheEsecuzione;
-import matteo.Riassunto.TipiRiassunto;
+import matteo.Riassunto.TipoRiassunto;
 import matteo.Strategies.StrategyBundle;
 import matteo.Strategies.StrategyFactory;
 import nicolas.*;
-
 
 public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasProgressoMonitor {
 
@@ -150,7 +149,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 	private void generaReportFinale(ICammino risultato) {
 		stats.setCammino(risultato);
-		report = stats.generaRiassunto(TipiRiassunto.VERBOSE).toString();
+		report = stats.generaRiassunto(TipoRiassunto.VERBOSE).toString();
 	}
 
 	private void stampaStatoDestinazioneFinale(ICammino risultato) {

@@ -11,7 +11,7 @@ import matteo.ILandmark;
 import matteo.Riassunto.IStatisticheEsecuzione;
 import matteo.Riassunto.Riassunto;
 import matteo.Riassunto.StatisticheEsecuzione;
-import matteo.Riassunto.TipiRiassunto;
+import matteo.Riassunto.TipoRiassunto;
 import nicolas.DistanzaLibera;
 
 import java.util.List;
@@ -56,7 +56,7 @@ public class TestRiassunti {
 
 			System.out.println("\n=== DEMO DI TUTTI I TIPI DI RIASSUNTO ===\n");
 
-			for (TipiRiassunto tipo : TipiRiassunto.values()) {
+			for (TipoRiassunto tipo : TipoRiassunto.values()) {
 				System.out.println("🔸".repeat(40));
 				System.out.println("   " + tipo.name());
 				System.out.println("🔸".repeat(40));
@@ -71,7 +71,7 @@ public class TestRiassunti {
 	@Test
 	@DisplayName("Test formato VERBOSE")
 	void testVerbose() {
-		Riassunto riassunto = stats.generaRiassunto(TipiRiassunto.VERBOSE);
+		Riassunto riassunto = stats.generaRiassunto(TipoRiassunto.VERBOSE);
 		if(stampaRiassunto) {
 			System.out.println("\n--- VERBOSE ---");
 			riassunto.stampa();
@@ -81,7 +81,7 @@ public class TestRiassunti {
 	@Test
 	@DisplayName("Test formato TABELLA")
 	void testTabella() {
-		Riassunto riassunto = stats.generaRiassunto(TipiRiassunto.TABELLA);
+		Riassunto riassunto = stats.generaRiassunto(TipoRiassunto.TABELLA);
 		if(stampaRiassunto) {
 			System.out.println("\n--- TABELLA ---");
 			riassunto.stampa();
@@ -91,7 +91,7 @@ public class TestRiassunti {
 	@Test
 	@DisplayName("Test formato COMPATTO")
 	void testCompatto() {
-		Riassunto riassunto = stats.generaRiassunto(TipiRiassunto.COMPATTO);
+		Riassunto riassunto = stats.generaRiassunto(TipoRiassunto.COMPATTO);
 		if(stampaRiassunto) {
 			System.out.println("\n--- COMPATTO ---");
 			riassunto.stampa();
@@ -101,7 +101,7 @@ public class TestRiassunti {
 	@Test
 	@DisplayName("Test formato JSON")
 	void testJson() {
-		Riassunto riassunto = stats.generaRiassunto(TipiRiassunto.JSON);
+		Riassunto riassunto = stats.generaRiassunto(TipoRiassunto.JSON);
 		if(stampaRiassunto) {
 			System.out.println("\n--- JSON ---");
 			riassunto.stampa();
@@ -111,7 +111,7 @@ public class TestRiassunti {
 	@Test
 	@DisplayName("Test formato CSV")
 	void testCsv() {
-		Riassunto riassunto = stats.generaRiassunto(TipiRiassunto.CSV);
+		Riassunto riassunto = stats.generaRiassunto(TipoRiassunto.CSV);
 		if(stampaRiassunto) {
 			System.out.println("\n--- CSV ---");
 			riassunto.stampa();
@@ -121,7 +121,7 @@ public class TestRiassunti {
 	@Test
 	@DisplayName("Test formato MARKDOWN")
 	void testMarkdown() {
-		Riassunto riassunto = stats.generaRiassunto(TipiRiassunto.MARKDOWN);
+		Riassunto riassunto = stats.generaRiassunto(TipoRiassunto.MARKDOWN);
 		if(stampaRiassunto) {
 			System.out.println("\n--- MARKDOWN ---");
 			riassunto.stampa();
@@ -137,7 +137,7 @@ public class TestRiassunti {
 			System.out.println("Directory: " + baseDir);
 		}
 
-		for (TipiRiassunto tipo : TipiRiassunto.values()) {
+		for (TipoRiassunto tipo : TipoRiassunto.values()) {
 			Riassunto riassunto = stats.generaRiassunto(tipo);
 			String nomeFile = "riassunto_" + tipo.name().toLowerCase();
 
@@ -170,13 +170,13 @@ public class TestRiassunti {
 		}
 
 		// Test con estensioni forzate
-		Riassunto json = stats.generaRiassunto(TipiRiassunto.JSON);
+		Riassunto json = stats.generaRiassunto(TipoRiassunto.JSON);
 		if(salvaRiassunto) json.salvaFile("custom_report.data", "src/test/testRiassunti/estensioni_personalizzate"); // Forza .data invece di .json
 
-		Riassunto csv = stats.generaRiassunto(TipiRiassunto.CSV);
+		Riassunto csv = stats.generaRiassunto(TipoRiassunto.CSV);
 		if(salvaRiassunto) csv.salvaFile("spreadsheet.txt", "src/test/testRiassunti/estensioni_personalizzate"); // Forza .txt invece di .csv
 
-		Riassunto markdown = stats.generaRiassunto(TipiRiassunto.MARKDOWN);
+		Riassunto markdown = stats.generaRiassunto(TipoRiassunto.MARKDOWN);
 		if(salvaRiassunto) markdown.salvaFile("src/test/testRiassunti/estensioni_personalizzate/readme"); // Estensione automatica (.md)
 
 		if (stampaRiassunto) {
@@ -192,7 +192,7 @@ public class TestRiassunti {
 			System.out.println("\n=== TEST DIRECTORY CORRENTE ===");
 		}
 
-		Riassunto compatto = stats.generaRiassunto(TipiRiassunto.COMPATTO);
+		Riassunto compatto = stats.generaRiassunto(TipoRiassunto.COMPATTO);
 
 		try {
 			if(salvaRiassunto) {

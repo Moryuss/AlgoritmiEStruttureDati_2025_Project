@@ -9,8 +9,7 @@ import francesco.*;
 import francesco.implementazioni.Cella2D;
 import francesco.implementazioni.LettoreGriglia;
 import matteo.*;
-import matteo.Riassunto.IStatisticheEsecuzione;
-import matteo.Riassunto.TipiRiassunto;
+import matteo.Riassunto.*;
 import nicolas.*;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -33,10 +32,12 @@ public class AppletMain extends PApplet {
 	IGrigliaMutabile<?> griglia;
 	CompitoDueImpl compitoDue = CompitoDueImpl.V0;
 	CamminoConfiguration camminoConfiguration = ConfigurationMode.DEFAULT.toCamminoConfiguration();
+	int tipiRiassunto = TipoRiassunto.VERBOSE.mask;
 	
 	int COLORE_OSTACOLO,COLORE_DESTINAZIONE,COLORE_LANDMARK,COLORE_FRONTIERA,
 		COLORE_COMPLEMENTO,COLORE_ORIGINE,COLORE_REGINA,COLORE_CONTESTO,COLORE_BASE;
 	boolean showText;
+	int pixelDensity=1;
 	
 	
 	@Override
@@ -49,8 +50,6 @@ public class AppletMain extends PApplet {
 		
 		var config = PApplet.loadJSONObject(file);
 		JSONObject json = config.getJSONObject("applet");
-		
-		size(json.getInt("width", 1200), json.getInt("height", 600));
 		
 		
 		palette = Stream.of(json.getStringList("palette").toArray())
@@ -84,15 +83,25 @@ public class AppletMain extends PApplet {
 			griglia = new LettoreGriglia().crea(file.toPath()).toGrigliaMutabile();
 		}
 		
-		w = griglia.width();
-		h = griglia.height();
+		w=griglia.width(); h=griglia.height();
+		width = json.getInt("width", 1200);
 		s = width/w;
+		height = min(s*h, json.getInt("height", 600));
+		width = height*w/h;
+		size(width, height);
+		
+		
 		showText = json.getBoolean("showText", false);
+		pixelDensity = json.getInt("pixelDendity", 1);
+		pixelDensity(pixelDensity);
 		
 		println("w=%d, h=%d".formatted(w, h));
+		printGriglia(griglia);
 		
-		griglia.print();
-		
+	}
+	
+	private static void printGriglia(IGriglia<?> griglia) {
+		System.out.println(griglia.collect(c->c.is(OSTACOLO)?"██":".'", Collectors.joining(), Collectors.joining("\n")));
 	}
 	
 	
@@ -220,7 +229,7 @@ public class AppletMain extends PApplet {
 	}
 	
 	private int getColor(int index) {
-		return colors[index+5%colors.length];
+		return colors[(index+5)%colors.length];
 	}
 	
 	
@@ -260,6 +269,7 @@ public class AppletMain extends PApplet {
 		
 		switch(e.getButton()) {
 		case LEFT:
+			if (griglia.getCellaAt(x, y).is(OSTACOLO)) return;
 			clearNonOStacoli(e.isControlDown());
 			D = null;
 			monitor = monitorMin = null;
@@ -270,7 +280,7 @@ public class AppletMain extends PApplet {
 			break;
 		
 		case RIGHT:
-			if (O==null) return;
+			if (O==null || griglia.getCellaAt(x, y).is(OSTACOLO)) return;
 			griglia.forEach((j,i) -> {
 				var cella = griglia.getCellaAt(j, i);
 				if (LANDMARK.matches(cella.stato())) {
@@ -295,14 +305,14 @@ public class AppletMain extends PApplet {
 					cammino.landmarks().forEach(lm -> {
 						LANDMARK.addTo(griglia, lm.x(), lm.y());
 					});
-					System.out.printf("finito: %d+%d√2=%f\n",cammino.lunghezzaTorre(),
-							cammino.lunghezzaAlfiere(), cammino.lunghezza());
+					System.out.printf("finito: %s\n", cammino.distanzaLibera());
+					
 					monitor=null;
 					report = compitoTreImpl.getReport();
 					statisticheEsecuzione = compitoTreImpl.getStatisticheEsecuzione();
 					
 					var timeStamp = Utils.getCurrentTimestamp();
-					for (var tr : TipiRiassunto.values()) {
+					for (var tr : TipoRiassunto.from(tipiRiassunto)) {
 						statisticheEsecuzione.generaRiassunto(tr)
 						.salvaFile(tr.name().toLowerCase(), "output/"+timeStamp);
 					}
@@ -320,18 +330,21 @@ public class AppletMain extends PApplet {
 			case 0 -> OSTACOLO.toggleTo(griglia, x, y);
 			case Event.SHIFT|Event.CTRL|Event.ALT ->{
 				if (x+3>=w || y+3<0) return;
-				OSTACOLO.addTo(griglia, x+1, y);
-				OSTACOLO.addTo(griglia, x+3, y);
-				OSTACOLO.addTo(griglia, x, y-1);
-				OSTACOLO.addTo(griglia, x+1, y-1);
-				OSTACOLO.addTo(griglia, x+2, y-1);
-				OSTACOLO.addTo(griglia, x+3, y-1);
-				OSTACOLO.addTo(griglia, x, y-2);
-				OSTACOLO.addTo(griglia, x+1, y-2);
-				OSTACOLO.addTo(griglia, x+1, y-3);
-				OSTACOLO.addTo(griglia, x+2, y-3);
-				OSTACOLO.addTo(griglia, x+3, y-3);
+				OSTACOLO.setTo(griglia, x+1, y);
+				OSTACOLO.setTo(griglia, x+3, y);
+				OSTACOLO.setTo(griglia, x, y-1);
+				OSTACOLO.setTo(griglia, x+1, y-1);
+				OSTACOLO.setTo(griglia, x+2, y-1);
+				OSTACOLO.setTo(griglia, x+3, y-1);
+				OSTACOLO.setTo(griglia, x, y-2);
+				OSTACOLO.setTo(griglia, x+1, y-2);
+				OSTACOLO.setTo(griglia, x+1, y-3);
+				OSTACOLO.setTo(griglia, x+2, y-3);
+				OSTACOLO.setTo(griglia, x+3, y-3);
 			}
+			}
+			if (O!=null) {
+				griglia = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y()).toGrigliaMutabile();
 			}
 			break;
 		}
@@ -345,16 +358,21 @@ public class AppletMain extends PApplet {
 		int y = e.getY() * h / height;
 		x = constrain(x, 0, w-1);
 		y = constrain(y, 0, h-1);
+		int stato = griglia.getCellaAt(x, y).stato();
 		
 		switch(e.getButton()) {
 		case LEFT:
-			griglia.setStato(x, y, OSTACOLO.value());
+			OSTACOLO.setTo(griglia, x, y);
 			break;
 		case RIGHT:
 			OSTACOLO.removeTo(griglia, x, y);
 			break;
 		case CENTER:
 			break;
+		}
+		
+		if (O!=null && griglia.getCellaAt(x, y).stato()!=stato) {
+			griglia = GrigliaConOrigineFactory.creaV0(griglia, O.x(), O.y()).toGrigliaMutabile();
 		}
 		
 	}
@@ -407,14 +425,12 @@ public class AppletMain extends PApplet {
 		case 'U':
 			if (grigliaConOrigine != null) {
 				grigliaNazione = RegioneFactory.from(grigliaConOrigine);
-				System.out.println(grigliaNazione.regioni().length);
+				System.out.printf("Numero regioni: %d\n", grigliaNazione.regioni().length);
 				var str = grigliaNazione.collect(c2d->grigliaNazione.getRegioneIndexContenente(c2d)
 						.map("%2d"::formatted)
 						.orElse("  "),
 						Collectors.joining("|"), Collectors.joining("\n"));
-				System.out.println(str);
-				var regione = grigliaNazione.getRegioneContenente(28, 19);
-				System.out.println(regione);
+				if (e.isShiftDown()) System.out.println(str);
 			}
 			break;
 		case 'F':
@@ -494,8 +510,8 @@ public class AppletMain extends PApplet {
 		otherWindow = new PApplet() {
 			@Override
 			public void settings() {
-				size(400, ConfigurationFlag.LENGTH*30);
-				pixelDensity(2);
+				size(400, max(ConfigurationFlag.LENGTH, TipoRiassunto.values().length+2)*30);
+				pixelDensity(pixelDensity);
 			}
 			@Override
 			public void setup() {
@@ -510,26 +526,41 @@ public class AppletMain extends PApplet {
 				for (int i=0; i<ConfigurationFlag.LENGTH; i++) {
 					var f = ConfigurationFlag.fromIndex(i);
 					var bool = camminoConfiguration.hasFlag(f);
-					text("%s: %s".formatted(f.name(), bool), 10, 20+i*24);
+					fill(bool ? 0 : 200);
+					text("%s".formatted(f.name(), bool), 10, 20+i*28);
 				}
 				
+				fill(0);
 				text("CompitoDue: %s".formatted(compitoDue.name()), 260, 20);
+				
+				textAlign(RIGHT, CENTER);
+				for (int i=0, n=TipoRiassunto.LENGTH; i<n; i++) {
+					var f = TipoRiassunto.values()[i];
+					var bool = f.isIn(tipiRiassunto);
+					fill(bool ? 0 : 200);
+					text(f.name(), width-10, 20+(i+2)*28);
+				}
 				
 			}
 			public void keyPressed(KeyEvent e) {
 				parent.keyPressed(e);
 			}
 			public void mouseClicked(MouseEvent e) {
-				if (e.getX()>250) {
-					if (e.getY()>10 && e.getY()<30) {
-						compitoDue = compitoDue.next();
-					}
+				if (e.getX() <= 250) {
+					int y = (e.getY()-16)/27;
+					if (y<0 || y>=ConfigurationFlag.LENGTH) return;
+					var flag = ConfigurationFlag.fromIndex(y);
+					camminoConfiguration = camminoConfiguration.toggle(flag);
 					return;
 				}
-				int y = (e.getY()-20)/22;
-				if (y<0 || y>=ConfigurationFlag.LENGTH) return;
-				var flag = ConfigurationFlag.fromIndex(y);
-				camminoConfiguration = camminoConfiguration.toggle(flag);
+				if (e.getY()>10 && e.getY()<30) {
+					compitoDue = compitoDue.next();
+				} else if (e.getY() > 59) {
+					int y = (e.getY()-60)/27;
+					if (y<0 || y>=TipoRiassunto.LENGTH) return;
+					int n = tipiRiassunto ^ TipoRiassunto.values()[y].mask;
+					if (n>0) tipiRiassunto = n;
+				}
 			}
 			@Override
 			public void exitActual() {

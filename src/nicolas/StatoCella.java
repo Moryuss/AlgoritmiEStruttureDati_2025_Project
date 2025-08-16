@@ -44,7 +44,9 @@ public enum StatoCella {
 		return n&~value;
 	}
 	
-	
+	public void setTo(IGrigliaMutabile<?> griglia, int x, int y) {
+		griglia.setStato(x, y, value);
+	}
 	public void addTo(IGrigliaMutabile<?> griglia, int x, int y) {
 		griglia.setStato(x, y, addTo(griglia.getCellaAt(x, y).stato()));
 		
