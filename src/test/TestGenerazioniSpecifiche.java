@@ -114,7 +114,7 @@ class TestGenerazioniSpecifiche {
 		}
 		for(int i = 0; i < prima.height(); i++) {
 			for(int j = 0; j < prima.width(); j++) {
-				assertEquals(prima.getCellaAt(i, j), seconda.getCellaAt(i, j), 
+				assertEquals(prima.getCellaAt(j, i), seconda.getCellaAt(j, i), 
 						"Le celle in posizione (" + i + ", " + j + ") sono diverse");
 			}
 		}
