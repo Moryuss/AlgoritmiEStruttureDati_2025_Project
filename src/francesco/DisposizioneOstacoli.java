@@ -1,0 +1,11 @@
+package francesco;
+
+public enum DisposizioneOstacoli {
+
+	VARAZIONE_DIMENSIONI,
+	SPIRALE,
+	LINEA_SPEZZATA,
+	DOPPIA_LINEA_SPEZZATA,
+	SCACCHIERA,
+	STANDARD
+}

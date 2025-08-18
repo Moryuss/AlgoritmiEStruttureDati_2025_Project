@@ -75,9 +75,9 @@ public class AppletMain extends PApplet {
 		COLORE_BASE			 = palette[5];
 		
 		
-		if (config.hasKey("load")) {
-			griglia = loadGriglia(config);
-		}
+//		if (config.hasKey("load")) {
+//			griglia = loadGriglia(config);
+//		}
 		
 		if (griglia==null) {
 			griglia = new LettoreGriglia().crea(file.toPath()).toGrigliaMutabile();

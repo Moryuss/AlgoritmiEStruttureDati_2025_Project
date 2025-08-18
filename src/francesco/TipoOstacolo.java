@@ -11,7 +11,8 @@ public enum TipoOstacolo implements CostruttoreOstacolo {
 	BARRA_DIAGONALE			(new OBarraDiagonale()), // solo sottile (spessore = 1)
 	ZONA_CHIUSA				(new OZonaChiusa()), // forme rettangolari cave all'interno
 	DELIMITATORE_VERTICALE	(new ODelimitatoreVerticale()),
-	DELIMITATORE_ORIZZONTALE(new ODelimitatoreOrizzontale());
+	DELIMITATORE_ORIZZONTALE(new ODelimitatoreOrizzontale()),
+	PERSONALIZZATO          (new OPersonalizzato()); // il costruttore è solo un placeholder
 	
 	
 	private final int valore = 1<<ordinal();

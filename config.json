@@ -4,14 +4,22 @@
 	"randomSeed": 42,
 	"maxOstacoli": {
 		"SEMPLICE": 0,
-		"AGGLOMERATO": 0,
-		"BARRA_VERTICALE": 0,
+		"AGGLOMERATO": 3,
+		"BARRA_VERTICALE": 4,
 		"BARRA_ORIZZONTALE": 0,
 		"BARRA_DIAGONALE": 0,
 		"ZONA_CHIUSA": 0,
 		"DELIMITATORE_VERTICALE": 0,
 		"DELIMITATORE_ORIZZONTALE": 0
 	},
+	"disposizione":{
+		"STANDARD": false,
+		"VARAZIONE_DIMENSIONI": true,
+		"SPIRALE": false,
+		"LINEA_SPEZZATA": false,
+		"DOPPIA_LINEA_SPEZZATA": true,
+		"SCACCHIERA": false
+		},
 	"load":{
 		"path":"griglie.int.json",
 		"name":"test1"
