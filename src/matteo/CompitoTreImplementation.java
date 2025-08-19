@@ -107,14 +107,15 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 		stampaStatiOrigineDestinazione(O, D);
 		inizializzaCalcolo(griglia, O, D, compitoDue);
-		ICammino risultato = null;
+		ICammino risultato = ICammino.INFINITY;
 		try {
 			pushOrigineInStack(O);
 
 			risultato = calcoloCamminoMin(griglia, O, D, stats, compitoDue);
 			stampaStatoDestinazioneFinale(risultato);
 			return risultato;
-		} catch (InterruptedException e) {
+		} catch (InterruptedException | StackOverflowError | OutOfMemoryError e) {
+//			e.printStackTrace();
 			return gestisciInterruzione_GeneraCammino(e);
 		} finally {
 			finalizzaStatisticheEsecuzione(); // Salva il tempo di esecuzione
@@ -166,7 +167,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		+ "\nDestinazione: " + bitPrint(D.stato()));
 	}
 
-	private ICammino gestisciInterruzione_GeneraCammino(InterruptedException e) {
+	private ICammino gestisciInterruzione_GeneraCammino(Throwable e) {
 		strategies.getDebugStrategy().println(e.getMessage());
 
 		stats.interrompiCalcolo();
@@ -248,7 +249,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	}
 
 	private ICammino calcoloCamminoMin(IGriglia<?> griglia, ICella2D O, ICella2D D, IStatisticheEsecuzione stats,
-			ICompitoDue compitoDue) throws InterruptedException {
+			ICompitoDue compitoDue) throws InterruptedException, StackOverflowError {
 
 		ICammino risultatoCache = verificaPresenzaCamminoInCache(griglia, O, D);
 		if (risultatoCache != null) {

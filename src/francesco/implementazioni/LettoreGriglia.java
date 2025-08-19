@@ -60,7 +60,10 @@ public class LettoreGriglia extends PApplet implements ICompitoUno {
 		IGriglia<?> result = griglia;
 		int ostCounter = 0;
 		
-		if(isDisposizioneInJSONAndTrue(disposizioni, DisposizioneOstacoli.STANDARD)) {
+		if(disposizioni == null) {
+			result = generazioneStandard(width, height, randomSeed, json, result, ostCounter);
+		}
+		else if(isDisposizioneInJSONAndTrue(disposizioni, DisposizioneOstacoli.STANDARD)) {
 			result = generazioneStandard(width, height, randomSeed, json, result, ostCounter);
 		}
 		else if(isDisposizioneInJSONAndTrue(disposizioni, DisposizioneOstacoli.VARAZIONE_DIMENSIONI)) {

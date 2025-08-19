@@ -45,7 +45,7 @@ public class SperimentazioneGrandiDimensioni {
 			);
 	
 	private static final List<ICompitoDue> DUES = List.of(
-			CompitoDueImpl.V0,
+//			CompitoDueImpl.V0
 			CompitoDueImpl.V1
 			);
 	
