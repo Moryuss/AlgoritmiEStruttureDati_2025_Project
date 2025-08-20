@@ -2,6 +2,7 @@ package sperimentazione;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,9 +39,9 @@ public class ConvertitoreMedieInCSV {
     public static void main(String[] args) {
         try {
             convertTxtToCsv();
-            System.out.println("Conversione completata in " + OUTPUT_CSV);
+            System.out.println("Conversione completata " + OUTPUT_CSV);
         } catch (IOException e) {
-            System.err.println("Errore conversione: " + e.getMessage());
+            System.err.println("Errore nel main: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -53,13 +54,13 @@ public class ConvertitoreMedieInCSV {
         }
         
         try (BufferedWriter csvWriter = Files.newBufferedWriter(Paths.get(OUTPUT_CSV))) {
-            // Write CSV header
-            csvWriter.write("File,Cache_Usata,Sorted_Frontiera,Media_Cache_Hit,Media_Celle_Frontiera," +
+            // Header del CSV
+            csvWriter.write("Categoria_Griglia,Nome_Griglia,Compito_Due,Compito_Tre,Cache_Usata,Sorted_Frontiera,Media_Cache_Hit,Media_Celle_Frontiera," +
                            "Media_Iterazioni_Condizione,Tempo," +
                            "Spazio_KB,Massima_Profondita,Esecuzioni_Corrette,Timeout,Destinazione_Irraggiungibile");
             csvWriter.newLine();
             
-            // Process all txt files recursively
+            // Ricorsione nella cartella per trovare i file .txt
             Files.walk(folderPath)
                 .filter(Files::isRegularFile)
                 .filter(path -> path.toString().toLowerCase().endsWith(".txt"))
@@ -67,7 +68,7 @@ public class ConvertitoreMedieInCSV {
                     try {
                         processFile(txtFile, csvWriter);
                     } catch (IOException e) {
-                        System.err.println("Errore nella lettura del file " + txtFile + ": " + e.getMessage());
+                        System.err.println("Error col file " + txtFile + ": " + e.getMessage());
                     }
                 });
         }
@@ -76,29 +77,60 @@ public class ConvertitoreMedieInCSV {
     private static void processFile(Path txtFile, BufferedWriter csvWriter) throws IOException {
         String content = Files.readString(txtFile);
         
-        // Check if file contains the pattern we're looking for
+        // Se il file non va bene, viene saltato
         if (!content.contains(PATTERN_START)) {
-            return; // Skip files that don't contain our pattern
+            return;
         }
-        
-        // Extract the section starting from PATTERN_START
+                
+        // Estrazione della sola parte che comincia con il pattern di media esecuzioni
         int patternIndex = content.indexOf(PATTERN_START);
         String relevantSection = content.substring(patternIndex);
         
-        // Check for timeout before the pattern (optional - defaults to false if not found)
+        // Controlla di timeout
         String beforePattern = content.substring(0, patternIndex);
         boolean isTimeout = TIMEOUT_PATTERN.matcher(beforePattern).find();
         
-        // Check for "Destinazione Irraggiungibile" in the relevant section
+        // Controlla di Destinazione Irraggiungibile
         boolean isDestinationUnreachable = DESTINAZIONE_IRRAGGIUNGIBILE_PATTERN.matcher(relevantSection).find();
         
-        // Extract values using regex patterns
+        // Estrazione dei valori con regex
         ExtractionResult result = extractValues(relevantSection);
         
         if (result != null) {
+            
+            // Estrazione di tipo, nome griglia e compiti
+            String nomeFile = txtFile.getFileName().toString();
+            String[] parti = nomeFile.split("_");
+            String categoriaGriglia = parti.length > 0 ? parti[0] : "Invalido";
+            if(categoriaGriglia.contains("analisi")) {
+            	// Rimozione della scrtita "analisi"
+            	categoriaGriglia = categoriaGriglia.replace("analisi", "").trim();
+            }
+            if(categoriaGriglia.equals("DoppioDenteDiSega")) {
+            	// Cambio legacy
+            	categoriaGriglia = "DoppiaLineaSpezzata";
+            }
+            result.categoriaGriglia = categoriaGriglia;
+            result.nomeGriglia = parti.length > 1 ? parti[1] : "Invalido";
+            
+            // Visto che il nome è salvato con _, allora si predono tutti gli elementi dall'indice in 2 in poi
+            // escluso l'ultimo che è il compito due
+            result.compitoTreUsato = parti.length > 2 ? String.join("_", 
+                    Arrays.copyOfRange(parti, 2, parti.length - 1)) : "Invalido";
+            
+            // L'ultimo elemento è il compito due
+            result.compitoDueUsato = parti.length > 3 ? parti[parti.length - 1] : "Invalido";
+            
+            if(result.compitoDueUsato.contains(".txt")) {
+            	// Rimozione dell'estensione .txt
+				result.compitoDueUsato = result.compitoDueUsato.replace(".txt", "").trim();
+            }
             // Write to CSV
-            csvWriter.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
-                txtFile.getFileName().toString(),
+            csvWriter.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                result.categoriaGriglia,
+                result.nomeGriglia,
+                result.compitoDueUsato,
+                result.compitoTreUsato,
                 result.cacheUsata,
                 result.sortedFrontiera,
                 result.mediaCacheHit,
@@ -112,6 +144,8 @@ public class ConvertitoreMedieInCSV {
                 isDestinationUnreachable
             ));
             csvWriter.newLine();
+        } else {
+            System.err.println("Errore nell'estrazione dati: " + txtFile.getFileName());
         }
     }
     
@@ -119,58 +153,69 @@ public class ConvertitoreMedieInCSV {
         ExtractionResult result = new ExtractionResult();
         
         try {
-            // Extract Cache usata
+            // Cache usata
             Matcher matcher = CACHE_PATTERN.matcher(section);
             if (matcher.find()) {
                 result.cacheUsata = matcher.group(1);
-            } else return null;
+            } else {
+                return null;
+            }
             
-            // Extract Sorted Frontiera
+            // Sorted Frontiera
             matcher = SORTED_PATTERN.matcher(section);
             if (matcher.find()) {
                 result.sortedFrontiera = matcher.group(1);
-            } else return null;
+            } else {
+                return null;
+            }
             
-            // Extract Media Cache hit
+            // Media Cache hit
             matcher = CACHE_HIT_PATTERN.matcher(section);
             if (matcher.find()) {
                 result.mediaCacheHit = matcher.group(1);
-            } else return null;
+            } else {
+                return null;
+            }
             
-            // Extract Media Celle di Frontiera
+            // Media Celle di Frontiera
             matcher = CELLE_FRONTIERA_PATTERN.matcher(section);
             if (matcher.find()) {
                 result.mediaCelleFrontiera = matcher.group(1);
-            } else return null;
+            } else {
+                return null;
+            }
             
-            // Extract Media Iterazioni Condizione
+            // Media Iterazioni Condizione
             matcher = ITERAZIONI_PATTERN.matcher(section);
             if (matcher.find()) {
                 result.mediaIterazioniCondizione = matcher.group(1);
-            } else return null;
+            } else {
+                return null;
+            }
             
-            // Extract Tempo d'Esecuzione (get ns value and convert using Utils)
+
+            // Tempo d'esecuzione
             matcher = TEMPO_PATTERN.matcher(section);
             if (matcher.find()) {
-                String tempoNs = matcher.group(1);
-                long castedTime = Integer.parseInt(tempoNs);
-                String tempoConvertito = Utils.tempoToString(castedTime);
-                result.tempo = tempoConvertito;
-            } else return null;
-            
-            // Extract Spazio Occupato (handles B, KB, and MB - converts all to KB)
+            	long tempo = Long.parseLong(matcher.group(1));
+                result.tempo = Utils.tempoToString(tempo);
+            } else {
+                return null;
+            }
+
+            // Spazio occupato
             matcher = SPAZIO_PATTERN.matcher(section);
             if (matcher.find()) {
                 String spazioValue = matcher.group(1);
                 String unit = matcher.group(2);
-                
+                spazioValue = spazioValue.replace(",", "."); 
                 if ("MB".equals(unit)) {
-                    // Convert MB to KB: multiply by 1024
+                    // Conversione da MB a KB
                     double mbValue = Double.parseDouble(spazioValue.replace(",", "."));
                     double kbValue = mbValue * 1024;
                     result.spazioKB = String.format("%.2f", kbValue).replace(".", ",");
                 } else if ("B".equals(unit)) {
-                    // Convert B to KB: divide by 1024
+                    // Conversione da B a KB
                     double bValue = Double.parseDouble(spazioValue.replace(",", "."));
                     double kbValue = bValue / 1024;
                     result.spazioKB = String.format("%.3f", kbValue).replace(".", ",");
@@ -178,29 +223,42 @@ public class ConvertitoreMedieInCSV {
                     // Already in KB
                     result.spazioKB = spazioValue;
                 }
-            } else return null;
+                
+            } else {
+                return null;
+            }
             
-            // Extract Massima Profondita'
+            // Massima Profondita'
             matcher = PROFONDITA_PATTERN.matcher(section);
             if (matcher.find()) {
                 result.massimaProfondita = matcher.group(1);
-            } else return null;
+            } else {
+                return null;
+            }
             
-            // Extract Esecuzioni corrette
+            // Esecuzioni corrette
             matcher = CORRETTE_PATTERN.matcher(section);
             if (matcher.find()) {
                 result.esecuzioniCorrette = matcher.group(1);
-            } else return null;
+            } else {
+                return null;
+            }
             
             return result;
             
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
     
-    // Helper class to store extracted values
+
+    // Classe per contenere i dati d'interesse
     private static class ExtractionResult {
+    	String categoriaGriglia;
+    	String nomeGriglia;
+    	String compitoTreUsato;
+    	String compitoDueUsato;
         String cacheUsata;
         String sortedFrontiera;
         String mediaCacheHit;
