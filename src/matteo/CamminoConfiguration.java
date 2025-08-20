@@ -1,5 +1,9 @@
 package matteo;
 
+/**
+ * Classe che rappresenta la configurazione di Cammino.
+ * Permette di gestire modalità predefinite e configurazioni personalizzate tramite flag.
+ */
 public class CamminoConfiguration {
 
 	private final int flags;

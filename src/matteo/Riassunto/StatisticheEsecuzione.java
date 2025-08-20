@@ -139,9 +139,9 @@ public class StatisticheEsecuzione implements IStatisticheEsecuzione {
 	public SequencedMap<String, String> toSequencedMap() {
 		var map = new LinkedHashMap<String,String>();
 		map.put("Dimensioni griglia", getLarghezzaGriglia() + "x" + getAltezzaGriglia());
-		map.put("Tipo griglia", getOrigine().x() + "," + getOrigine().y() + ")");
-		map.put("Origine", "(" + getOrigine().x() + "," + getOrigine().y() + ")");
-		map.put("Destinazione", "(" + getDestinazione().x() + "," + getDestinazione().y() + ")");
+		map.put("Tipo griglia", getTipoGriglia() +"");
+		map.put("Origine", getOrigine().coordinateToString());
+		map.put("Destinazione", getDestinazione().coordinateToString());
 		map.put("Tempo esecuzione", Utils.formatTempo(getTempoEsecuzione()));
 		map.put("Celle frontiera", String.valueOf(getQuantitaCelleFrontiera()));
 		map.put("Iterazioni condizione", String.valueOf(getIterazioniCondizione()));
