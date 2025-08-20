@@ -38,14 +38,14 @@ public class Main {
 	//VARIABILI:
 	private static String FILE_DI_CONFIGURAZIONE = "config.json";
 
-	private static final int TIME_STOP = 30;
+	private static final int TEMPO_LIMITE = 30;
 	private static final TimeUnit TIME_UNIT = TimeUnit.SECONDS;
 
 	private static final int ORIGINE_X = 0;
 	private static final int ORIGINE_Y = 0;
 
-	private static final int DESTINAZIONE_X = 0;
-	private static final int DESTINAZIONE_Y = 0;
+	private static final int DESTINAZIONE_X = 39;
+	private static final int DESTINAZIONE_Y = 19;
 
 	private static final CompitoDueImpl COMPITO_DUE_MODALITA = CompitoDueImpl.V0;
 	
@@ -55,6 +55,7 @@ public class Main {
 	private static final CamminoConfiguration COMPITO_TRE_MODALITA = ConfigurationMode.DEFAULT.
 																		toCamminoConfiguration();
 */	
+	//Modalità di esecuzione personalizzabile per il Compito Tre
 	private static final CamminoConfiguration COMPITO_TRE_MODALITA = CamminoConfiguration.custom(
 										ConfigurationFlag.CONDIZIONE_RAFFORZATA,
 												ConfigurationFlag.SVUOTA_FRONTIERA);
@@ -82,7 +83,7 @@ public class Main {
 
 
 		// Imposta un timeout per l'esecuzione del compito
-		c.setTimeout(TIME_STOP, TIME_UNIT); 
+		c.setTimeout(TEMPO_LIMITE, TIME_UNIT); 
 
 		//Generazione di Origine e Destinazione
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);

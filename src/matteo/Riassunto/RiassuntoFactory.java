@@ -19,6 +19,7 @@ public class RiassuntoFactory {
 	}
 	
 	private static Riassunto creaRiassuntoVerbose(IStatisticheEsecuzione stats) {
+		boolean[] isPrimo = {true};
 		String tempoFormattato = Utils.formatTempo(stats.getTempoEsecuzione());
 		ICammino risultato = stats.getCammino();
 		
@@ -49,12 +50,20 @@ public class RiassuntoFactory {
 			sb.append("Sequenza landmarks: ");
 			for (ILandmark l : risultato.landmarks()) { 
 				sb.append("<(").append(l.x()).append(",").append(l.y()).append("),")
-				.append(StatoCella.CONTESTO.is(l) ? "1" : "2").append(">, ");
+				.append(tipoCella(l, isPrimo)).append(">, ");
 			}
 			sb.append("\n");
 		}
 		
 		return new Riassunto(TipoRiassunto.VERBOSE, sb.toString());
+	}
+
+	private static String tipoCella(ILandmark l, boolean[] isPrimo) {
+		if(isPrimo[0]) {
+			isPrimo[0] = false;
+			return "0";
+		}
+		return StatoCella.CONTESTO.is(l) ? "1" : "2";
 	}
 	
 	private static Riassunto creaRiassuntoTabella(IStatisticheEsecuzione stats) {
