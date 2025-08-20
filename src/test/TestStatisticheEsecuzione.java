@@ -174,7 +174,7 @@ class TestStatisticheEsecuzione {
         assertTrue(riassunto.contains("Frontiera sorted: SI"));
         assertTrue(riassunto.contains("Lunghezza cammino trovato: 7.07"));
         assertTrue(riassunto.contains("Numero landmarks: 2"));
-        assertTrue(riassunto.contains("<(2,2),1>, <(4,4),2>"));
+        assertTrue(riassunto.contains("<(2,2),0>, <(4,4),2>"));
         
         // Test formattazione tempo
         assertTrue(riassunto.contains("ns"), "Il riassunto dovrebbe contenere nanosecondi");

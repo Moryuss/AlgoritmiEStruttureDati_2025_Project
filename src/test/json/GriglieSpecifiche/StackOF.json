@@ -1,6 +1,6 @@
 {
-	"width":60,
-	"height":65,
+	"width":200,
+	"height":200,
 	"randomSeed": 42,
 	"maxOstacoli": {
 		"SEMPLICE": 0,
