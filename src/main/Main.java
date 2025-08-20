@@ -1,11 +1,7 @@
 package main;
 
 import static nicolas.StatoCella.OSTACOLO;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -16,11 +12,8 @@ import francesco.implementazioni.LettoreGriglia;
 import matteo.CamminoConfiguration;
 import matteo.CompitoTreImplementation;
 import matteo.ConfigurationFlag;
-import matteo.ConfigurationMode;
 import matteo.ICammino;
 import matteo.ICompitoTre;
-import matteo.IProgressoMonitor;
-import matteo.ProgressoMonitor;
 import matteo.Riassunto.IStatisticheEsecuzione;
 import matteo.Riassunto.Riassunto;
 import matteo.Riassunto.TipoRiassunto;
@@ -28,7 +21,6 @@ import nicolas.CompitoDueImpl;
 import nicolas.GrigliaConOrigineFactory;
 import nicolas.IGrigliaConOrigine;
 import nicolas.StatoCella;
-import utils.Utils;
 
 public class Main {
 
@@ -48,17 +40,17 @@ public class Main {
 	private static final int DESTINAZIONE_Y = 19;
 
 	private static final CompitoDueImpl COMPITO_DUE_MODALITA = CompitoDueImpl.V0;
-	
-/**
- * Configurazione per il Compito Tre, utilizzando configurazioni pre-esistenti
- * 
+
+	/**
+	 * Configurazione per il Compito Tre, utilizzando configurazioni pre-esistenti
+	 * 
 	private static final CamminoConfiguration COMPITO_TRE_MODALITA = ConfigurationMode.DEFAULT.
 																		toCamminoConfiguration();
-*/	
+	 */	
 	//Modalità di esecuzione personalizzabile per il Compito Tre
 	private static final CamminoConfiguration COMPITO_TRE_MODALITA = CamminoConfiguration.custom(
-										ConfigurationFlag.CONDIZIONE_RAFFORZATA,
-												ConfigurationFlag.SVUOTA_FRONTIERA);
+			ConfigurationFlag.CONDIZIONE_RAFFORZATA,
+			ConfigurationFlag.SVUOTA_FRONTIERA);
 
 	private static final TipoRiassunto TIPO_RIASSUNTO = TipoRiassunto.VERBOSE;
 	/**
@@ -87,8 +79,14 @@ public class Main {
 
 		//Generazione di Origine e Destinazione
 		IGrigliaConOrigine g = GrigliaConOrigineFactory.creaV0(griglia, 0,0);
-		ICella2D origine = g.getCellaAt(ORIGINE_X,ORIGINE_Y);	// Punto di partenza
-		ICella2D destinazione = g.getCellaAt(DESTINAZIONE_X,DESTINAZIONE_Y);	 // Punto di arrivo
+		if(g == null) {
+			System.err.println("Errore nella creazione della griglia con origine.");
+			return; // Esci se la griglia con origine non può essere creata
+		}
+
+		ICella2D origine = getCellaSafe(g, ORIGINE_X, ORIGINE_Y);	// Punto di partenza
+		ICella2D destinazione = getCellaSafe(g, DESTINAZIONE_X, DESTINAZIONE_Y);	 // Punto di arrivo
+
 		if(origine.is(StatoCella.OSTACOLO) || destinazione.is(StatoCella.OSTACOLO)) {
 			System.err.println("Origine o destinazione sono ostacoli, impossibile calcolare il cammino.");
 			return; // Esci se origine o destinazione sono ostacoli
@@ -105,6 +103,16 @@ public class Main {
 		//Stampa il riassunto nel tipo specificato
 		stampaRiassunto(c.getStatisticheEsecuzione() ,TIPO_RIASSUNTO);
 
+	}
+
+	private static ICella2D getCellaSafe(IGrigliaConOrigine g, int cellaX, int cellaY) {
+		try {
+			return g.getCellaAt(cellaX,cellaY);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.err.println("Errore nella creazione della cella: " + e.getMessage());
+			System.exit(1); // Ritorna 1 se la cella non può essere creata
+		}
+		return null; // Non dovrebbe mai arrivare qui, ma per evitare errori di compilazione
 	}
 
 	/**
