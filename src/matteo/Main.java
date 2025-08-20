@@ -1,19 +1,16 @@
-package main;
+package matteo;
 
 import static nicolas.StatoCella.OSTACOLO;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import francesco.ICella2D;
 import francesco.IGriglia;
 import francesco.implementazioni.LettoreGriglia;
-import matteo.CamminoConfiguration;
-import matteo.CompitoTreImplementation;
-import matteo.ConfigurationFlag;
-import matteo.ICammino;
-import matteo.ICompitoTre;
 import matteo.Riassunto.IStatisticheEsecuzione;
 import matteo.Riassunto.Riassunto;
 import matteo.Riassunto.TipoRiassunto;
@@ -21,6 +18,7 @@ import nicolas.CompitoDueImpl;
 import nicolas.GrigliaConOrigineFactory;
 import nicolas.IGrigliaConOrigine;
 import nicolas.StatoCella;
+import processing.core.PApplet;
 
 public class Main {
 
@@ -28,31 +26,24 @@ public class Main {
 	static ICompitoTre c;
 
 	//VARIABILI:
-	private static String FILE_DI_CONFIGURAZIONE = "config.json";
+	private static String FILE_DI_CONFIGURAZIONE = "src/matteo/config.json";
 
-	private static final int TEMPO_LIMITE = 30;
-	private static final TimeUnit TIME_UNIT = TimeUnit.SECONDS;
+	private static  int TEMPO_LIMITE = Integer.MAX_VALUE; 
+	private static TimeUnit TIME_UNIT = TimeUnit.SECONDS;
 
-	private static final int ORIGINE_X = 0;
-	private static final int ORIGINE_Y = 0;
+	private static int ORIGINE_X = 0;
+	private static int ORIGINE_Y = 0;
 
-	private static final int DESTINAZIONE_X = 39;
-	private static final int DESTINAZIONE_Y = 19;
+	private static int DESTINAZIONE_X = 0;
+	private static int DESTINAZIONE_Y = 0;
 
-	private static final CompitoDueImpl COMPITO_DUE_MODALITA = CompitoDueImpl.V0;
+	private static CompitoDueImpl COMPITO_DUE_MODALITA = CompitoDueImpl.V0;
 
-	/**
-	 * Configurazione per il Compito Tre, utilizzando configurazioni pre-esistenti
-	 * 
-	private static final CamminoConfiguration COMPITO_TRE_MODALITA = ConfigurationMode.DEFAULT.
-																		toCamminoConfiguration();
-	 */	
 	//Modalità di esecuzione personalizzabile per il Compito Tre
-	private static final CamminoConfiguration COMPITO_TRE_MODALITA = CamminoConfiguration.custom(
-			ConfigurationFlag.CONDIZIONE_RAFFORZATA,
-			ConfigurationFlag.SVUOTA_FRONTIERA);
+	private static CamminoConfiguration COMPITO_TRE_MODALITA;
 
-	private static final TipoRiassunto TIPO_RIASSUNTO = TipoRiassunto.VERBOSE;
+
+	private static TipoRiassunto TIPO_RIASSUNTO = TipoRiassunto.VERBOSE;
 	/**
 	 * Punto di ingresso principale dell'applicazione.
 	 * Carica la griglia da un file JSON e calcola il cammino minimo tra due celle.
@@ -64,6 +55,26 @@ public class Main {
 		try {
 
 			griglia = new LettoreGriglia().crea(Path.of(FILE_DI_CONFIGURAZIONE));
+
+			//carica le impostazioni
+			File file = new File(FILE_DI_CONFIGURAZIONE);
+			var config = PApplet.loadJSONObject(file).getJSONObject("impostazioniMain");
+
+			TEMPO_LIMITE = config.getInt("tempoLimite");
+			TIME_UNIT = TimeUnit.valueOf(config.getString("timeUnit").toUpperCase());
+			ORIGINE_X = config.getInt("origineX");
+			ORIGINE_Y = config.getInt("origineY");
+			DESTINAZIONE_X = config.getInt("destinazioneX");
+			DESTINAZIONE_Y = config.getInt("destinazioneY");
+			COMPITO_DUE_MODALITA = CompitoDueImpl.valueOf(config.getString("compitoDueModalita").toUpperCase());
+			
+			var compitoTreModalitaFlags = config.getJSONObject("compitoTreModalitaFlags");
+			COMPITO_TRE_MODALITA = CamminoConfiguration.custom(Stream.of(ConfigurationFlag.values())
+			    .filter(k -> compitoTreModalitaFlags.hasKey(k.name()) && compitoTreModalitaFlags.getBoolean(k.name(), false))
+			    .toArray(ConfigurationFlag[]::new));
+			
+			TIPO_RIASSUNTO = TipoRiassunto.valueOf(config.getString("tipoRiassunto").toUpperCase());
+
 		} catch (Exception e) {
 			System.err.println("Errore durante il caricamento della griglia: " + e.getMessage());
 			e.printStackTrace();

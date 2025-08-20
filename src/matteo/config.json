@@ -1,0 +1,45 @@
+{
+	"width":40,
+	"height":20,
+	"randomSeed": 42,
+	"maxOstacoli": {
+		"SEMPLICE": 0,
+		"AGGLOMERATO": 3,
+		"BARRA_VERTICALE": 4,
+		"BARRA_ORIZZONTALE": 0,
+		"BARRA_DIAGONALE": 0,
+		"ZONA_CHIUSA": 0,
+		"DELIMITATORE_VERTICALE": 0,
+		"DELIMITATORE_ORIZZONTALE": 0
+	},
+	"disposizione":{
+		"STANDARD": true,
+		"VARAZIONE_DIMENSIONI": true,
+		"SPIRALE": false,
+		"LINEA_SPEZZATA": false,
+		"DOPPIA_LINEA_SPEZZATA": true,
+		"SCACCHIERA": false
+		},
+	
+  "impostazioniMain": {
+    "tempoLimite": 30,
+    "timeUnit": "MINUTES",
+    "origineX": 0,
+    "origineY": 0,
+    "destinazioneX": 10,
+    "destinazioneY": 10,
+    "compitoDueModalita": "V0",
+    "compitoTreModalitaFlags": {
+      "DEBUG": false,
+      "MONITOR_ENABLED": true,
+      "STOP_MESSAGE": false,
+      "STATE_CHECK": false,
+      "SORTED_FRONTIERA": false,
+      "CONDIZIONE_RAFFORZATA": false,
+      "CACHE_ENABLED": false,
+      "SVUOTA_FRONTIERA": false
+    },
+    "tipoRiassunto": "VERBOSE"
+  }
+
+}
