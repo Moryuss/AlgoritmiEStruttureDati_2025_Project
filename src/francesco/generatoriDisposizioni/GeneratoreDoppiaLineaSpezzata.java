@@ -3,9 +3,9 @@ package francesco.generatoriDisposizioni;
 import java.util.ArrayList;
 import java.util.List;
 
+import francesco.DisposizioneOstacoli;
 import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.TipoOstacolo;
 import francesco.implementazioni.Cella2D;
 import francesco.implementazioni.Ostacolo;
 import nicolas.StatoCella;
@@ -45,14 +45,14 @@ public class GeneratoreDoppiaLineaSpezzata implements GeneratoreDisposizione {
 			rigaDaSinistra = !rigaDaSinistra;
 		}
 		
-		// Per l'ultima riga, si mette una linea piena tranne che per quella centrale
+		// Per l'ultima riga, si mette una linea piena tranne che per la cella centrale
 		for(int j = 0; j < width; j++) {
 			if(j != divisione) {
 				celle.add(new Cella2D(StatoCella.OSTACOLO.value(), j, height - 1));
 			}
 		}
 		
-		result = result.addObstacle(new Ostacolo(celle), TipoOstacolo.PERSONALIZZATO.value());
+		result = result.addObstacle(new Ostacolo(celle), DisposizioneOstacoli.DOPPIA_LINEA_SPEZZATA.value());
 		
 		return result;
 	}

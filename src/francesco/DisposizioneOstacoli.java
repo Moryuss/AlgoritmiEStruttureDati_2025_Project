@@ -7,5 +7,12 @@ public enum DisposizioneOstacoli {
 	LINEA_SPEZZATA,
 	DOPPIA_LINEA_SPEZZATA,
 	SCACCHIERA,
-	STANDARD
+	STANDARD;
+	
+	private final int value = TipoOstacolo.PERSONALIZZATO.value() + ordinal();
+	
+	public int value() {
+		return value;
+	}
+
 }

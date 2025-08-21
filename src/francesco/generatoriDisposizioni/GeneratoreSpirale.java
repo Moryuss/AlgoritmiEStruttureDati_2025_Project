@@ -3,10 +3,10 @@ package francesco.generatoriDisposizioni;
 import java.util.ArrayList;
 import java.util.List;
 
+import francesco.DisposizioneOstacoli;
 import francesco.ICella;
 import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.TipoOstacolo;
 import francesco.implementazioni.Cella2D;
 import francesco.implementazioni.Ostacolo;
 import nicolas.StatoCella;
@@ -43,7 +43,7 @@ public class GeneratoreSpirale implements GeneratoreDisposizione {
 				break;
 			}
 			// Si aggiungono le celle alla griglia, così l'iterazione dopo è corretta
-			result = result.addObstacle(new Ostacolo(celle), TipoOstacolo.PERSONALIZZATO.value());
+			result = result.addObstacle(new Ostacolo(celle), DisposizioneOstacoli.SPIRALE.value());
 			
 			// Calcola la distanza tra l'ultima cella e quella di partenza
 			int distanza = (int) Math.sqrt(Math.pow(ultimaCella.x() - cellaPartenza.x(), 2) + 

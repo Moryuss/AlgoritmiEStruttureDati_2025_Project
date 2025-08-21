@@ -3,9 +3,9 @@ package francesco.generatoriDisposizioni;
 import java.util.ArrayList;
 import java.util.List;
 
+import francesco.DisposizioneOstacoli;
 import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.TipoOstacolo;
 import francesco.implementazioni.Cella2D;
 import francesco.implementazioni.Ostacolo;
 import nicolas.StatoCella;
@@ -33,7 +33,7 @@ public class GeneratoreScacchiera implements GeneratoreDisposizione {
 			indiceProgressoLinea = indiceProgressoLinea < ordine.size() - 1 ? indiceProgressoLinea + 1 : 0;
 		}
 		
-		result = result.addObstacle(new Ostacolo(celle), TipoOstacolo.PERSONALIZZATO.value());
+		result = result.addObstacle(new Ostacolo(celle), DisposizioneOstacoli.SCACCHIERA.value());
 		
 		return result;
 	}

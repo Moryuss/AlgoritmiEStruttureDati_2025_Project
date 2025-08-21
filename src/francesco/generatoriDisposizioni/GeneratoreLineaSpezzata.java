@@ -3,9 +3,9 @@ package francesco.generatoriDisposizioni;
 import java.util.ArrayList;
 import java.util.List;
 
+import francesco.DisposizioneOstacoli;
 import francesco.ICella2D;
 import francesco.IGriglia;
-import francesco.TipoOstacolo;
 import francesco.implementazioni.Cella2D;
 import francesco.implementazioni.Ostacolo;
 import nicolas.StatoCella;
@@ -42,7 +42,7 @@ public class GeneratoreLineaSpezzata implements GeneratoreDisposizione{
 				celle.remove(0);
 			}
 			daSopra = !daSopra;
-			result = result.addObstacle(new Ostacolo(celle), TipoOstacolo.PERSONALIZZATO.value());
+			result = result.addObstacle(new Ostacolo(celle), DisposizioneOstacoli.LINEA_SPEZZATA.value());
 		}
 		
 		return result;
