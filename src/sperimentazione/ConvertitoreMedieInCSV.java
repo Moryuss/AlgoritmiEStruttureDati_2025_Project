@@ -44,6 +44,17 @@ public class ConvertitoreMedieInCSV {
             System.err.println("Errore nel main: " + e.getMessage());
             e.printStackTrace();
         }
+        try {
+            System.out.println(
+                Files.lines(Path.of("results.csv"))
+                .map(row -> row.split(",").length)
+                .distinct()
+                .toList()
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
     
     private static void convertTxtToCsv() throws IOException {
@@ -211,14 +222,14 @@ public class ConvertitoreMedieInCSV {
                 spazioValue = spazioValue.replace(",", "."); 
                 if ("MB".equals(unit)) {
                     // Conversione da MB a KB
-                    double mbValue = Double.parseDouble(spazioValue.replace(",", "."));
+                    double mbValue = Double.parseDouble(spazioValue);
                     double kbValue = mbValue * 1024;
-                    result.spazioKB = String.format("%.2f", kbValue).replace(".", ",");
+                    result.spazioKB = kbValue + "";
                 } else if ("B".equals(unit)) {
                     // Conversione da B a KB
-                    double bValue = Double.parseDouble(spazioValue.replace(",", "."));
+                    double bValue = Double.parseDouble(spazioValue);
                     double kbValue = bValue / 1024;
-                    result.spazioKB = String.format("%.3f", kbValue).replace(".", ",");
+                    result.spazioKB = kbValue + "";
                 } else {
                     // Already in KB
                     result.spazioKB = spazioValue;
