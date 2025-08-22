@@ -12,48 +12,47 @@ import utils.BiHashmap;
 
 public class RegioneFactory {
 	
-	public static Regione regioneContenente2(IGriglia<?> griglia, int x, int y, BiFunction<Integer,Integer,ICella2D> func) {
+	public static Regione regioneContenente2(IGriglia<? extends ICella2D> griglia, int x, int y) {
 		var indexer = new BiHashmap<Integer,Integer>();
 		griglia.forEach((j,i) -> {
-			var stato = griglia.getCellaAt(j, i).stato();
-			indexer.put(i, j, StatoCella.OSTACOLO.is(stato) ? stato : -1);
+			var cella = griglia.getCellaAt(j, i);
+			indexer.put(i, j, cella.is(StatoCella.OSTACOLO) ? cella.stato() : -1);
 		});
 		
-		var regione = new Regione(func.apply(x, y));
-		bucketPaint(griglia, indexer, 1, regione, x, y, func);
+		var regione = new Regione(griglia.getCellaAt(x, y));
+		bucketPaint(griglia, indexer, 1, regione, x, y);
 		return regione;
 	}
 	
 	
 	
-	private static void bucketPaint(IGriglia<?> griglia, BiHashmap<Integer,Integer> indexer, int regioneIndex, Regione regione, int x, int y, BiFunction<Integer,Integer,ICella2D> func) {
+	private static void bucketPaint(IGriglia<? extends ICella2D> griglia, BiHashmap<Integer,Integer> indexer, int regioneIndex, Regione regione, int x, int y) {
 		if (indexer.getOrDefault(y, x,-1)>=0) return;
 		var c = griglia.getCellaAt(x, y);
 		if (StatoCella.DESTINAZIONE.removeTo(c.stato())!=0) {
-			var c2 = func.apply(x, y);
-			if (c2.is(StatoCella.FRONTIERA) && !regione.frontiera.contains(c2)) {
-				regione.frontiera.add(c2);
+			if (c.is(StatoCella.FRONTIERA) && !regione.frontiera.contains(c)) {
+				regione.frontiera.add(c);
 			}
 			return;
 		}
 		
 		indexer.put(y, x, regioneIndex);
-		regione.addCella(new Cella2D(c.stato(), x, y));
+		regione.addCella(c);
 		
 		if (y>griglia.ymin()) {
-			if (x>griglia.xmin()) bucketPaint(griglia, indexer, regioneIndex, regione, x-1, y-1, func);
-			bucketPaint(griglia, indexer, regioneIndex, regione, x, y-1, func);
-			if (x<griglia.xmax()) bucketPaint(griglia, indexer, regioneIndex, regione, x+1, y-1, func);
+			if (x>griglia.xmin()) bucketPaint(griglia, indexer, regioneIndex, regione, x-1, y-1);
+			bucketPaint(griglia, indexer, regioneIndex, regione, x, y-1);
+			if (x<griglia.xmax()) bucketPaint(griglia, indexer, regioneIndex, regione, x+1, y-1);
 		}
 		{
-			if (x>griglia.xmin()) bucketPaint(griglia, indexer, regioneIndex, regione, x-1, y, func);
-			bucketPaint(griglia, indexer, regioneIndex, regione, x, y, func);
-			if (x<griglia.xmax()) bucketPaint(griglia, indexer, regioneIndex, regione, x+1, y, func);
+			if (x>griglia.xmin()) bucketPaint(griglia, indexer, regioneIndex, regione, x-1, y);
+			bucketPaint(griglia, indexer, regioneIndex, regione, x, y);
+			if (x<griglia.xmax()) bucketPaint(griglia, indexer, regioneIndex, regione, x+1, y);
 		}
 		if (y<griglia.ymax()) {
-			if (x>griglia.xmin()) bucketPaint(griglia, indexer, regioneIndex, regione, x-1, y+1, func);
-			bucketPaint(griglia, indexer, regioneIndex, regione, x, y+1, func);
-			if (x<griglia.xmax()) bucketPaint(griglia, indexer, regioneIndex, regione, x+1, y+1, func);
+			if (x>griglia.xmin()) bucketPaint(griglia, indexer, regioneIndex, regione, x-1, y+1);
+			bucketPaint(griglia, indexer, regioneIndex, regione, x, y+1);
+			if (x<griglia.xmax()) bucketPaint(griglia, indexer, regioneIndex, regione, x+1, y+1);
 		}
 	}
 	

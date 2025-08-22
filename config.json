@@ -3,34 +3,54 @@
 	"height":20,
 	"randomSeed": 42,
 	"maxOstacoli": {
-		"SEMPLICE": 0,
-		"AGGLOMERATO": 3,
-		"BARRA_VERTICALE": 4,
-		"BARRA_ORIZZONTALE": 0,
-		"BARRA_DIAGONALE": 0,
+		"SEMPLICE": 20,
+		"AGGLOMERATO": 0,
 		"ZONA_CHIUSA": 0,
+		"BARRA_VERTICALE": 0,
+		"BARRA_DIAGONALE": 0,
+		"BARRA_ORIZZONTALE": 0,
 		"DELIMITATORE_VERTICALE": 0,
 		"DELIMITATORE_ORIZZONTALE": 0
 	},
 	"disposizione":{
-		"STANDARD": false,
-		"VARAZIONE_DIMENSIONI": true,
 		"SPIRALE": false,
+		"STANDARD": true,
+		"SCACCHIERA": false,
 		"LINEA_SPEZZATA": false,
-		"DOPPIA_LINEA_SPEZZATA": true,
-		"SCACCHIERA": false
-		},
-	"load":{
-		"path":"griglie.int.json",
-		"name":"test1"
+		"VARAZIONE_DIMENSIONI": false,
+		"DOPPIA_LINEA_SPEZZATA": false
 	},
+	"load_":{
+		"path":"griglie.int.json",
+		"name":"test5"
+	},
+	"loadThis":	[
+		[ , , , , ,1, , , , , , , , , , , , , , ,],
+		[ , , , , , , , , ,1, , , , , , , , , , ,],
+		[ , , , , , , , , , , , , , , , , , , , ,],
+		[ , , ,1, , , , , , , , , , , , , , , , ,],
+		[ , , , , , , , , , , , , , , , , ,1, , ,],
+		[ , , , , , , , , , , , , , , , , , , ,1,],
+		[ , , , , ,1, , , , , , , , , , , , , ,1,],
+		[ , , , , , , , , , , , , , , , , , , , ,],
+		[1, , ,1, , , ,1, , , , , , , , ,1,1, ,1,],
+		[ , , , , , , ,1, , , , , , , , , , , , ,]
+	],
 	"applet":{
 		"width":1200,
 		"height":600,
-		"demo":false,
 		"showText":false,
 		"pixelDensity":1,
-		"palette":["0xff0000", "0xff4000", "0xff8000", "0xffb000","0x004000", "0xffffff", "0x000000", "0xff00ff", "0x00ff00"],
-		"paletteLegend":["origine","regina","contesto","complemento","frontiera","vuota","ostacolo","destinazione","landmark"]
+		"palette":{
+			"ORIGINE":     "0xff0000",
+			"REGINA":      "0xff4000",
+			"CONTESTO":    "0xff8000",
+			"COMPLEMENTO": "0xffb000",
+			"FRONTIERA":   "0x004000",
+			"VUOTA":       "0xffffff",
+			"OSTACOLO":    "0x000000",
+			"DESTINAZIONE":"0xff00ff",
+			"LANDMARK":    "0x00ff00",
+		}
 	}
 }

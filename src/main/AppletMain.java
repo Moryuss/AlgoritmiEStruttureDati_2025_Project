@@ -2,6 +2,8 @@ package main;
 
 import static nicolas.StatoCella.*;
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,7 +39,6 @@ public class AppletMain extends PApplet {
 	int COLORE_OSTACOLO,COLORE_DESTINAZIONE,COLORE_LANDMARK,COLORE_FRONTIERA,
 		COLORE_COMPLEMENTO,COLORE_ORIGINE,COLORE_REGINA,COLORE_CONTESTO,COLORE_BASE;
 	boolean showText;
-	int pixelDensity=1;
 	
 	
 	@Override
@@ -52,10 +53,6 @@ public class AppletMain extends PApplet {
 		JSONObject json = config.getJSONObject("applet");
 		
 		
-		palette = Stream.of(json.getStringList("palette").toArray())
-		.mapToInt(e -> Utils.parseHex(e).orElse(0))
-		.map(n->n|0xff000000)
-		.toArray();
 		
 		colors = Stream.of(json.getString("colors", "\"0x404040,0x808080,0xff0000,0xff6a00,0xffd800,0xb6ff00,0x4cff00,0x00ff21,0x00ff90,0x00ffff,0x0094ff,0x0026ff,0x4800ff,0xb200ff,0xff00dc,0xff006e\"").split("[\\[\",\\]\\s]+"))
 		.skip(1)
@@ -64,20 +61,23 @@ public class AppletMain extends PApplet {
 		.toArray();
 		
 		
-		COLORE_OSTACOLO		 = palette[6];
-		COLORE_DESTINAZIONE	 = palette[7];
-		COLORE_LANDMARK		 = palette[8];
-		COLORE_FRONTIERA	 = palette[4];
-		COLORE_COMPLEMENTO	 = palette[3];
-		COLORE_ORIGINE		 = palette[0];
-		COLORE_REGINA		 = palette[1];
-		COLORE_CONTESTO		 = palette[2];
-		COLORE_BASE			 = palette[5];
+		var map = Utils.toMap(json.getJSONObject("palette"));
+		COLORE_OSTACOLO     = getColor(map, StatoCella.OSTACOLO); 
+		COLORE_DESTINAZIONE = getColor(map, StatoCella.DESTINAZIONE);
+		COLORE_LANDMARK     = getColor(map, StatoCella.LANDMARK); 
+		COLORE_FRONTIERA    = getColor(map, StatoCella.FRONTIERA); 
+		COLORE_COMPLEMENTO  = getColor(map, StatoCella.COMPLEMENTO); 
+		COLORE_ORIGINE      = getColor(map, StatoCella.ORIGINE); 
+		COLORE_REGINA       = getColor(map, StatoCella.REGINA); 
+		COLORE_CONTESTO     = getColor(map, StatoCella.CONTESTO); 
+		COLORE_BASE         = getColor(map, StatoCella.VUOTA);
 		
 		
-//		if (config.hasKey("load")) {
-//			griglia = loadGriglia(config);
-//		}
+		if (config.hasKey("load")) {
+			griglia = loadGriglia(config);
+		} else if (config.hasKey("loadThis")) {
+			griglia = Utils.loadSimple(config.getJSONArray("loadThis")).toGrigliaMutabile();
+		}
 		
 		if (griglia==null) {
 			griglia = new LettoreGriglia().crea(file.toPath()).toGrigliaMutabile();
@@ -92,12 +92,15 @@ public class AppletMain extends PApplet {
 		
 		
 		showText = json.getBoolean("showText", false);
-		pixelDensity = json.getInt("pixelDendity", 1);
-		pixelDensity(pixelDensity);
+		pixelDensity(json.getInt("pixelDensity", 1));
 		
 		println("w=%d, h=%d".formatted(w, h));
 		printGriglia(griglia);
 		
+	}
+
+	private static int getColor(Map<String, Object> map, StatoCella stato) {
+		return Utils.parseHex(map.get(stato.name())+"").orElse(0)|0xff000000;
 	}
 	
 	private static void printGriglia(IGriglia<?> griglia) {
@@ -146,19 +149,19 @@ public class AppletMain extends PApplet {
 		griglia.forEach((j,i) -> {
 			int n = griglia.getCellaAt(j, i).stato();
 			
-			if (OSTACOLO.check(n)) fill(COLORE_OSTACOLO);
-			else if (ORIGINE.check(n)) fill(COLORE_ORIGINE);
-			else if (DESTINAZIONE.check(n)) fill(COLORE_DESTINAZIONE);
-			else if (LANDMARK.check(n)) fill(COLORE_LANDMARK);
-			//else if (FRONTIERA.check(n)) fill(COLORE_FRONTIERA);
-			else if (COMPLEMENTO.check(n)) fill(COLORE_COMPLEMENTO);
-			else if (REGINA.check(n)) fill(COLORE_REGINA);
-			else if (CONTESTO.check(n)) fill(COLORE_CONTESTO);
+			if (OSTACOLO.is(n)) fill(COLORE_OSTACOLO);
+			else if (ORIGINE.is(n)) fill(COLORE_ORIGINE);
+			else if (DESTINAZIONE.is(n)) fill(COLORE_DESTINAZIONE);
+			else if (LANDMARK.is(n)) fill(COLORE_LANDMARK);
+			//else if (FRONTIERA.is(n)) fill(COLORE_FRONTIERA);
+			else if (COMPLEMENTO.is(n)) fill(COLORE_COMPLEMENTO);
+			else if (REGINA.is(n)) fill(COLORE_REGINA);
+			else if (CONTESTO.is(n)) fill(COLORE_CONTESTO);
 			else fill(COLORE_BASE);
 			
 			rect(j*s, i*s, s, s);
 			
-			if (FRONTIERA.check(n)) {
+			if (FRONTIERA.is(n)) {
 				fill(100, 100);
 				circle(j*s, i*s, s);
 			}
@@ -283,7 +286,7 @@ public class AppletMain extends PApplet {
 			if (O==null || griglia.getCellaAt(x, y).is(OSTACOLO)) return;
 			griglia.forEach((j,i) -> {
 				var cella = griglia.getCellaAt(j, i);
-				if (LANDMARK.matches(cella.stato())) {
+				if (LANDMARK.is(cella.stato())) {
 					LANDMARK.removeTo(griglia, x, y);
 				}
 			});
@@ -354,6 +357,8 @@ public class AppletMain extends PApplet {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (!mouseEnabled) return;
+		if (abs(e.getX()-pmouseX)+abs(e.getY()-pmouseY)<2.5) return;
+		
 		int x = e.getX() * w / width;
 		int y = e.getY() * h / height;
 		x = constrain(x, 0, w-1);
@@ -388,26 +393,22 @@ public class AppletMain extends PApplet {
 			break;
 		case 'P':			
 			if (e.isShiftDown()) {
-			
 				var str = griglia.collect(
 						c -> c.is(OSTACOLO) ? "1" : " ", 
 						Collectors.joining(",", "[", ",]"), 
 						Collectors.joining(",\n", "[\n", "\n]"));
 				
 				println(str);
-				
 			} else {
 				var str = griglia.collect(
 						c -> "%02x".formatted(c.stato()), 
 						Collectors.joining(",", "[", ",]"), 
 						Collectors.joining(",\n", "[\n", "\n]"));
-				
 				println(str);
 			}
-			
 			break;
 		case 'C':
-			clearNonOStacoli(e.isControlDown());
+			clearNonOStacoli(e.isShiftDown());
 			monitorMin = monitor = null;
 			grigliaNazione = null;
 			O = D = null;
@@ -506,12 +507,16 @@ public class AppletMain extends PApplet {
 		}
 		
 		PApplet parent = this;
+		println(parent.pixelDensity);
 		
 		otherWindow = new PApplet() {
+			
+			List<ConfigurationFlag> flags = ConfigurationFlag.allFlags();
+			
 			@Override
 			public void settings() {
-				size(400, max(ConfigurationFlag.LENGTH, TipoRiassunto.values().length+2)*30);
-				pixelDensity(pixelDensity);
+				size(400, max(flags.size(), TipoRiassunto.values().length+2)*30);
+				pixelDensity(parent.pixelDensity);
 			}
 			@Override
 			public void setup() {
@@ -523,8 +528,8 @@ public class AppletMain extends PApplet {
 				fill(0);
 				textSize(20);
 				textAlign(LEFT, CENTER);
-				for (int i=0; i<ConfigurationFlag.LENGTH; i++) {
-					var f = ConfigurationFlag.fromIndex(i);
+				for (int i=0; i<flags.size(); i++) {
+					var f = flags.get(i);
 					var bool = camminoConfiguration.hasFlag(f);
 					fill(bool ? 0 : 200);
 					text("%s".formatted(f.name(), bool), 10, 20+i*28);
@@ -548,8 +553,8 @@ public class AppletMain extends PApplet {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getX() <= 250) {
 					int y = (e.getY()-16)/27;
-					if (y<0 || y>=ConfigurationFlag.LENGTH) return;
-					var flag = ConfigurationFlag.fromIndex(y);
+					if (y<0 || y>=flags.size()) return;
+					var flag = flags.get(y);
 					camminoConfiguration = camminoConfiguration.toggle(flag);
 					return;
 				}
@@ -570,6 +575,7 @@ public class AppletMain extends PApplet {
 				otherWindow = null;
 			}
 		};
+		
 		
 		PApplet.runSketch(new String[] {otherWindow.getClass().getSimpleName()}, otherWindow);
 	}

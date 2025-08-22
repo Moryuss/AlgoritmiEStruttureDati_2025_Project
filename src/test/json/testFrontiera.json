@@ -4,7 +4,7 @@
       "distanzaTorre": 3,
       "stato": 8,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 2,
       "isFrontiera": false
     },
@@ -12,7 +12,7 @@
       "distanzaTorre": 2,
       "stato": 24,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 2,
       "isFrontiera": true
     },
@@ -44,7 +44,7 @@
       "distanzaTorre": 2,
       "stato": 3,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 0,
       "isFrontiera": false
     }
@@ -54,7 +54,7 @@
       "distanzaTorre": 4,
       "stato": 8,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": false
     },
@@ -62,7 +62,7 @@
       "distanzaTorre": 3,
       "stato": 24,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": true
     },
@@ -70,7 +70,7 @@
       "distanzaTorre": 2,
       "stato": 24,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": true
     },
@@ -94,7 +94,7 @@
       "distanzaTorre": 1,
       "stato": 3,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 0,
       "isFrontiera": false
     }
@@ -104,7 +104,7 @@
       "distanzaTorre": 5,
       "stato": 3,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 0,
       "isFrontiera": false
     },
@@ -112,7 +112,7 @@
       "distanzaTorre": 4,
       "stato": 3,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 0,
       "isFrontiera": false
     },
@@ -120,7 +120,7 @@
       "distanzaTorre": 3,
       "stato": 3,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 0,
       "isFrontiera": false
     },
@@ -128,7 +128,7 @@
       "distanzaTorre": 2,
       "stato": 3,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 0,
       "isFrontiera": false
     },
@@ -136,7 +136,7 @@
       "distanzaTorre": 1,
       "stato": 3,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 0,
       "isFrontiera": false
     },
@@ -144,7 +144,7 @@
       "distanzaTorre": 0,
       "stato": 7,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 0,
       "isFrontiera": false
     }
@@ -154,7 +154,7 @@
       "distanzaTorre": 4,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": false
     },
@@ -162,7 +162,7 @@
       "distanzaTorre": 3,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": false
     },
@@ -170,7 +170,7 @@
       "distanzaTorre": 2,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": false
     },
@@ -178,7 +178,7 @@
       "distanzaTorre": 1,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": false
     },
@@ -186,7 +186,7 @@
       "distanzaTorre": 0,
       "stato": 19,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": true
     },
@@ -204,7 +204,7 @@
       "distanzaTorre": 3,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 2,
       "isFrontiera": false
     },
@@ -212,7 +212,7 @@
       "distanzaTorre": 2,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 2,
       "isFrontiera": false
     },
@@ -220,7 +220,7 @@
       "distanzaTorre": 1,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 2,
       "isFrontiera": false
     },
@@ -228,7 +228,7 @@
       "distanzaTorre": 0,
       "stato": 3,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 2,
       "isFrontiera": false
     },
@@ -236,7 +236,7 @@
       "distanzaTorre": 1,
       "stato": 17,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": true
     },
@@ -254,7 +254,7 @@
       "distanzaTorre": 2,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 3,
       "isFrontiera": false
     },
@@ -262,7 +262,7 @@
       "distanzaTorre": 1,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 3,
       "isFrontiera": false
     },
@@ -270,7 +270,7 @@
       "distanzaTorre": 0,
       "stato": 3,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 3,
       "isFrontiera": false
     },
@@ -278,7 +278,7 @@
       "distanzaTorre": 1,
       "stato": 1,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 2,
       "isFrontiera": false
     },
@@ -286,7 +286,7 @@
       "distanzaTorre": 2,
       "stato": 17,
       "isOstacolo": false,
-      "isChiusura": false,
+      "isChiusura": true,
       "distanzaAlfiere": 1,
       "isFrontiera": true
     },

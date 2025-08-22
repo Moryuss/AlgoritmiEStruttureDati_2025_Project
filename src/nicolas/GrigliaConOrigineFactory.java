@@ -19,7 +19,7 @@ public final class GrigliaConOrigineFactory {
 	private GrigliaConOrigineFactory() {}
 	
 	
-	private static void paint(int xmin, int ymin, int[][] out, int[][] in, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy, BiConsumer<Integer,Integer> onPaint) {
+	private static void paint(int xmin, int ymin, int[][] out, int[][] in, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy, boolean recursion, int col2, int dx1, int dy1, int dx2, int dy2) {
 		while (true) {
 			x += dx;
 			y += dy;
@@ -27,17 +27,11 @@ public final class GrigliaConOrigineFactory {
 					|| OSTACOLO.is(in[y][x])) return;
 			out[y][x] = col;
 			chiusura.addLast(new Cella2D(col, x+xmin, y+ymin));
-			onPaint.accept(x, y);
+			if (recursion) {
+				paint(xmin, ymin, out, in, chiusura, x, y, col2, dx1, dy1, false, 0, 0, 0, 0, 0);
+				paint(xmin, ymin, out, in, chiusura, x, y, col2, dx2, dy2, false, 0, 0, 0, 0, 0);
+			}
 		}
-	}
-	private static void paint(int xmin, int ymin, int[][] out, int[][] in, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy) {
-		paint(xmin, ymin, out, in, chiusura, x, y, col, dx, dy, (i,j)->{});
-	}
-	private static void paint0(int xmin, int ymin, int[][] out, int[][] in, List<ICella2D> chiusura, int x, int y, int col, int dx, int dy, int dx1, int dy1, int dx2, int dy2) {
-		paint(xmin, ymin, out, in, chiusura, x, y, REGINA.value(), dx, dy, (j,i)->{
-			paint(xmin, ymin, out, in, chiusura, j, i, col, dx1, dy1);
-			paint(xmin, ymin, out, in, chiusura, j, i, col, dx2, dy2);
-		});
 	}
 	
 	public static GrigliaConOrigine creaV0(IGriglia<?> griglia, int Ox, int Oy) {
@@ -54,25 +48,31 @@ public final class GrigliaConOrigineFactory {
 		int xmin=griglia.xmin(), ymin=griglia.ymin();
 		
 		var chiusura = new LinkedList<ICella2D>();
+		int reg = REGINA.value();
 		var com = COMPLEMENTO.value();
 		var cont = CONTESTO.value();
 		
-		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, com,   0, -1, -1, -1,  1,-1);
-		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, com,   0,  1, -1,  1,  1, 1);
-		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, com,   1,  0,  1, -1,  1, 1);
-		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, com, -1,  0,  -1, -1, -1, 1);
-		
-		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, cont, 1,  1, 1,  0,0, 1);                  
-		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, cont, 1,  -1,1,  0,0, -1);                  
-		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, cont, -1, -1,-1, 0,0, -1);                  
-		paint0(xmin, ymin, res, in, chiusura, Ox, Oy, cont, -1, 1, -1, 0,0, 1);
+		paint(xmin, ymin, res, in, chiusura, Ox, Oy, reg,   0, -1, true, com,  -1,-1,  1,-1);
+		paint(xmin, ymin, res, in, chiusura, Ox, Oy, reg,   0,  1, true, com,  -1, 1,  1, 1);
+		paint(xmin, ymin, res, in, chiusura, Ox, Oy, reg,   1,  0, true, com,   1,-1,  1, 1);
+		paint(xmin, ymin, res, in, chiusura, Ox, Oy, reg,  -1,  0, true, com,  -1,-1, -1, 1);
+		paint(xmin, ymin, res, in, chiusura, Ox, Oy, reg,   1,  1, true, cont,  1, 0,  0, 1);                  
+		paint(xmin, ymin, res, in, chiusura, Ox, Oy, reg,   1, -1, true, cont,  1, 0,  0,-1);                  
+		paint(xmin, ymin, res, in, chiusura, Ox, Oy, reg,  -1, -1, true, cont, -1, 0,  0,-1);                  
+		paint(xmin, ymin, res, in, chiusura, Ox, Oy, reg,  -1,  1, true, cont, -1, 0,  0, 1);
 		
 		
 		res[Oy-ymin][Ox-xmin] = ORIGINE.value();
 		chiusura.add(new Cella2D(ORIGINE.value(), Ox, Oy));
 		
-		var frontiera = new ArrayDeque<ICella2D>();
+		var frontiera = creaFrontiera(xmin, ymin, res);
 		
+		return new GrigliaConOrigine(res, Ox, Oy, xmin, ymin, chiusura, frontiera.toArray(ICella2D[]::new), griglia.getTipo());
+	}
+
+
+	private static ArrayDeque<ICella2D> creaFrontiera(int xmin, int ymin, int[][] res) {
+		var frontiera = new ArrayDeque<ICella2D>();
 		
 		for (int i = 0; i < res.length; i++) {
 			outer:
@@ -96,7 +96,7 @@ public final class GrigliaConOrigineFactory {
 			}
 		}
 		
-		return new GrigliaConOrigine(res, Ox, Oy, xmin, ymin, chiusura, frontiera.toArray(ICella2D[]::new), griglia.getTipo());
+		return frontiera;
 	}
 	
 	
@@ -153,7 +153,7 @@ public final class GrigliaConOrigineFactory {
 		var frontiera = new ArrayDeque<ICella2D>();
 		
 		griglia.forEach((j,i) -> {
-			if (!CHIUSURA.check(map.get(i, j))) return;
+			if (!CHIUSURA.is(map.get(i, j))) return;
 			for (int ii = -1; ii < 2; ii++) {
 				for (int jj = -1, iii, jjj; jj < 2; jj++) {
 					iii=i+ii;

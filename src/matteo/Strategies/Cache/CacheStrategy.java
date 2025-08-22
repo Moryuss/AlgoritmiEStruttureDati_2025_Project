@@ -1,20 +1,22 @@
 package matteo.Strategies.Cache;
 
+import java.util.Optional;
+
 import francesco.ICella2D;
 import francesco.IGriglia;
 import matteo.CamminoCache;
 import matteo.ICammino;
 
 public sealed interface CacheStrategy {
-	ICammino get(IGriglia<?> griglia, ICella2D O, ICella2D D);
+	Optional<ICammino> get(IGriglia<?> griglia, ICella2D O, ICella2D D);
 	void put(IGriglia<?> griglia, ICella2D O, ICella2D D, ICammino cammino);
 
 
 	public static record CacheNull() implements CacheStrategy {
 		@Override
-		public ICammino get(IGriglia<?> griglia, ICella2D O, ICella2D D) {
+		public Optional<ICammino> get(IGriglia<?> griglia, ICella2D O, ICella2D D) {
 			// no-op
-			return null;
+			return Optional.empty();
 		}
 
 		@Override
@@ -30,7 +32,7 @@ public sealed interface CacheStrategy {
 		}
 
 		@Override
-		public ICammino get(IGriglia<?> griglia, ICella2D O, ICella2D D) {
+		public Optional<ICammino> get(IGriglia<?> griglia, ICella2D O, ICella2D D) {
 			return cache.getCammino(griglia, O, D);
 		}
 		@Override

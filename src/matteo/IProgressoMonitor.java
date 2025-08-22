@@ -1,5 +1,7 @@
 package matteo;
 
+import java.util.Optional;
+
 import francesco.ICella2D;
 
 public interface IProgressoMonitor {
@@ -15,5 +17,10 @@ public interface IProgressoMonitor {
 	void setOrigine(ICella2D origine);
 	
 	void setDestinazione(ICella2D destinazione);
+	
+	
+	default Optional<ICammino> safeGetCammino() {
+		return Optional.of(getCammino());
+	}
 	
 }

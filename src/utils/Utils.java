@@ -7,8 +7,10 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -131,6 +133,16 @@ public final class Utils {
 		return Collector.of(C::new, C::accept, C::merge, C::finish);
 	}
 	
+	
+	
+	public static Map<String,Object> toMap(JSONObject json) {
+		var map = new HashMap<String,Object>();
+		for (var key : json.keys()) {
+			var keyStr = (String)key;
+			map.put(keyStr, json.get(keyStr));
+		}
+		return map;
+	}
 	
 	
 	public static <T> Collector<T,?,JSONArray> collectToJSONArray(BiFunction<JSONArray,T,JSONArray> appender) {

@@ -22,7 +22,7 @@ public class TestGrigliaMatrix {
 		var g2 = g.addObstacle(new Ostacolo(List.of(new Cella2D(StatoCella.OSTACOLO.value(), 0, 0))), 0);
 		
 		assertTrue(g2.getCellaAt(0, 0).is(StatoCella.OSTACOLO));
-		assertFalse(StatoCella.OSTACOLO.check(g.getCellaAt(0, 0).stato()), "La griglia originale deve rimanere inalterata");
+		assertFalse(g.getCellaAt(0, 0).is(StatoCella.OSTACOLO), "La griglia originale deve rimanere inalterata");
 		
 	}
 	

@@ -20,7 +20,7 @@ public enum CompitoDueImpl implements ICompitoDue {
 		}
 		@Override
 		public GrigliaFrontieraPair getGrigliaFrontieraPair(IGrigliaConOrigine griglia, IHave2DCoordinate O, IHave2DCoordinate D) {
-			Regione regione = RegioneFactory.regioneContenente2(griglia, D.x(), D.y(), griglia::getCellaAt);
+			Regione regione = RegioneFactory.regioneContenente2(griglia, D.x(), D.y());
 			var frontieraList = regione.frontiera(O);
 			IGriglia<?> g = RegioneFactory.creaSottoGriglia2(griglia, regione);
 			return new GrigliaFrontieraPair(g, frontieraList);

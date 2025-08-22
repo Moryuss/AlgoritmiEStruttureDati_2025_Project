@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import francesco.ICella2D;
 import francesco.IGriglia;
@@ -24,19 +25,22 @@ public class CamminoCache {
 		this.enabled = enabled;
 		this.debugMode = debugMode;
 	}
+	
 	// Metodo principale per ottenere un cammino dalla cache
-	public ICammino getCammino(IGriglia<?> griglia, ICella2D origine, ICella2D destinazione) {
+	public Optional<ICammino> getCammino(IGriglia<?> griglia, ICella2D origine, ICella2D destinazione) {
 		if (!enabled) {
-			return null; // Cache disabilitata
+			return Optional.empty(); // Cache disabilitata
 		}
 
 		String key = generateCacheKey(griglia, origine, destinazione);
-		ICammino cached = cache.get(key);
+		var cached = Optional.ofNullable(cache.get(key));
 
-		if (cached != null && debugMode) {
-			System.out.println("Cache HIT per chiave: " + key);
-		} else if (debugMode) {
-			System.out.println("Cache MISS per chiave: " + key);
+		if (debugMode) {
+			if (cached.isPresent()) {
+				System.out.println("Cache HIT per chiave: " + key);
+			} else {
+				System.out.println("Cache MISS per chiave: " + key);
+			}
 		}
 
 		return cached;

@@ -10,10 +10,12 @@ public enum StatoCella {
 	ORIGINE			(0b00000111, 0b00000100), // (Ox, Oy)
 	COMPLEMENTO		(0b00001000, 0b00001000), // celle raggiungibili con solo cammini liberi di tipo 2
 	FRONTIERA		(0b00010000, 0b00010000), // celle nel contesto adiacenti a celle non nel contesto
-	DESTINAZIONE	(0b00100000, 0b00100000),
-	LANDMARK		(0b01010000, 0b01000000),
+	LANDMARK		(0b00110000, 0b00100000),
+	DESTINAZIONE	(0b01000000, 0b01000000),
 	OSTACOLO		(0b10000000, 0b10000000),
-	CHIUSURA		(0b00000000, 0b00001001);
+	CHIUSURA		(0b00000000, 0b00001001),
+	@Deprecated
+	VUOTA           (0b00000000, 0b00000000);
 	
 	
 	private final short value, mask;
@@ -49,7 +51,6 @@ public enum StatoCella {
 	}
 	public void addTo(IGrigliaMutabile<?> griglia, int x, int y) {
 		griglia.setStato(x, y, addTo(griglia.getCellaAt(x, y).stato()));
-		
 	}
 	public void toggleTo(IGrigliaMutabile<?> griglia, int x, int y) {
 		griglia.setStato(x, y, toggleTo(griglia.getCellaAt(x, y).stato()));
@@ -60,7 +61,7 @@ public enum StatoCella {
 	
 	
 	public boolean is(int n) {
-		return matches(n);
+		return (n&mask) > 0;
 	}
 	
 	public boolean isNot(int n) {
@@ -74,14 +75,6 @@ public enum StatoCella {
 		return isNot(cella.stato());
 	}
 	
-	
-	public boolean check(int n) {
-		return (n&mask) > 0;
-	}
-	
-	public boolean matches(int n) {
-		return (n&mask) == mask;
-	}
 	
 	
 	public static Optional<StatoCella> from(int n) {

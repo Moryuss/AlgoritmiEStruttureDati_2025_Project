@@ -251,13 +251,13 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	private ICammino calcoloCamminoMin(IGriglia<?> griglia, ICella2D O, ICella2D D, IStatisticheEsecuzione stats,
 			ICompitoDue compitoDue) throws InterruptedException, StackOverflowError {
 
-		ICammino risultatoCache = verificaPresenzaCamminoInCache(griglia, O, D);
-		if (risultatoCache != null) {
+		var risultatoCache = verificaPresenzaCamminoInCache(griglia, O, D);
+		if (risultatoCache.isPresent()) {
 			strategies.getDebugStrategy().println("Cammino trovato in cache");
-			return risultatoCache;
+			return risultatoCache.get();
 		}
 
-		//		Thread.sleep(100);
+		//Thread.sleep(100);
 
 		IGrigliaConOrigine g = compitoDue.calcola(griglia, O);
 		ICella2D origine = g.getCellaAt(O.x(), O.y());
@@ -265,15 +265,15 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 		preparaRicorsione(origine);
 
-		if (StatoCella.COMPLEMENTO.is(dest) || StatoCella.CONTESTO.is(dest)) {
+		if (dest.is(StatoCella.CHIUSURA)) {
 			strategies.getDebugStrategy().println("TROVATO UN PERCORSO");
 		}
 
-		strategies.getDebugStrategy().println("D: " + D.x() + "," + D.y() + " stato: " + bitPrint(D.stato()) + " dest: "
-				+ dest.x() + "," + dest.y() + " stato: " + bitPrint(dest.stato()));
+		strategies.getDebugStrategy().println("D: " + D.coordinateToString()+ " stato: " + bitPrint(D.stato()) + " dest: "
+				+ dest.coordinateToString() + " stato: " + bitPrint(dest.stato()));
 
 
-		if (condizioneCasoBase(g, dest)) {
+		if (g.getCellaAt(dest).is(StatoCella.CHIUSURA)) {
 			return gestisciCasoBase(origine, g, dest);
 		}
 
@@ -408,10 +408,11 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			stackCammino.push(landmarkDestinazione);
 
 			var cammino = Cammino.from(new ArrayList<>(stackCammino).reversed());
-			if (Optional.ofNullable(monitorMin.getCammino()).orElse(ICammino.INFINITY).compareTo(cammino)>0) {
+			if (monitorMin.safeGetCammino().orElse(ICammino.INFINITY).compareTo(cammino)>0) {
 				monitorMin.setCammino(cammino);
 				aggiornaCamminoMinimo(cammino);
 			}
+			
 			stackCammino.pop();
 		}
 		livelloRicorsione--;
@@ -426,10 +427,6 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 
 	private void aggiornaCamminoMinimo(ICammino cammino) {
 		this.camminoMinimo = cammino;
-	}
-
-	private static boolean condizioneCasoBase(IGriglia<?> g, IHave2DCoordinate dest) {
-		return StatoCella.CHIUSURA.check(g.getCellaAt(dest).stato());
 	}
 
 	private void aggiornaMonitorConNuovaFrontiera() {
@@ -452,18 +449,14 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 		}
 	}
 
-	private ICammino verificaPresenzaCamminoInCache(IGriglia<?> griglia, ICella2D O, ICella2D D) {
+	private Optional<ICammino> verificaPresenzaCamminoInCache(IGriglia<?> griglia, ICella2D O, ICella2D D) {
 		// stampa tutti gli elementi in cache se debug abilitato
 		pathCache.printCacheContents();
-
-		// CACHE
-		ICammino cached = strategies.getCacheStrategy().get(griglia, O, D);
-		if (cached != null) {
+		var cached = strategies.getCacheStrategy().get(griglia, O, D);
+		if (cached.isPresent()) {
 			this.stats.incrementaCacheHit();
-			return cached;
 		}
-		return null; // Se non c'è un cammino in cache, procedi con il calcolo
-		// END CACHE CHECK
+		return cached;
 	}
 
 	@Override

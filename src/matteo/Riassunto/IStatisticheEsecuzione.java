@@ -35,7 +35,7 @@ public interface IStatisticheEsecuzione {
 	public void incrementaCacheHit();
 	public int getCacheHit();
 
-	public void setCache(boolean cahceStatus);
+	public void setCache(boolean cacheStatus);
 	public boolean isCacheAttiva();
 	
 	public void setFrontieraSorted(boolean frontieraStored);
