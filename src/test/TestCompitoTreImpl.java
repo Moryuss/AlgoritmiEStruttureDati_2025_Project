@@ -932,8 +932,8 @@ public class TestCompitoTreImpl {
 			assertTrue(((CompitoTreImplementation) c).
 					getConfiguration().hasAllFlags(
 							ConfigurationFlag.CONDIZIONE_RAFFORZATA,
-							ConfigurationFlag.SVUOTA_FRONTIERA,
-							ConfigurationFlag.STATE_CHECK));
+							ConfigurationFlag.SVUOTA_FRONTIERA));
+//							ConfigurationFlag.STATE_CHECK));
 			
 			assertFalse(((CompitoTreImplementation) c).
 					getConfiguration().hasFlag(

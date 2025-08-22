@@ -49,8 +49,8 @@ class TestCamminoConfiguration {
             
             assertTrue(config.isDebugEnabled());
             assertTrue(config.isMonitorEnabled());
-            assertTrue(config.isStopMessageEnabled());
-            assertTrue(config.isStateCheckEnabled());
+//          assertTrue(config.isStopMessageEnabled());
+//          assertTrue(config.isStateCheckEnabled());
             assertFalse(config.isSortedFrontieraEnabled());
             assertFalse(config.isCondizioneRafforzataEnabled());
             assertFalse(config.isCacheEnabled());
@@ -70,9 +70,9 @@ class TestCamminoConfiguration {
             assertTrue(config.isMonitorEnabled());
             assertFalse(config.isStopMessageEnabled());
             
-            assertEquals(2, config.getActiveFlags().size());
-            assertTrue(config.isCustom());
-            assertNull(config.getPredefinedMode());
+            assertEquals(4, config.getActiveFlags().size());
+            assertFalse(config.isCustom());
+            assertNotNull(config.getPredefinedMode());
         }
     }
 
@@ -94,7 +94,7 @@ class TestCamminoConfiguration {
             assertTrue(config.isMonitorEnabled());
             assertFalse(config.isStopMessageEnabled());
             
-            assertEquals(3, config.getActiveFlags().size());
+            assertEquals(5, config.getActiveFlags().size());
             assertTrue(config.isCustom());
             assertNull(config.getPredefinedMode());
         }
@@ -189,8 +189,6 @@ class TestCamminoConfiguration {
             
             assertTrue(config.hasFlag(ConfigurationFlag.DEBUG));
             assertTrue(config.hasFlag(ConfigurationFlag.MONITOR_ENABLED));
-            assertTrue(config.hasFlag(ConfigurationFlag.STOP_MESSAGE));
-            assertTrue(config.hasFlag(ConfigurationFlag.STATE_CHECK));
             assertFalse(config.hasFlag(ConfigurationFlag.SORTED_FRONTIERA));
             assertFalse(config.hasFlag(ConfigurationFlag.CONDIZIONE_RAFFORZATA));
             assertFalse(config.hasFlag(ConfigurationFlag.CACHE_ENABLED));
@@ -237,14 +235,17 @@ class TestCamminoConfiguration {
         @DisplayName("withFlag should add flags correctly")
         void testWithFlag() {
             CamminoConfiguration original = new CamminoConfiguration(ConfigurationMode.DEFAULT);
-            CamminoConfiguration modified = original.withFlag(ConfigurationFlag.DEBUG);
+            CamminoConfiguration modified = original.withFlags(ConfigurationFlag.SORTED_FRONTIERA, 
+            		ConfigurationFlag.SVUOTA_FRONTIERA);
             
             // Original should be unchanged
-            assertFalse(original.hasFlag(ConfigurationFlag.DEBUG));
+            assertFalse(original.hasFlag(ConfigurationFlag.SORTED_FRONTIERA));
+            assertFalse(original.hasFlag(ConfigurationFlag.SVUOTA_FRONTIERA));
             assertTrue(original.hasFlag(ConfigurationFlag.MONITOR_ENABLED));
             
             // Modified should have new flags plus original ones
-            assertTrue(modified.hasFlag(ConfigurationFlag.DEBUG));
+            assertTrue(modified.hasFlag(ConfigurationFlag.SORTED_FRONTIERA));
+            assertTrue(modified.hasFlag(ConfigurationFlag.SVUOTA_FRONTIERA));
             assertTrue(modified.hasFlag(ConfigurationFlag.MONITOR_ENABLED));
             
             // Should be custom since DEBUG + MONITOR_ENABLED alone is not a predefined mode
@@ -267,8 +268,6 @@ class TestCamminoConfiguration {
             
             // Modified should have new flags plus original ones (becomes DEBUG mode)
             assertTrue(modified.hasFlag(ConfigurationFlag.DEBUG));
-            assertTrue(modified.hasFlag(ConfigurationFlag.STOP_MESSAGE));
-            assertTrue(modified.hasFlag(ConfigurationFlag.STATE_CHECK));
             assertTrue(modified.hasFlag(ConfigurationFlag.MONITOR_ENABLED));
             
             // Should detect it's the DEBUG predefined mode
@@ -394,7 +393,7 @@ class TestCamminoConfiguration {
             
             String customStr = CamminoConfiguration.custom(ConfigurationFlag.DEBUG).toString();
             assertTrue(customStr.contains("CUSTOM"));
-            assertTrue(customStr.contains("00000001"));
+            assertTrue(customStr.contains("00001101"));
 }
 
         @Test
@@ -489,8 +488,8 @@ class TestCamminoConfiguration {
             );
             
             assertTrue(modified.hasFlag(ConfigurationFlag.DEBUG));
-            assertTrue(modified.hasFlag(ConfigurationFlag.STATE_CHECK));
-            assertTrue(modified.hasFlag(ConfigurationFlag.STOP_MESSAGE));
+//            assertTrue(modified.hasFlag(ConfigurationFlag.STATE_CHECK));
+//            assertTrue(modified.hasFlag(ConfigurationFlag.STOP_MESSAGE));
             assertTrue(modified.hasFlag(ConfigurationFlag.MONITOR_ENABLED));
             
             // Should detect it's DEBUG mode

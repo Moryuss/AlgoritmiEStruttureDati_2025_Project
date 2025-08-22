@@ -116,7 +116,7 @@ class TestGenerazioniSpecifiche {
 		CompitoTreImplementation treImplementazione = new CompitoTreImplementation(tre);
 		ICammino cammino = treImplementazione.camminoMin(grigliaOrigine, start, destinazione);
 		
-		System.out.println(treImplementazione.getReport());
+//		System.out.println(treImplementazione.getReport());
 		IStatisticheEsecuzione statistiche = treImplementazione.getStatisticheEsecuzione();
 		if(!statistiche.isCalcoloInterrotto()) {
 			fail("Il calcolo non e' stato interrotto.");

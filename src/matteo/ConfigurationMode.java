@@ -96,10 +96,12 @@ public enum ConfigurationMode {
 		return hasFlag(ConfigurationFlag.MONITOR_ENABLED); 
 	}
 
+	@Deprecated
 	public boolean isStopMessageEnabled() { 
 		return hasFlag(ConfigurationFlag.STOP_MESSAGE); 
 	}
 
+	@Deprecated
 	public boolean isStateCheckEnabled() { 
 		return hasFlag(ConfigurationFlag.STATE_CHECK); 
 	}

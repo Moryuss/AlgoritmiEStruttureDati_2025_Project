@@ -124,11 +124,11 @@ public class CamminoConfiguration {
     public boolean isMonitorEnabled() { 
         return hasFlag(ConfigurationFlag.MONITOR_ENABLED);
     }
-    
+    @Deprecated
     public boolean isStopMessageEnabled() { 
         return hasFlag(ConfigurationFlag.STOP_MESSAGE);
     }
-    
+    @Deprecated
     public boolean isStateCheckEnabled() { 
         return hasFlag(ConfigurationFlag.STATE_CHECK);
     }
@@ -173,7 +173,15 @@ public class CamminoConfiguration {
         for (ConfigurationFlag flag : ConfigurationFlag.values()) {
             if (hasFlag(flag)) {
                 activeFlags.add(flag);
+                if(flag == ConfigurationFlag.DEBUG) {
+					// Aggiungo anche i flag impliciti in DEBUG
+					if(!activeFlags.contains(ConfigurationFlag.STOP_MESSAGE))
+						activeFlags.add(ConfigurationFlag.STOP_MESSAGE);
+					if(!activeFlags.contains(ConfigurationFlag.STATE_CHECK))
+						activeFlags.add(ConfigurationFlag.STATE_CHECK);
+				}
             }
+            
         }
         return activeFlags;
     }

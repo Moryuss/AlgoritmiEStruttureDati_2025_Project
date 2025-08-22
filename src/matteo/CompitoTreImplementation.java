@@ -34,7 +34,7 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	private int maxProfonditaRicorsione = 0;
 
 	private Deque<ILandmark> stackCammino = new ArrayDeque<ILandmark>();
-	private ICammino camminoMinimo = ICammino.INFINITY; // cammino minimo trovato
+	private ICammino camminoMinimo = ICammino.INFINITY;
 
 	/**
 	 * Constructor con configurazione di default
@@ -116,7 +116,8 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 			return risultato;
 		} catch (InterruptedException | StackOverflowError | OutOfMemoryError e) {
 //			e.printStackTrace();
-			return gestisciInterruzione_GeneraCammino(e);
+			risultato = gestisciInterruzione_GeneraCammino(e);
+			return risultato;
 		} finally {
 			finalizzaStatisticheEsecuzione(); // Salva il tempo di esecuzione
 			// Genera sempre il report, anche in caso di interruzione
@@ -129,16 +130,15 @@ public class CompitoTreImplementation implements ICompitoTre, IHasReport, IHasPr
 	}
 
 	private void generaReportAlways(ICammino risultato) {
-		if (risultato != null)
+		if (risultato != null) {
 			generaReportFinale(risultato);
-		else if (this.getProgressMin() != null & this.getProgressMin().getCammino() != null
+		} else if (this.getProgressMin() != null & this.getProgressMin().getCammino() != null
 				& this.getProgressMin().getCammino().lunghezza() < Double.POSITIVE_INFINITY) {
 			generaReportFinale(this.getProgressMin().getCammino());
 		} else if( camminoMinimo != null 
 				&& camminoMinimo.lunghezza() < Double.POSITIVE_INFINITY) {
 			generaReportFinale(camminoMinimo);
-		}
-		else {
+		} else {
 			generaReportFinale(new Cammino(DistanzaLibera.INFINITY, new ArrayList<>()));
 		}
 	}

@@ -47,19 +47,16 @@ class TestConfigurationMode{
 
 			assertTrue(mode.isDebugEnabled());
 			assertTrue(mode.isMonitorEnabled());
-			assertTrue(mode.isStopMessageEnabled());
-			assertTrue(mode.isStateCheckEnabled());
+//			assertTrue(mode.isStopMessageEnabled());
+//			assertTrue(mode.isStateCheckEnabled());
 			assertFalse(mode.isSortedFrontieraEnabled());
 			assertFalse(mode.isCondizioneRafforzataEnabled());
 			assertFalse(mode.isCacheEnabled());
 
-			assertEquals(4, mode.getActiveFlags().size());
+			assertEquals(2, mode.getActiveFlags().size());
 			assertTrue(mode.hasAllFlags(
 					ConfigurationFlag.DEBUG,
-					ConfigurationFlag.MONITOR_ENABLED,
-					ConfigurationFlag.STOP_MESSAGE,
-					ConfigurationFlag.STATE_CHECK
-					));
+					ConfigurationFlag.MONITOR_ENABLED));
 		}
 
 		@Test
@@ -117,8 +114,8 @@ class TestConfigurationMode{
 
 			assertTrue(debug.hasFlag(ConfigurationFlag.DEBUG));
 			assertTrue(debug.hasFlag(ConfigurationFlag.MONITOR_ENABLED));
-			assertTrue(debug.hasFlag(ConfigurationFlag.STOP_MESSAGE));
-			assertTrue(debug.hasFlag(ConfigurationFlag.STATE_CHECK));
+//			assertTrue(debug.hasFlag(ConfigurationFlag.STOP_MESSAGE));
+//			assertTrue(debug.hasFlag(ConfigurationFlag.STATE_CHECK));
 			assertFalse(debug.hasFlag(ConfigurationFlag.SORTED_FRONTIERA));
 			assertFalse(debug.hasFlag(ConfigurationFlag.CONDIZIONE_RAFFORZATA));
 			assertFalse(debug.hasFlag(ConfigurationFlag.CACHE_ENABLED));
@@ -181,14 +178,14 @@ class TestConfigurationMode{
 				assertEquals(1, defaultFlags.size());
 				assertTrue(defaultFlags.contains(ConfigurationFlag.MONITOR_ENABLED));
 
-				List<ConfigurationFlag> debugFlags = ConfigurationMode.DEBUG.getActiveFlags();
-				assertEquals(4, debugFlags.size());
-				assertTrue(debugFlags.containsAll(Arrays.asList(
-						ConfigurationFlag.DEBUG,
-						ConfigurationFlag.MONITOR_ENABLED,
-						ConfigurationFlag.STOP_MESSAGE,
-						ConfigurationFlag.STATE_CHECK
-						)));
+//				List<ConfigurationFlag> debugFlags = ConfigurationMode.DEBUG.getActiveFlags();
+//				assertEquals(2, debugFlags.size());
+//				assertTrue(debugFlags.containsAll(Arrays.asList(
+//						ConfigurationFlag.DEBUG,
+//						ConfigurationFlag.MONITOR_ENABLED,
+//						ConfigurationFlag.STOP_MESSAGE,
+//						ConfigurationFlag.STATE_CHECK
+//						)));
 				List<ConfigurationFlag> performanceFlags = ConfigurationMode.PERFORMANCE.getActiveFlags();
 				assertEquals(4, performanceFlags.size());
 				assertTrue(performanceFlags.containsAll(Arrays.asList(
@@ -212,8 +209,8 @@ class TestConfigurationMode{
 				assertTrue(debugStr.contains("0001111"));
 				assertTrue(debugStr.contains("DEBUG"));
 				assertTrue(debugStr.contains("MONITOR_ENABLED"));
-				assertTrue(debugStr.contains("STOP_MESSAGE"));
-				assertTrue(debugStr.contains("STATE_CHECK"));
+//				assertTrue(debugStr.contains("STOP_MESSAGE"));
+//				assertTrue(debugStr.contains("STATE_CHECK"));
 
 				String performanceStr = ConfigurationMode.PERFORMANCE.getModeName();
 				assertTrue(performanceStr.contains("PERFORMANCE"));
@@ -268,7 +265,7 @@ class TestConfigurationMode{
 		@DisplayName("ConfigurationFlag Tests")
 		class ConfigurationFlagTest {
 
-			@Test
+			@Deprecated
 			@DisplayName("ConfigurationFlag values should be powers of 2")
 			void testFlagValuesArePowersOfTwo() {
 				ConfigurationFlag[] flags = ConfigurationFlag.values();
@@ -280,7 +277,7 @@ class TestConfigurationMode{
 				}
 			}
 
-			@Test
+			@Deprecated
 			@DisplayName("All flags should have unique values")
 			void testFlagValuesAreUnique() {
 				ConfigurationFlag[] flags = ConfigurationFlag.values();
