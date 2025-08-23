@@ -36,6 +36,8 @@ public class ConvertitoreMedieInCSV {
     // Pattern to detect unreachable destination
     private static final Pattern DESTINAZIONE_IRRAGGIUNGIBILE_PATTERN = Pattern.compile("Destinazione Irraggiungibile\\.");
     
+    private static final Pattern NUMERO_LANDMARK_PATTERN = Pattern.compile("Numero landmarks: (\\d+)");
+    
     public static void main(String[] args) {
         try {
             convertTxtToCsv();
@@ -68,7 +70,7 @@ public class ConvertitoreMedieInCSV {
             // Header del CSV
             csvWriter.write("Categoria_Griglia,Nome_Griglia,Compito_Due,Compito_Tre,Cache_Usata,Sorted_Frontiera,Media_Cache_Hit,Media_Celle_Frontiera," +
                            "Media_Iterazioni_Condizione,Tempo," +
-                           "Spazio_KB,Massima_Profondita,Esecuzioni_Corrette,Timeout,Destinazione_Irraggiungibile");
+                           "Spazio_KB,Massima_Profondita,Esecuzioni_Corrette,Celle_Di_Frontiera,CDF_Per_Landmark,Timeout,Destinazione_Irraggiungibile");
             csvWriter.newLine();
             
             // Ricorsione nella cartella per trovare i file .txt
@@ -105,9 +107,27 @@ public class ConvertitoreMedieInCSV {
         boolean isDestinationUnreachable = DESTINAZIONE_IRRAGGIUNGIBILE_PATTERN.matcher(relevantSection).find();
         
         // Estrazione dei valori con regex
-        ExtractionResult result = extractValues(relevantSection);
+        ExtractionResult result = extractValues(relevantSection, isTimeout);
+        
         
         if (result != null) {
+
+        	Matcher numeroLandmark = NUMERO_LANDMARK_PATTERN.matcher(content);
+
+            if (numeroLandmark.find() && !isDestinationUnreachable) {
+            	int valore = Integer.parseInt(numeroLandmark.group(1));
+            	if(isTimeout) {
+            		valore *= 10;
+            	}
+    			result.numeroLandmark = (valore + "").replace(",", ".");
+    			result.CDFperLandmark = valore > 0 ? 
+    					Integer.parseInt(result.mediaCelleFrontiera) / Integer.parseInt(result.numeroLandmark) + ""
+    					: "0";
+    			result.CDFperLandmark = result.CDFperLandmark.replace(",", ".");
+    		} else {
+    			result.numeroLandmark = "0"; // Default se non trovato
+    			result.CDFperLandmark = "0"; // Default se non trovato
+    		}
             
             // Estrazione di tipo, nome griglia e compiti
             String nomeFile = txtFile.getFileName().toString();
@@ -137,7 +157,7 @@ public class ConvertitoreMedieInCSV {
 				result.compitoDueUsato = result.compitoDueUsato.replace(".txt", "").trim();
             }
             // Write to CSV
-            csvWriter.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+            csvWriter.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
                 result.categoriaGriglia,
                 result.nomeGriglia,
                 result.compitoDueUsato,
@@ -151,6 +171,8 @@ public class ConvertitoreMedieInCSV {
                 result.spazioKB,
                 result.massimaProfondita,
                 result.esecuzioniCorrette,
+                result.numeroLandmark,
+                result.CDFperLandmark,
                 isTimeout,
                 isDestinationUnreachable
             ));
@@ -160,7 +182,7 @@ public class ConvertitoreMedieInCSV {
         }
     }
     
-    private static ExtractionResult extractValues(String section) {
+    private static ExtractionResult extractValues(String section, boolean isTimeout) {
         ExtractionResult result = new ExtractionResult();
         
         try {
@@ -175,7 +197,7 @@ public class ConvertitoreMedieInCSV {
             // Sorted Frontiera
             matcher = SORTED_PATTERN.matcher(section);
             if (matcher.find()) {
-                result.sortedFrontiera = matcher.group(1);
+            	result.sortedFrontiera = matcher.group(1);
             } else {
                 return null;
             }
@@ -183,7 +205,11 @@ public class ConvertitoreMedieInCSV {
             // Media Cache hit
             matcher = CACHE_HIT_PATTERN.matcher(section);
             if (matcher.find()) {
-                result.mediaCacheHit = matcher.group(1);
+            	int valore = Integer.parseInt(matcher.group(1));
+            	if(isTimeout) {
+            		valore *= 10;
+            	}
+                result.mediaCacheHit = (valore + "").replace(",", ".");
             } else {
                 return null;
             }
@@ -191,7 +217,11 @@ public class ConvertitoreMedieInCSV {
             // Media Celle di Frontiera
             matcher = CELLE_FRONTIERA_PATTERN.matcher(section);
             if (matcher.find()) {
-                result.mediaCelleFrontiera = matcher.group(1);
+            	int valore = Integer.parseInt(matcher.group(1));
+            	if(isTimeout) {
+            		valore *= 10;
+            	}
+                result.mediaCelleFrontiera = (valore + "").replace(",", ".");
             } else {
                 return null;
             }
@@ -199,7 +229,11 @@ public class ConvertitoreMedieInCSV {
             // Media Iterazioni Condizione
             matcher = ITERAZIONI_PATTERN.matcher(section);
             if (matcher.find()) {
-                result.mediaIterazioniCondizione = matcher.group(1);
+            	int valore = Integer.parseInt(matcher.group(1));
+            	if(isTimeout) {
+            		valore *= 10;
+            	}
+                result.mediaIterazioniCondizione = (valore + "").replace(",", ".");
             } else {
                 return null;
             }
@@ -209,6 +243,9 @@ public class ConvertitoreMedieInCSV {
             matcher = TEMPO_PATTERN.matcher(section);
             if (matcher.find()) {
             	long tempo = Long.parseLong(matcher.group(1));
+            	if(isTimeout) {
+            		tempo *= 10;
+            	}
                 result.tempo = Utils.tempoToString(tempo);
             } else {
                 return null;
@@ -242,7 +279,11 @@ public class ConvertitoreMedieInCSV {
             // Massima Profondita'
             matcher = PROFONDITA_PATTERN.matcher(section);
             if (matcher.find()) {
-                result.massimaProfondita = matcher.group(1);
+            	int valore = Integer.parseInt(matcher.group(1));
+            	if(isTimeout) {
+            		valore *= 10;
+            	}
+                result.massimaProfondita = (valore + "").replace(",", ".");
             } else {
                 return null;
             }
@@ -279,5 +320,7 @@ public class ConvertitoreMedieInCSV {
         String spazioKB;
         String massimaProfondita;
         String esecuzioniCorrette;
+        String numeroLandmark;
+        String CDFperLandmark;
     }
 }
