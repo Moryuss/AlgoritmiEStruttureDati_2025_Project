@@ -1,6 +1,6 @@
 {
-	"width":40,
-	"height":20,
+	"width":60,
+	"height":60,
 	"randomSeed": 42,
 	"maxOstacoli": {
 		"SEMPLICE": 0,
@@ -14,10 +14,10 @@
 	},
 	"disposizione":{
 		"STANDARD": true,
-		"VARAZIONE_DIMENSIONI": true,
+		"VARAZIONE_DIMENSIONI": false,
 		"SPIRALE": false,
 		"LINEA_SPEZZATA": false,
-		"DOPPIA_LINEA_SPEZZATA": true,
+		"DOPPIA_LINEA_SPEZZATA": false,
 		"SCACCHIERA": false
 		},
 	
@@ -26,14 +26,12 @@
     "timeUnit": "MINUTES",
     "origineX": 0,
     "origineY": 0,
-    "destinazioneX": 10,
-    "destinazioneY": 10,
+    "destinazioneX": 59,
+    "destinazioneY": 0,
     "compitoDueModalita": "V0",
     "compitoTreModalitaFlags": {
       "DEBUG": false,
       "MONITOR_ENABLED": true,
-      "STOP_MESSAGE": false,
-      "STATE_CHECK": false,
       "SORTED_FRONTIERA": false,
       "CONDIZIONE_RAFFORZATA": false,
       "CACHE_ENABLED": false,
