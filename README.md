@@ -1,5 +1,5 @@
 # AlgoritmiEStruttureDati_2025_Project
-Progetto di algoritmi e strutture dati, Univeristà degli Studi di Brescia, Anno Accademico 2024/2025. 
+Progetto di Algoritmi e Strutture Dati, Univeristà degli Studi di Brescia, Anno Accademico 2024/2025. 
 
 # Membri del gruppo:
 - Matteo Ghidini: 736213
