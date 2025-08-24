@@ -6,6 +6,11 @@ Progetto di Algoritmi e Strutture Dati, Univeristà degli Studi di Brescia, Anno
 - Nicolas Cavicchioli: 735621
 - Francesco Lozio: 737664
 
+# Relazione:
+- [Relazione](Relazione/Relazione_Algoritmi_e_Strutture_Dati.pdf): relazione sullo svolgimento del progetto.
+- [Grafici](Relazione/Grafici): grafici e codice R per generazione grafici dal file [result.csv](results.csv)
+- [File result.csv](results.csv): file contenente i riassuntì delle sperimentazioni in formato CSV.
+
 # Utilizzo dell'applicazione:
 Sono presenti due main di utilizzo principali e uno di sperimentazione:
 - [AppletMain](src/main/AppletMain.java): **Main primario** con rappresentazione mediante GUI interattiva, contienene tutti i requisiti funzionali e richieste del progetto. Utilizza questo [file](config.json) per la configurazione
