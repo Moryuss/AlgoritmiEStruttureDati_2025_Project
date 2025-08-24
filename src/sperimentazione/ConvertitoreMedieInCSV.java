@@ -70,7 +70,7 @@ public class ConvertitoreMedieInCSV {
             // Header del CSV
             csvWriter.write("Categoria_Griglia,Nome_Griglia,Compito_Due,Compito_Tre,Cache_Usata,Sorted_Frontiera,Media_Cache_Hit,Media_Celle_Frontiera," +
                            "Media_Iterazioni_Condizione,Tempo," +
-                           "Spazio_KB,Massima_Profondita,Esecuzioni_Corrette,Celle_Di_Frontiera,CDF_Per_Landmark,"
+                           "Spazio_KB,Massima_Profondita,Esecuzioni_Corrette,Landmark,CDF_Per_Landmark,"
                            + "Timeout,Destinazione_Irraggiungibile");
             csvWriter.newLine();
             
@@ -105,7 +105,7 @@ public class ConvertitoreMedieInCSV {
         boolean isTimeout = TIMEOUT_PATTERN.matcher(beforePattern).find();
         
         // Controlla di Destinazione Irraggiungibile
-        boolean isDestinationUnreachable = DESTINAZIONE_IRRAGGIUNGIBILE_PATTERN.matcher(relevantSection).find();
+        boolean isDestinationUnreachable = DESTINAZIONE_IRRAGGIUNGIBILE_PATTERN.matcher(content).find();
         
         // Estrazione dei valori con regex
         ExtractionResult result = extractValues(relevantSection);
@@ -211,7 +211,7 @@ public class ConvertitoreMedieInCSV {
             // Media Celle di Frontiera
             matcher = CELLE_FRONTIERA_PATTERN.matcher(section);
             if (matcher.find()) {
-            	result.mediaCelleFrontiera = matcher.group(1).replace(",", ".");
+                result.mediaCelleFrontiera = matcher.group(1).replace(",", ".");
             } else {
                 return null;
             }
@@ -219,7 +219,7 @@ public class ConvertitoreMedieInCSV {
             // Media Iterazioni Condizione
             matcher = ITERAZIONI_PATTERN.matcher(section);
             if (matcher.find()) {
-            	result.mediaIterazioniCondizione = matcher.group(1).replace(",", ".");
+                result.mediaIterazioniCondizione = matcher.group(1).replace(",", ".");
             } else {
                 return null;
             }
@@ -228,7 +228,8 @@ public class ConvertitoreMedieInCSV {
             // Tempo d'esecuzione
             matcher = TEMPO_PATTERN.matcher(section);
             if (matcher.find()) {
-            	result.tempo = matcher.group(1).replace(",", ".");
+            	long tempo = Long.parseLong(matcher.group(1));
+                result.tempo = Utils.tempoToString(tempo);
             } else {
                 return null;
             }
@@ -261,7 +262,7 @@ public class ConvertitoreMedieInCSV {
             // Massima Profondita'
             matcher = PROFONDITA_PATTERN.matcher(section);
             if (matcher.find()) {
-            	result.massimaProfondita = matcher.group(1).replace(",", ".");
+                result.massimaProfondita = matcher.group(1).replace(",", ".");
             } else {
                 return null;
             }
