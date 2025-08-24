@@ -31,11 +31,11 @@ public class MainSperimentazione {
 	private static final String VARIAZIONE_DIMENSIONI_PATH = "src/sperimentazione/vardimensioni";
 	private static final String TIPO_GRIGLIA_PATH = "src/sperimentazione/tipoGriglia";
 	private static final String SPIRALE_PATH = "src/sperimentazione/spirale";
-	private static final String DOPPIO_DENTE_DI_SEGA_PATH = "src/sperimentazione/doppiodentedisega";
+	private static final String DOPPIA_LINEA_SPEZZATA_PATH = "src/sperimentazione/doppialineaspezzata";
 	private static final String SCACCHIERA_PATH = "src/sperimentazione/scacchiera";
 
 	private static final List<String> CARTELLE = List.of(
-//			DOPPIO_DENTE_DI_SEGA_PATH,
+//			DOPPIA_LINEA_SPEZZATA_PATH,
 //			LINEA_SPEZZATA_PATH,
 			SCACCHIERA_PATH,
 //			SPIRALE_PATH,
